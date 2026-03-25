@@ -1,5 +1,13 @@
 {
   "mcpServers": {
+    "obsidian": {
+      "command": "npx",
+      "args": [
+        "@bitbonsai/mcpvault@latest",
+        "PATH_TO_YOUR_OBSIDIAN_VAULT"
+      ],
+      "disabled": false
+    },
     "TestSprite": {
       "command": "npx",
       "args": [

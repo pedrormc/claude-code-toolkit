@@ -99,14 +99,95 @@ Todos em PT-BR, modelo Opus.
 
 ---
 
-### MCP Servers (2)
+### Skills/Agents dos Plugins (Inventario Completo)
 
+> Quando voce digita `/` no Claude Code, a lista e montada combinando seus skills customizados + todos os skills dos plugins abaixo. Por isso voce ve muito mais que 8 skills.
+
+#### Everything Claude Code (ECC) — 20 skills + 9 agents
+| Tipo | Nome | Descricao |
+|------|------|-----------|
+| skill | `plan` | Criar planos de implementacao |
+| skill | `tdd` | Test-driven development workflow |
+| skill | `e2e` | E2E testing com Playwright |
+| skill | `claw` | NanoClaw REPL |
+| skill | `evolve` | Analise e evolucao de instincts |
+| skill | `go-build` | Fix Go build errors |
+| skill | `go-review` | Go code review |
+| skill | `go-test` | Go TDD workflow |
+| skill | `gradle-build` | Fix Gradle build errors |
+| skill | `learn-eval` | Extrair patterns reutilizaveis |
+| skill | `save-session` / `resume-session` | Persistir/retomar sessoes |
+| skill | `skill-create` | Gerar SKILL.md a partir de git history |
+| skill | `instinct-status` / `export` / `import` / `promote` | Gestao de instincts |
+| skill | `projects` | Listar projetos conhecidos |
+| skill | `python-review` | Python code review |
+| agent | `planner` | Planejamento de implementacao |
+| agent | `architect` | Decisoes de arquitetura |
+| agent | `tdd-guide` | Guia TDD |
+| agent | `code-reviewer` | Code review |
+| agent | `security-reviewer` | Analise de seguranca |
+| agent | `build-error-resolver` | Fix build errors |
+| agent | `e2e-runner` | E2E testing |
+| agent | `refactor-cleaner` | Limpeza de dead code |
+| agent | `doc-updater` | Atualizacao de docs |
+
+Alem disso, ECC traz **130+ rules** para 7 linguagens (TypeScript, Python, Go, Kotlin, Perl, PHP, Swift) cobrindo coding-style, patterns, security, testing e hooks.
+
+#### Superpowers — 18 skills + 1 agent
+| Tipo | Nome | Descricao |
+|------|------|-----------|
+| skill | `using-superpowers` | Bootstrap de sessao — detecta skills aplicaveis |
+| skill | `brainstorming` | Explorar intent e requisitos antes de implementar |
+| skill | `writing-plans` | Escrever planos de implementacao |
+| skill | `executing-plans` | Executar planos com checkpoints |
+| skill | `test-driven-development` | TDD workflow |
+| skill | `systematic-debugging` | Debugging estruturado |
+| skill | `dispatching-parallel-agents` | Despachar agents em paralelo |
+| skill | `subagent-driven-development` | Desenvolvimento com subagents |
+| skill | `requesting-code-review` | Solicitar code review |
+| skill | `receiving-code-review` | Receber e processar code review |
+| skill | `using-git-worktrees` | Isolamento com git worktrees |
+| skill | `finishing-a-development-branch` | Finalizar branch (merge/PR/cleanup) |
+| skill | `verification-before-completion` | Verificar antes de declarar pronto |
+| skill | `writing-skills` | Criar e editar skills |
+| skill | `brainstorm` | (deprecated, usa brainstorming) |
+| skill | `write-plan` / `execute-plan` | (deprecated, usa writing-plans/executing-plans) |
+| agent | `code-reviewer` | Code review com alinhamento ao plano |
+
+#### Ralph — 2 skills
+| Tipo | Nome | Descricao |
+|------|------|-----------|
+| skill | `ralph` | Converter PRD para prd.json (formato Ralph) |
+| skill | `prd` | Gerar PRD de feature do zero |
+
+#### UI/UX Pro Max — 1 skill (2 versoes)
+| Tipo | Nome | Descricao |
+|------|------|-----------|
+| skill | `ui-ux-pro-max` | Design intelligence: 50+ estilos, 161 paletas, 57 fonts, 99 UX guidelines |
+
+---
+
+### MCP Servers — Completo (2 locais + 5 cloud)
+
+#### Locais (configurados em `mcp.json`)
 | Server | Pacote | Descricao |
 |--------|--------|-----------|
 | **n8n** | `n8n-mcp` | Gerenciamento de workflows n8n — criar, editar, validar, testar, executar |
 | **TestSprite** | `@testsprite/testsprite-mcp` | Testing automation |
 
-> Configuracao em `config/mcp.json` — substitua os placeholders pelas suas API keys.
+#### Cloud Connectors (gerenciados via OAuth pela Anthropic)
+| Connector | Descricao |
+|-----------|-----------|
+| **Gmail** | Buscar, ler, criar drafts, listar labels |
+| **Google Calendar** | Criar eventos, encontrar horarios, listar calendarios |
+| **Google Drive** | Buscar e ler documentos Google Docs |
+| **HubSpot** (connector 1) | MCP oficial — CRM objects, search, manage, properties |
+| **HubSpot** (connector 2) | MCP secundario — batch operations, engagements, workflows |
+| **Excalidraw** | Criar diagramas hand-drawn |
+
+> Os cloud connectors NAO ficam no `mcp.json`. Sao conectados via OAuth no Claude Code e aparecem automaticamente. Para configurar, use `/mcp` no Claude Code ou acesse as configuracoes de conectores.
+
+> Configuracao dos locais em `config/mcp.json` — substitua os placeholders pelas suas API keys.
 
 ---
 
@@ -178,6 +259,71 @@ Opus 4.6 | meu-projeto | [frontend-specialist] | feature/nova-pagina
 - `ralph.sh` — Long-running AI agent loop. Executa Claude Code em modo headless com iteracoes configuraveis.
 - `CLAUDE.md` — Instrucoes do agente Ralph
 - `prd.json.example` — Exemplo de PRD no formato Ralph
+
+---
+
+### Projetos Ativos e Memorias
+
+O Claude Code mantem memorias persistentes por projeto. Aqui esta o mapa completo:
+
+#### Bombeiros (FireDash)
+- **Path:** `Desktop/AAsites-antigra/Bombeiros`
+- **Repo:** [pedrormc/FireDash](https://github.com/pedrormc/FireDash.git)
+- **Producao:** https://firedash-bombeiros.vercel.app
+- **Stack:** React 19, TypeScript, Tailwind v4, Vercel
+- **Memorias:**
+  - `feedback_no_push_without_confirmation` — Nao fazer push sem confirmar (multi-agent workflow)
+  - `feedback_superpowers_is_ecc` — "superpowers" = ECC, nao pacote npm
+  - `project_global_setup_upgrade` — Setup global atualizado 2026-03-12
+
+#### AAxu (APonTA)
+- **Path:** `Desktop/AAxu/aponta.teste`
+- **Repo:** [raluwtorreao/aponta.teste](https://github.com/raluwtorreao/aponta.teste.git)
+- **Stack:** Flask, Python 3.13, SQLite/PostgreSQL, spaCy, Dynaconf
+- **Memorias:**
+  - Poetry virtualenv quebrado — usar pip direto no virtualenv
+  - Sem Visual C++ Build Tools — `--only-binary :all:`
+
+#### n8n-Gloria (Instituto Gloria)
+- **Path:** `Desktop/n8n/Gloria`
+- **Repo:** [pedrormc/Gloria](https://github.com/pedrormc/Gloria.git)
+- **Stack:** n8n workflows (3), Chatwoot, Evolution API, PostgreSQL
+- **Memorias (7):**
+  - `project_gloria_workflows` — Arquitetura completa: state machine, 3 workflows, bugs confirmados
+  - `project_zona_mapping` — Mapeamento inbox/zone/instance
+  - `reference_inbox_setup_guide` — Guia passo-a-passo para novos WhatsApp
+  - `session_2026-03-17_redesign` — Log completo do redesign
+  - `feedback_terminal_ssh` — Nunca dar comandos longos via SSH, usar scripts Python
+  - `feedback_use_n8n_mcp` — Preferir n8n MCP tools a scripts SSH
+  - `feedback_just_deploy` — "Deploy" = so push, nao consertar bugs
+
+#### n8n-Mili (Sales Agent)
+- **Path:** `Desktop/n8n/Mili`
+- **Repo:** [pedrormc/Mili](https://github.com/pedrormc/Mili.git)
+- **Stack:** n8n, o4-mini + 3 sub-agents (gpt-4.1-mini), HubSpot, Google Calendar, Evolution API
+- **Memorias:**
+  - `project_mili_agent` — Arquitetura multi-agent: a-hubspot, a-calendar, a-reminders
+
+#### n8n-Navi
+- **Path:** `Desktop/n8n/navi`
+- **Stack:** n8n workflows
+- **Memorias (4):**
+  - `user_profile` — PT-BR, usa n8n
+  - `reference_n8n_instance` — URL n8n.blackgroup-bia.shop
+  - `reference_n8n_repos` — n8n-mcp e n8n-skills repos
+  - `reference_hubspot_mcp` — @shinzolabs/hubspot-mcp configurado
+
+#### n8n-smuppinho (SmupWeb)
+- **Path:** `Desktop/n8n/smuppinho`
+- **Stack:** n8n, HubSpot (Free → Pro upgrade)
+- **Memorias:**
+  - `project_hubspot_prd` — PRD v3.0 implementado, 6 workflows ativos
+  - `user_terminal_wezterm` — WezTerm com Tokyo Night theme
+
+#### ADenergia
+- **Path:** `Desktop/ADenergia`
+- **Repo:** [pedrormc/ADenergia](https://github.com/pedrormc/ADenergia.git)
+- **Subprojeto:** `dashboard/`
 
 ---
 
@@ -308,6 +454,43 @@ Edite `~/.claude/mcp.json` e substitua:
 ```bash
 npm install -g n8n-mcp
 ```
+
+---
+
+## Arquitetura: Como as Camadas Funcionam
+
+Quando voce digita `/` no Claude Code, ele monta a lista combinando **4 camadas**:
+
+```
+~/.claude/
+├── agents/          ← CAMADA 1: Agents customizados (5 neste repo)
+├── skills/          ← CAMADA 2: Skills customizados (8 neste repo)
+├── rules/           ← CAMADA 2: Rules customizadas (15 neste repo)
+├── plugins/cache/   ← CAMADA 3: Skills/agents dos plugins (42 skills + 10 agents)
+│   ├── everything-claude-code/  → 20 skills, 9 agents, 130+ rules
+│   ├── superpowers-marketplace/ → 18 skills, 1 agent
+│   ├── ralph-marketplace/       → 2 skills
+│   └── ui-ux-pro-max-skill/     → 1 skill
+└── [Cloud MCPs]     ← CAMADA 4: Connectors OAuth (Gmail, Calendar, Drive, HubSpot, Excalidraw)
+```
+
+**Prioridade de resolucao:**
+1. Configs de PROJETO (`.claude/` dentro do repo) > configs globais (`~/.claude/`)
+2. Rules de projeto > rules globais > rules de plugins
+3. Skills customizados e skills de plugins coexistem (sem override)
+
+**Para os devs:** Este repo contem as camadas 1 e 2 (customizacoes). A camada 3 (plugins) e instalada via `install.sh`. A camada 4 (cloud connectors) requer configuracao individual via OAuth.
+
+### Cloud Connectors — Configuracao Manual
+
+Cada dev precisa conectar individualmente:
+1. No Claude Code, acesse as configuracoes de connectors
+2. Conecte os servicos que usa:
+   - **Gmail** — para buscar/ler/rascunhar emails
+   - **Google Calendar** — para gerenciar eventos
+   - **Google Drive** — para buscar/ler Google Docs
+   - **HubSpot** — para CRM (contacts, deals, tickets)
+   - **Excalidraw** — para diagramas
 
 ---
 

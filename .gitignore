@@ -1,0 +1,16 @@
+# Never commit real secrets
+*.env
+.env.*
+credentials.json
+.credentials.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Node
+node_modules/

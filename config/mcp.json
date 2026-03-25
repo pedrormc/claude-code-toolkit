@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "TestSprite": {
+      "command": "npx",
+      "args": [
+        "@testsprite/testsprite-mcp@latest"
+      ],
+      "env": {
+        "API_KEY": "YOUR_TESTSPRITE_API_KEY_HERE"
+      },
+      "disabled": false
+    },
+    "n8n": {
+      "command": "node",
+      "args": [
+        "PATH_TO_N8N_MCP/dist/mcp/index.js"
+      ],
+      "env": {
+        "MCP_MODE": "stdio",
+        "N8N_API_URL": "YOUR_N8N_INSTANCE_URL",
+        "N8N_API_KEY": "YOUR_N8N_API_KEY_HERE"
+      },
+      "disabled": false
+    }
+  }
+}

@@ -37,14 +37,60 @@ O script copia tudo para `~/.claude/` e instala os plugins automaticamente.
 
 ---
 
-### Plugins (4)
+### Plugins (4) — Onde moram os 255 skills, 64 agents e 141 rules
 
-| Plugin | Versao | Repo | Descricao |
-|--------|--------|------|-----------|
-| **Everything Claude Code** | 1.8.0 | [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) | 100+ skills, agents, rules para todas as linguagens. TDD, code review, deployment patterns, continuous learning |
-| **Superpowers** | 5.0.2 | [obra/superpowers-marketplace](https://github.com/obra/superpowers-marketplace) | Brainstorming, plan mode, TDD workflow, systematic debugging, parallel agents, code review, git worktrees |
-| **Ralph Skills** | 1.0.0 | [snarktank/ralph](https://github.com/snarktank/ralph) | Conversao de PRDs para formato JSON do agente autonomo Ralph. Long-running agent loops |
-| **UI/UX Pro Max** | 2.2.1 | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 50+ estilos, 161 paletas, 57 font pairings, 161 product types, 99 UX guidelines, 25 chart types |
+> **IMPORTANTE:** Os plugins sao a fonte de ~95% dos skills/agents. Sem eles, voce so tem os 5 agents e 8 skills customizados. O `install.sh` instala todos automaticamente, mas se precisar instalar manualmente, siga as instrucoes abaixo.
+
+| Plugin | Marketplace ID | GitHub Repo | O que traz |
+|--------|---------------|-------------|------------|
+| **Everything Claude Code** | `everything-claude-code` | [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) | 217 skills, 17 agents, 125+ rules para 7 linguagens |
+| **Superpowers** | `superpowers` | [obra/superpowers-marketplace](https://github.com/obra/superpowers-marketplace) | 14 skills, 1 agent — brainstorming, plan mode, TDD, debugging, parallel agents |
+| **Ralph Skills** | `ralph-skills` | [snarktank/ralph](https://github.com/snarktank/ralph) | 2 skills — PRD generator e conversor para formato Ralph |
+| **UI/UX Pro Max** | `ui-ux-pro-max` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 14 skills — 50+ estilos, 161 paletas, 57 fonts, 99 UX guidelines |
+
+#### Como instalar os plugins manualmente
+
+Cada plugin vem de um **marketplace** (repo GitHub que o Claude Code sabe baixar). Para instalar:
+
+```bash
+# 1. Primeiro, registre os marketplaces (o settings.json ja faz isso automaticamente)
+#    Se o settings.json nao foi copiado, adicione manualmente em ~/.claude/settings.json:
+#    "extraKnownMarketplaces": { ... }
+
+# 2. Instale cada plugin (requer Claude Code logado):
+claude plugins install everything-claude-code --marketplace everything-claude-code
+claude plugins install superpowers --marketplace superpowers-marketplace
+claude plugins install ralph-skills --marketplace ralph-marketplace
+claude plugins install ui-ux-pro-max --marketplace ui-ux-pro-max-skill
+
+# 3. Verifique a instalacao:
+claude plugins list
+```
+
+#### Marketplaces (configurados no settings.json)
+
+Os marketplaces sao repos GitHub que servem como fonte de plugins:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "everything-claude-code": {
+      "source": { "source": "github", "repo": "affaan-m/everything-claude-code" }
+    },
+    "superpowers-marketplace": {
+      "source": { "source": "github", "repo": "obra/superpowers-marketplace" }
+    },
+    "ralph-marketplace": {
+      "source": { "source": "github", "repo": "snarktank/ralph" }
+    },
+    "ui-ux-pro-max-skill": {
+      "source": { "source": "github", "repo": "nextlevelbuilder/ui-ux-pro-max-skill" }
+    }
+  }
+}
+```
+
+> Quando voce copia o `settings.json` deste repo, os marketplaces ja ficam registrados. Basta rodar os comandos `claude plugins install` acima.
 
 ---
 
@@ -167,28 +213,58 @@ Alem disso, ECC traz **130+ rules** para 7 linguagens (TypeScript, Python, Go, K
 
 ---
 
-### MCP Servers — Completo (3 locais + 5 cloud)
+### MCP Servers — Completo (3 locais + 7 cloud)
 
 #### Locais (configurados em `mcp.json`)
-| Server | Pacote | Descricao |
-|--------|--------|-----------|
-| **Obsidian** | `@bitbonsai/mcpvault` | Vault MCP para leitura/escrita de notas Obsidian |
-| **n8n** | `n8n-mcp` | Gerenciamento de workflows n8n — criar, editar, validar, testar, executar |
-| **TestSprite** | `@testsprite/testsprite-mcp` | Testing automation |
 
-#### Cloud Connectors (gerenciados via OAuth pela Anthropic)
-| Connector | Descricao |
-|-----------|-----------|
-| **Gmail** | Buscar, ler, criar drafts, listar labels |
-| **Google Calendar** | Criar eventos, encontrar horarios, listar calendarios |
-| **Google Drive** | Buscar e ler documentos Google Docs |
-| **HubSpot** (connector 1) | MCP oficial — CRM objects, search, manage, properties |
-| **HubSpot** (connector 2) | MCP secundario — batch operations, engagements, workflows |
-| **Excalidraw** | Criar diagramas hand-drawn |
+Instalados via npm, configurados em `~/.claude/mcp.json`:
 
-> Os cloud connectors NAO ficam no `mcp.json`. Sao conectados via OAuth no Claude Code e aparecem automaticamente.
+| Server | Pacote | Como instalar | Descricao |
+|--------|--------|---------------|-----------|
+| **Obsidian** | `@bitbonsai/mcpvault` | `npx @bitbonsai/mcpvault@latest PATH_VAULT` | Vault MCP para leitura/escrita de notas Obsidian |
+| **n8n** | `n8n-mcp` | `npm install -g n8n-mcp` | Gerenciamento de workflows n8n — criar, editar, validar, testar, executar |
+| **TestSprite** | `@testsprite/testsprite-mcp` | `npx @testsprite/testsprite-mcp@latest` | Testing automation |
 
-> Configuracao dos locais em `config/mcp.json` — substitua os placeholders pelas suas API keys.
+```bash
+# Instalar n8n-mcp globalmente:
+npm install -g n8n-mcp
+
+# Obsidian e TestSprite usam npx (nao precisam instalar previamente)
+# Basta configurar as API keys no mcp.json
+```
+
+#### User MCP Connectors (conectados via Claude Code)
+| Connector | Status | Descricao |
+|-----------|--------|-----------|
+| **HubSpot** | connected | CRM — contacts, companies, deals, engagements, batch operations, workflows |
+| **n8n-mcp** | connected | Duplica o local para acesso via Claude Code UI |
+
+#### Cloud Connectors (claudeai — gerenciados via OAuth)
+| Connector | Status | Descricao |
+|-----------|--------|-----------|
+| **Excalidraw** | connected | Criar diagramas hand-drawn style |
+| **Gmail** | connected | Buscar, ler, criar drafts, listar labels |
+| **Google Calendar** | connected | Criar eventos, encontrar horarios, listar calendarios |
+| **Google Drive** | connected | Buscar e ler documentos Google Docs |
+| **HubSpot** (cloud) | connected | MCP oficial Anthropic — CRM objects, search, manage |
+
+#### Como configurar MCP em outro dispositivo
+
+```bash
+# 1. Copie o mcp.json (ja feito pelo install.sh)
+cp config/mcp.json ~/.claude/mcp.json
+
+# 2. Edite com suas API keys:
+#    - PATH_TO_YOUR_OBSIDIAN_VAULT -> caminho do seu vault
+#    - YOUR_TESTSPRITE_API_KEY_HERE -> sua API key do TestSprite
+#    - YOUR_N8N_INSTANCE_URL -> URL da sua instancia n8n
+#    - YOUR_N8N_API_KEY_HERE -> n8n Settings > API > Create API Key
+
+# 3. Cloud connectors: conecte manualmente no Claude Code
+#    Abra Claude Code > /mcp > Installed > conecte cada servico via OAuth:
+#    - Gmail, Google Calendar, Google Drive, HubSpot, Excalidraw
+#    Cada dispositivo precisa autenticar individualmente.
+```
 
 ---
 
@@ -436,18 +512,72 @@ cp templates/*.md ~/.claude/templates/
 cp plugins/blocklist.json ~/.claude/plugins/
 ```
 
-### 11. Plugins
+### 11. Plugins (OBRIGATORIO — traz 247 skills + 59 agents + 125 rules)
 ```bash
-# Instale via Claude Code CLI:
+# PASSO 1: Certifique-se de que o settings.json foi copiado (contem os marketplaces)
+# O settings.json registra os repos GitHub de cada marketplace
+
+# PASSO 2: Instale cada plugin (requer Claude Code logado):
 claude plugins install everything-claude-code --marketplace everything-claude-code
 claude plugins install superpowers --marketplace superpowers-marketplace
 claude plugins install ralph-skills --marketplace ralph-marketplace
 claude plugins install ui-ux-pro-max --marketplace ui-ux-pro-max-skill
+
+# PASSO 3: Verifique:
+claude plugins list
+# Deve mostrar 4 plugins enabled
+
+# Se algum falhar, tente instalar manualmente via /plugins no Claude Code
+```
+
+**Repos dos plugins (para referencia):**
+| Plugin | GitHub |
+|--------|--------|
+| Everything Claude Code | https://github.com/affaan-m/everything-claude-code |
+| Superpowers | https://github.com/obra/superpowers-marketplace |
+| Ralph Skills | https://github.com/snarktank/ralph |
+| UI/UX Pro Max | https://github.com/nextlevelbuilder/ui-ux-pro-max-skill |
+
+### 12. MCP Servers locais
+```bash
+# Instalar n8n-mcp globalmente:
+npm install -g n8n-mcp
+
+# Editar mcp.json com suas API keys:
+nano ~/.claude/mcp.json
+# Substituir: PATH_TO_YOUR_OBSIDIAN_VAULT, YOUR_TESTSPRITE_API_KEY_HERE,
+#             YOUR_N8N_INSTANCE_URL, YOUR_N8N_API_KEY_HERE, PATH_TO_N8N_MCP
+```
+
+### 13. Cloud Connectors (OAuth — manual por dispositivo)
+```bash
+# Abra o Claude Code e conecte via OAuth:
+# /mcp > procure cada servico e clique "Connect":
+#   - Gmail
+#   - Google Calendar
+#   - Google Drive
+#   - HubSpot
+#   - Excalidraw
+# Cada dispositivo precisa autenticar individualmente.
 ```
 
 ---
 
 ## Configuracao Pos-Instalacao
+
+### Checklist completo para novo dispositivo
+
+```
+[ ] 1. git clone https://github.com/pedrormc/claude-code-toolkit.git
+[ ] 2. cd claude-code-toolkit && bash install.sh
+[ ] 3. Verificar que 4 plugins foram instalados: claude plugins list
+[ ] 4. Se algum plugin falhou: reinstalar manualmente (ver secao 11)
+[ ] 5. Instalar n8n-mcp: npm install -g n8n-mcp
+[ ] 6. Editar ~/.claude/mcp.json com suas API keys
+[ ] 7. Conectar cloud MCPs via OAuth: Gmail, Calendar, Drive, HubSpot, Excalidraw
+[ ] 8. Reiniciar Claude Code
+[ ] 9. Testar: digitar / e verificar que os skills aparecem (~255 total)
+```
 
 ### API Keys necessarias
 
@@ -455,16 +585,11 @@ Edite `~/.claude/mcp.json` e substitua:
 
 | Placeholder | Onde obter |
 |-------------|------------|
-| `PATH_TO_YOUR_OBSIDIAN_VAULT` | Caminho para seu vault Obsidian |
+| `PATH_TO_YOUR_OBSIDIAN_VAULT` | Caminho para seu vault Obsidian (ex: `C:/Users/user/Documents/obsidiano`) |
 | `YOUR_TESTSPRITE_API_KEY_HERE` | [TestSprite Dashboard](https://testsprite.com) |
-| `YOUR_N8N_INSTANCE_URL` | URL da sua instancia n8n |
-| `YOUR_N8N_API_KEY_HERE` | n8n Settings > API > Create API Key |
-| `PATH_TO_N8N_MCP` | `npm root -g` + `/n8n-mcp` |
-
-### Instalar n8n-mcp globalmente
-```bash
-npm install -g n8n-mcp
-```
+| `YOUR_N8N_INSTANCE_URL` | URL da sua instancia n8n (ex: `https://n8n.seudominio.com`) |
+| `YOUR_N8N_API_KEY_HERE` | n8n > Settings > API > Create API Key |
+| `PATH_TO_N8N_MCP` | Rode `npm root -g` e adicione `/n8n-mcp` ao final |
 
 ---
 

@@ -337,6 +337,130 @@ A task puxa:
 - `claude-notify.js` — Script principal que gerencia todos os eventos. Detecta o tipo de hook, seta o terminal title, envia Windows toast notification via PowerShell/WinRT, e atualiza o WezTerm tab state via OSC 1337.
 - `toast-notify.js` — Fallback simplificado, toast silencioso.
 
+> **PORTABILIDADE:** Os paths dos hooks usam `$HOME/.claude/` (nao hardcoded). Funcionam em qualquer dispositivo apos rodar `install.sh`.
+
+---
+
+### Hooks do ECC Plugin (20 hooks automaticos)
+
+Alem dos 6 hooks customizados acima, o plugin **Everything Claude Code** traz **20 hooks automaticos** que sao ativados pela env var `ECC_HOOK_PROFILE=strict` no `settings.json`.
+
+Esses hooks vem com o plugin — nao precisam ser configurados manualmente. Basta instalar o plugin e ter `ECC_HOOK_PROFILE=strict` no env.
+
+#### PreToolUse (rodam ANTES de cada tool)
+| Hook | Matcher | O que faz |
+|------|---------|-----------|
+| Auto-tmux dev server | `Bash` | Bloqueia `npm run dev` fora de tmux |
+| Tmux reminder | `Bash` | Sugere tmux para comandos longos (npm test, cargo build, docker) |
+| Git push reminder | `Bash` | Lembra de revisar antes de `git push` |
+| Doc file warning | `Write` | Avisa sobre arquivos .md nao-padrao |
+| Strategic compact | `Edit\|Write` | Sugere `/compact` a cada ~50 tool calls |
+| Continuous learning observer | `*` | Captura observacoes para aprendizado continuo |
+| InsAIts security (opt-in) | `Bash\|Write\|Edit` | Scan de seguranca (requer `ECC_ENABLE_INSAITS=1`) |
+
+#### PostToolUse (rodam DEPOIS de cada tool)
+| Hook | Matcher | O que faz |
+|------|---------|-----------|
+| PR logger | `Bash` | Loga URL do PR apos `gh pr create` |
+| Build analysis | `Bash` | Analise async apos build commands |
+| Quality gate | `Edit\|Write` | Checks de qualidade apos edits |
+| Prettier/Biome format | `Edit` | Auto-format JS/TS apos edits |
+| TypeScript check | `Edit` | `tsc --noEmit` apos editar .ts/.tsx |
+| console.log warning | `Edit` | Avisa sobre console.log em edits |
+| Continuous learning result | `*` | Captura resultados para aprendizado |
+
+#### Lifecycle
+| Hook | Evento | O que faz |
+|------|--------|-----------|
+| Session start | `SessionStart` | Carrega contexto anterior, detecta package manager |
+| Pre-compact | `PreCompact` | Salva estado antes de compactacao |
+| Console.log audit | `Stop` | Checa console.log em todos os arquivos modificados |
+| Session summary | `Stop` | Persiste estado da sessao |
+| Pattern extraction | `Stop` | Avalia sessao para patterns reutilizaveis |
+| Cost tracker | `Stop` | Metricas de custo por sessao |
+| Session end marker | `SessionEnd` | Lifecycle marker |
+
+#### Como funciona o ECC_HOOK_PROFILE
+
+```
+ECC_HOOK_PROFILE=strict   -> TODOS os hooks ativos (recomendado)
+ECC_HOOK_PROFILE=standard -> Maioria dos hooks (sem tmux blocker)
+ECC_HOOK_PROFILE=minimal  -> Apenas lifecycle hooks (session start/end)
+```
+
+O profile `strict` ja esta configurado no `settings.json` deste repo.
+
+---
+
+### Regras de Execucao — Superpowers (CRITICO)
+
+O plugin **Superpowers** e o cerebro que governa COMO o Claude Code trabalha. Ele impoe um modelo de execucao disciplinado com skills obrigatorios em cada fase do trabalho.
+
+#### Skill `using-superpowers` (auto-ativa em toda sessao)
+
+Este skill carrega automaticamente no inicio de cada sessao e forca o Claude a:
+
+1. **Verificar skills ANTES de qualquer resposta** — mesmo perguntas simples
+2. **Invocar skills aplicaveis obrigatoriamente** — mesmo com 1% de chance de relevancia
+3. **Bloquear racionalizacoes** — "e so uma pergunta simples" nao e desculpa
+
+#### Cadeia de Execucao Superpowers
+
+```
+Mensagem do usuario
+  |
+  v
+[using-superpowers] Verifica se algum skill se aplica
+  |
+  v (se sim)
+[Skill invocado] -> brainstorming / writing-plans / tdd / debugging / etc.
+  |
+  v
+[Skill seguido] Execucao conforme o skill manda
+  |
+  v
+[verification-before-completion] Verifica antes de declarar pronto
+```
+
+#### Skills de Execucao do Superpowers
+
+| Skill | Quando ativa | O que forca |
+|-------|-------------|-------------|
+| `brainstorming` | Antes de QUALQUER trabalho criativo | Explorar intent, requisitos e design antes de codificar |
+| `writing-plans` | Antes de implementacao multi-step | Plano escrito com steps numerados |
+| `executing-plans` | Ao executar um plano existente | Checkpoints de review entre steps |
+| `test-driven-development` | Qualquer feature ou bugfix | Testes PRIMEIRO, depois implementacao |
+| `systematic-debugging` | Qualquer bug ou falha | Root cause analysis antes de fix |
+| `dispatching-parallel-agents` | 2+ tasks independentes | Paralelizar com agents isolados |
+| `subagent-driven-development` | Implementacao com tasks independentes | Delegar para subagents |
+| `requesting-code-review` | Apos completar feature/task | Review automatico |
+| `receiving-code-review` | Ao receber feedback de review | Verificar antes de aceitar cegamente |
+| `using-git-worktrees` | Feature que precisa isolamento | Worktree isolado para cada agent |
+| `finishing-a-development-branch` | Implementacao completa | Merge / PR / cleanup estruturado |
+| `verification-before-completion` | Antes de declarar "pronto" | Rodar verificacao, evidencia antes de afirmar |
+| `writing-skills` | Criar ou editar skills | Seguir formato e testar antes de deploy |
+
+#### Red Flags — Pensamentos que o Superpowers bloqueia
+
+Se o Claude pensa qualquer um destes, o Superpowers forca parar e verificar:
+
+| Pensamento bloqueado | Realidade |
+|---------------------|-----------|
+| "E so uma pergunta simples" | Perguntas sao tasks. Verificar skills. |
+| "Preciso de mais contexto primeiro" | Skill check vem ANTES de perguntas. |
+| "Deixa eu explorar o codebase" | Skills dizem COMO explorar. Check primeiro. |
+| "Vou so fazer essa coisinha rapido" | Check ANTES de fazer qualquer coisa. |
+| "O skill e overkill" | Coisas simples viram complexas. Usar. |
+| "Eu sei o que isso significa" | Saber o conceito ≠ usar o skill. Invocar. |
+
+#### Garantia: Superpowers funciona em outro dispositivo?
+
+**SIM, se o plugin estiver instalado.** O Superpowers e um plugin — quando instalado via `claude plugins install superpowers --marketplace superpowers-marketplace`, TODOS os skills de execucao acima sao baixados automaticamente para `~/.claude/plugins/cache/superpowers-marketplace/`.
+
+O `settings.json` deste repo ja tem:
+- `"superpowers@superpowers-marketplace": true` em `enabledPlugins`
+- `"superpowers-marketplace"` em `extraKnownMarketplaces` apontando para `obra/superpowers-marketplace`
+
 ---
 
 ### Statusline Customizada

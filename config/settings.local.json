@@ -7,7 +7,15 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:api.github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -sL https://raw.githubusercontent.com/snarktank/ralph/main/skills/ralph/SKILL.md)",
+      "Bash(curl -sL https://raw.githubusercontent.com/snarktank/ralph/main/.claude-plugin/marketplace.json)",
+      "Bash(curl -sL https://raw.githubusercontent.com/snarktank/ralph/main/ralph.sh)",
+      "Bash(curl -sL https://api.github.com/repos/nextlevelbuilder/ui-ux-pro-max-skill/contents/ | python3 -c \"import sys,json; [print\\(f\\\\\"{x['name']} \\({x['type']}\\)\\\\\" \\) for x in json.loads\\(sys.stdin.read\\(\\)\\)]\" 2>/dev/null || curl -sL https://api.github.com/repos/nextlevelbuilder/ui-ux-pro-max-skill/contents/)",
+      "Bash(curl -sL https://api.github.com/repos/nextlevelbuilder/ui-ux-pro-max-skill/contents/src/ui-ux-pro-max | python3 -c \"import sys,json; [print\\(f\\\\\"{x['name']} \\({x['type']}\\)\\\\\" \\) for x in json.loads\\(sys.stdin.read\\(\\)\\)]\")",
       "Bash(ls:*)",
+      "Bash(find /c/Users/teste/AppData/Local -path *wezterm* -type f)",
+      "Bash(where.exe wezterm:*)",
+      "Bash(winget search:*)",
       "mcp__n8n-mcp__n8n_get_workflow",
       "mcp__n8n-mcp__n8n_health_check",
       "mcp__n8n-mcp__n8n_list_workflows",
@@ -15,7 +23,8 @@
       "mcp__n8n-mcp__n8n_update_partial_workflow",
       "mcp__n8n-mcp__n8n_test_workflow",
       "mcp__n8n-mcp__n8n_autofix_workflow",
-      "mcp__n8n-mcp__n8n_validate_workflow"
+      "mcp__n8n-mcp__n8n_validate_workflow",
+      "Bash(python3 -c \":*)"
     ]
   }
 }

@@ -1,6 +1,6 @@
 # Claude Code Toolkit
 
-Setup completo e tunado do Claude Code para o time de desenvolvimento. Inclui agents customizados, rules, skills, hooks, scripts de notificacao e statusline personalizada.
+Setup completo e tunado do Claude Code para o time de desenvolvimento. Inclui agents customizados, rules, skills, hooks, scripts de notificacao, statusline personalizada, teams, scheduled tasks e templates.
 
 ## Requisitos
 
@@ -167,11 +167,12 @@ Alem disso, ECC traz **130+ rules** para 7 linguagens (TypeScript, Python, Go, K
 
 ---
 
-### MCP Servers — Completo (2 locais + 5 cloud)
+### MCP Servers — Completo (3 locais + 5 cloud)
 
 #### Locais (configurados em `mcp.json`)
 | Server | Pacote | Descricao |
 |--------|--------|-----------|
+| **Obsidian** | `@bitbonsai/mcpvault` | Vault MCP para leitura/escrita de notas Obsidian |
 | **n8n** | `n8n-mcp` | Gerenciamento de workflows n8n — criar, editar, validar, testar, executar |
 | **TestSprite** | `@testsprite/testsprite-mcp` | Testing automation |
 
@@ -185,15 +186,15 @@ Alem disso, ECC traz **130+ rules** para 7 linguagens (TypeScript, Python, Go, K
 | **HubSpot** (connector 2) | MCP secundario — batch operations, engagements, workflows |
 | **Excalidraw** | Criar diagramas hand-drawn |
 
-> Os cloud connectors NAO ficam no `mcp.json`. Sao conectados via OAuth no Claude Code e aparecem automaticamente. Para configurar, use `/mcp` no Claude Code ou acesse as configuracoes de conectores.
+> Os cloud connectors NAO ficam no `mcp.json`. Sao conectados via OAuth no Claude Code e aparecem automaticamente.
 
 > Configuracao dos locais em `config/mcp.json` — substitua os placeholders pelas suas API keys.
 
 ---
 
-### Rules (15 arquivos)
+### Rules (16 arquivos)
 
-#### Globais (`rules/common/`) — 9 arquivos
+#### Globais (`rules/common/`) — 10 arquivos
 | Arquivo | Foco |
 |---------|------|
 | `agents.md` | Orquestracao de agents, quando usar cada um, execucao paralela |
@@ -203,6 +204,7 @@ Alem disso, ECC traz **130+ rules** para 7 linguagens (TypeScript, Python, Go, K
 | `hooks.md` | PreToolUse, PostToolUse, Stop hooks, TodoWrite best practices |
 | `patterns.md` | Repository pattern, API response envelope, skeleton projects |
 | `performance.md` | Model selection (Haiku/Sonnet/Opus), context window, extended thinking |
+| `project-categorization.md` | Categorizacao automatica de projetos no Obsidian (Pessoal/Paralelo/Freelancer/Singular) |
 | `security.md` | Checklist pre-commit, secret management, security response protocol |
 | `testing.md` | 80% coverage minimo, TDD obrigatorio, unit + integration + E2E |
 
@@ -219,6 +221,28 @@ Alem disso, ECC traz **130+ rules** para 7 linguagens (TypeScript, Python, Go, K
 - Regras para worktree isolation em agents paralelos
 - Quando usar worktree vs. nao usar
 - Merge workflow sequencial
+
+---
+
+### Teams (1 team)
+
+| Team | Inbox | Descricao |
+|------|-------|-----------|
+| `default` | `spec-reviewer` | Inbox para revisao de specs — recebe mensagens de team-lead para re-review |
+
+---
+
+### Scheduled Tasks (1 task)
+
+| Task | Schedule | Descricao |
+|------|----------|-----------|
+| `daily-sync-obsidian` | Diario | Sync Calendar + Gmail + HubSpot para daily note no Obsidian vault |
+
+A task puxa:
+- **Google Calendar**: Eventos do dia
+- **Gmail**: Emails nao lidos (top 10)
+- **HubSpot**: Deals ativos (top 5 por valor)
+- Cria daily note em `Diario/YYYY-MM-DD.md` no Obsidian vault
 
 ---
 
@@ -244,7 +268,7 @@ Alem disso, ECC traz **130+ rules** para 7 linguagens (TypeScript, Python, Go, K
 Script bash que mostra em tempo real:
 ```
 Opus 4.6 | meu-projeto | [frontend-specialist] | feature/nova-pagina
-░░░░░░░░░░ 23% | 1m 45s | $0.42 | #a1b2c3d4
+ 23% | 1m 45s | $0.42 | #a1b2c3d4
 ```
 
 - **Linha 1:** Modelo + projeto + agent ativo + branch
@@ -261,6 +285,19 @@ Opus 4.6 | meu-projeto | [frontend-specialist] | feature/nova-pagina
 - `prd.json.example` — Exemplo de PRD no formato Ralph
 
 ---
+
+### Obsidian Templates (2)
+
+| Template | Descricao |
+|----------|-----------|
+| `template-daily.md` | Template de daily note com secoes: Agenda, Emails, HubSpot, Tasks, Notas |
+| `template-projeto.md` | Template de nota de projeto com frontmatter category/status/stack |
+
+---
+
+### Plugin Blocklist
+
+`plugins/blocklist.json` — Lista de plugins bloqueados (testados e rejeitados). Previne reinstalacao acidental.
 
 ---
 
@@ -281,8 +318,10 @@ claude-code-toolkit/
 │   ├── mcp.json                 # MCP servers (substituir API keys)
 │   ├── settings.json            # Settings principal
 │   └── settings.local.json      # Permissions locais
-├── rules/                       # 15 arquivos de rules
-│   ├── common/                  # Rules globais (9)
+├── plugins/                     # Plugin configs
+│   └── blocklist.json           # Plugins bloqueados
+├── rules/                       # 16 arquivos de rules
+│   ├── common/                  # Rules globais (10)
 │   │   ├── agents.md
 │   │   ├── coding-style.md
 │   │   ├── development-workflow.md
@@ -290,6 +329,7 @@ claude-code-toolkit/
 │   │   ├── hooks.md
 │   │   ├── patterns.md
 │   │   ├── performance.md
+│   │   ├── project-categorization.md
 │   │   ├── security.md
 │   │   └── testing.md
 │   ├── typescript/              # Rules TypeScript (5)
@@ -299,6 +339,9 @@ claude-code-toolkit/
 │   │   ├── security.md
 │   │   └── testing.md
 │   └── parallel-agents.md       # Worktree isolation
+├── scheduled-tasks/             # Tarefas agendadas
+│   └── daily-sync-obsidian/
+│       └── SKILL.md             # Sync diario Calendar+Gmail+HubSpot -> Obsidian
 ├── scripts/                     # Scripts de notificacao e automacao
 │   ├── claude-notify.js         # Notificacao principal (toast+bell+wezterm)
 │   ├── toast-notify.js          # Toast fallback
@@ -306,15 +349,22 @@ claude-code-toolkit/
 │       ├── ralph.sh
 │       ├── CLAUDE.md
 │       └── prd.json.example
-└── skills/                      # 8 skills customizados
-    ├── hubspot-mcp-expert/
-    ├── n8n-code-javascript/
-    ├── n8n-code-python/
-    ├── n8n-expression-syntax/
-    ├── n8n-mcp-tools-expert/
-    ├── n8n-node-configuration/
-    ├── n8n-validation-expert/
-    └── n8n-workflow-patterns/
+├── skills/                      # 8 skills customizados
+│   ├── hubspot-mcp-expert/
+│   ├── n8n-code-javascript/
+│   ├── n8n-code-python/
+│   ├── n8n-expression-syntax/
+│   ├── n8n-mcp-tools-expert/
+│   ├── n8n-node-configuration/
+│   ├── n8n-validation-expert/
+│   └── n8n-workflow-patterns/
+├── teams/                       # Agent teams config
+│   └── default/
+│       └── inboxes/
+│           └── spec-reviewer.json
+└── templates/                   # Templates Obsidian
+    ├── template-daily.md
+    └── template-projeto.md
 ```
 
 ---
@@ -363,7 +413,30 @@ cp config/settings.local.json ~/.claude/settings.local.json
 cp config/mcp.json ~/.claude/mcp.json
 ```
 
-### 7. Plugins
+### 7. Teams
+```bash
+mkdir -p ~/.claude/teams/default/inboxes
+cp teams/default/inboxes/spec-reviewer.json ~/.claude/teams/default/inboxes/
+```
+
+### 8. Scheduled Tasks
+```bash
+mkdir -p ~/.claude/scheduled-tasks/daily-sync-obsidian
+cp scheduled-tasks/daily-sync-obsidian/SKILL.md ~/.claude/scheduled-tasks/daily-sync-obsidian/
+```
+
+### 9. Templates
+```bash
+mkdir -p ~/.claude/templates
+cp templates/*.md ~/.claude/templates/
+```
+
+### 10. Plugin Blocklist
+```bash
+cp plugins/blocklist.json ~/.claude/plugins/
+```
+
+### 11. Plugins
 ```bash
 # Instale via Claude Code CLI:
 claude plugins install everything-claude-code --marketplace everything-claude-code
@@ -382,6 +455,7 @@ Edite `~/.claude/mcp.json` e substitua:
 
 | Placeholder | Onde obter |
 |-------------|------------|
+| `PATH_TO_YOUR_OBSIDIAN_VAULT` | Caminho para seu vault Obsidian |
 | `YOUR_TESTSPRITE_API_KEY_HERE` | [TestSprite Dashboard](https://testsprite.com) |
 | `YOUR_N8N_INSTANCE_URL` | URL da sua instancia n8n |
 | `YOUR_N8N_API_KEY_HERE` | n8n Settings > API > Create API Key |
@@ -400,15 +474,17 @@ Quando voce digita `/` no Claude Code, ele monta a lista combinando **4 camadas*
 
 ```
 ~/.claude/
-├── agents/          ← CAMADA 1: Agents customizados (5 neste repo)
-├── skills/          ← CAMADA 2: Skills customizados (8 neste repo)
-├── rules/           ← CAMADA 2: Rules customizadas (15 neste repo)
-├── plugins/cache/   ← CAMADA 3: Skills/agents dos plugins (42 skills + 10 agents)
-│   ├── everything-claude-code/  → 20 skills, 9 agents, 130+ rules
-│   ├── superpowers-marketplace/ → 18 skills, 1 agent
-│   ├── ralph-marketplace/       → 2 skills
-│   └── ui-ux-pro-max-skill/     → 1 skill
-└── [Cloud MCPs]     ← CAMADA 4: Connectors OAuth (Gmail, Calendar, Drive, HubSpot, Excalidraw)
+├── agents/          <- CAMADA 1: Agents customizados (5 neste repo)
+├── skills/          <- CAMADA 2: Skills customizados (8 neste repo)
+├── rules/           <- CAMADA 2: Rules customizadas (16 neste repo)
+├── plugins/cache/   <- CAMADA 3: Skills/agents dos plugins (42 skills + 10 agents)
+│   ├── everything-claude-code/  -> 20 skills, 9 agents, 130+ rules
+│   ├── superpowers-marketplace/ -> 18 skills, 1 agent
+│   ├── ralph-marketplace/       -> 2 skills
+│   └── ui-ux-pro-max-skill/     -> 1 skill
+├── teams/           <- CAMADA 2: Agent teams e inboxes
+├── scheduled-tasks/ <- CAMADA 2: Tarefas agendadas (cron-like)
+└── [Cloud MCPs]     <- CAMADA 4: Connectors OAuth (Gmail, Calendar, Drive, HubSpot, Excalidraw)
 ```
 
 **Prioridade de resolucao:**

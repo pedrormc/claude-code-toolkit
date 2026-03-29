@@ -1,0 +1,9 @@
+[
+  {
+    "from": "team-lead",
+    "text": "Re-review the spec at C:/Users/teste/Desktop/n8n/Gloria/docs/superpowers/specs/2026-03-22-logica-travada-respostas-design.md\n\nThe following issues from your previous review have been addressed:\n\nCRITICAL fixes:\n1. BUG-08 interaction: Added section \"Fail-safe especifico para aguardando_localizacao\" — fail-safe at localizacao now routes to aguardando_descricao_local instead of dead end. Also fixes the \"sim without GPS\" scenario.\n2. Race condition: Added section \"Update Retry Count: SQL direto no WF-02\" — retry_count is updated via direct SQL in WF-02, not through WF-04.\n3. Fail-safe SIM at localizacao: Same as #1, explicitly routes to pedir_descricao.\n\nIMPORTANT fixes:\n4. Added \"Estados onde o re-prompt se aplica\" section — explicitly lists the 3 states and 4 excluded states.\n5. Added normalization pseudocode with regex.\n6. timeout_primeiro and encaminhado_humano explicitly excluded from re-prompt.\n7. Reset Teste section added with guidance on retry_count cleanup.\n8. WF-01 message delivery mechanism clarified (texto plano, sem content_type especial).\n\nSUGGESTION fixes:\n11. Clarified that EXATO matching compares entire normalized input string, not word-by-word.\n12. Added test T26 for aguardando_apoio re-prompt path.\nAdded test T27 for fail-safe at localizacao (goes to descricao_local).\nAdded test T28 for \"sim\" without GPS at localizacao.\n\nPlease re-review and return APPROVED or ISSUES FOUND.",
+    "summary": "Re-review spec after fixing issues",
+    "timestamp": "2026-03-22T13:11:12.057Z",
+    "read": false
+  }
+]

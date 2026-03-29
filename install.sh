@@ -2,7 +2,8 @@
 # Claude Code Toolkit — Instalador Automatico
 # Usage: bash install.sh [--force]
 #
-# Copia agents, rules, skills, scripts, statusline e configs para ~/.claude/
+# Copia agents, rules, skills, scripts, statusline, teams, scheduled-tasks
+# e configs para ~/.claude/
 # Instala plugins via marketplace
 # Flags:
 #   --force   Sobrescreve arquivos existentes sem perguntar
@@ -69,6 +70,9 @@ mkdir -p "$CLAUDE_DIR/rules/common"
 mkdir -p "$CLAUDE_DIR/rules/typescript"
 mkdir -p "$CLAUDE_DIR/scripts/ralph"
 mkdir -p "$CLAUDE_DIR/skills"
+mkdir -p "$CLAUDE_DIR/plugins"
+mkdir -p "$CLAUDE_DIR/teams/default/inboxes"
+mkdir -p "$CLAUDE_DIR/scheduled-tasks"
 
 # ── Copy Agents ──
 
@@ -82,7 +86,7 @@ info "Instalando rules..."
 cp "$SCRIPT_DIR/rules/common/"*.md "$CLAUDE_DIR/rules/common/"
 cp "$SCRIPT_DIR/rules/typescript/"*.md "$CLAUDE_DIR/rules/typescript/"
 cp "$SCRIPT_DIR/rules/parallel-agents.md" "$CLAUDE_DIR/rules/"
-log "15 rules instaladas (9 common + 5 typescript + 1 parallel-agents)"
+log "16 rules instaladas (10 common + 5 typescript + 1 parallel-agents)"
 
 # ── Copy Skills ──
 
@@ -108,6 +112,41 @@ info "Instalando statusline..."
 cp "$SCRIPT_DIR/statusline.sh" "$CLAUDE_DIR/statusline.sh"
 chmod +x "$CLAUDE_DIR/statusline.sh"
 log "Statusline customizada instalada"
+
+# ── Copy Plugins Config ──
+
+info "Instalando plugins config..."
+if [[ -f "$SCRIPT_DIR/plugins/blocklist.json" ]]; then
+  cp "$SCRIPT_DIR/plugins/blocklist.json" "$CLAUDE_DIR/plugins/blocklist.json"
+  log "Plugin blocklist instalada"
+fi
+
+# ── Copy Teams ──
+
+info "Instalando teams..."
+if [[ -d "$SCRIPT_DIR/teams" ]]; then
+  cp -r "$SCRIPT_DIR/teams/"* "$CLAUDE_DIR/teams/" 2>/dev/null || true
+  log "Teams config instalada"
+fi
+
+# ── Copy Scheduled Tasks ──
+
+info "Instalando scheduled tasks..."
+for task_dir in "$SCRIPT_DIR/scheduled-tasks/"*/; do
+  task_name=$(basename "$task_dir")
+  mkdir -p "$CLAUDE_DIR/scheduled-tasks/$task_name"
+  cp "$task_dir"* "$CLAUDE_DIR/scheduled-tasks/$task_name/" 2>/dev/null || true
+done
+log "Scheduled tasks instaladas"
+
+# ── Copy Templates ──
+
+info "Instalando templates..."
+if [[ -d "$SCRIPT_DIR/templates" ]]; then
+  mkdir -p "$CLAUDE_DIR/templates"
+  cp "$SCRIPT_DIR/templates/"* "$CLAUDE_DIR/templates/" 2>/dev/null || true
+  log "Templates Obsidian instalados"
+fi
 
 # ── Copy Configs ──
 
@@ -173,12 +212,15 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 printf "${BOLD}${GREEN}  Instalacao concluida!${NC}\n"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-printf "  ${CYAN}Agents:${NC}     5 (api-specialist, devops, frontend, prompt-engineer, research)\n"
-printf "  ${CYAN}Rules:${NC}      15 (9 common + 5 typescript + 1 parallel-agents)\n"
-printf "  ${CYAN}Skills:${NC}     8 (1 hubspot + 7 n8n)\n"
-printf "  ${CYAN}Plugins:${NC}    4 (ECC, Superpowers, Ralph, UI/UX Pro Max)\n"
-printf "  ${CYAN}Scripts:${NC}    3 (notify, toast, ralph)\n"
-printf "  ${CYAN}MCP:${NC}        2 (n8n, TestSprite)\n"
+printf "  ${CYAN}Agents:${NC}         5 (api-specialist, devops, frontend, prompt-engineer, research)\n"
+printf "  ${CYAN}Rules:${NC}          16 (10 common + 5 typescript + 1 parallel-agents)\n"
+printf "  ${CYAN}Skills:${NC}         8 (1 hubspot + 7 n8n)\n"
+printf "  ${CYAN}Plugins:${NC}        4 (ECC, Superpowers, Ralph, UI/UX Pro Max)\n"
+printf "  ${CYAN}Scripts:${NC}        3 (notify, toast, ralph)\n"
+printf "  ${CYAN}MCP:${NC}            2 (n8n, TestSprite)\n"
+printf "  ${CYAN}Teams:${NC}          1 (default team with spec-reviewer inbox)\n"
+printf "  ${CYAN}Scheduled:${NC}      1 (daily-sync-obsidian)\n"
+printf "  ${CYAN}Templates:${NC}      2 (daily note + projeto)\n"
 echo ""
 
 if grep -q "YOUR_" "$CLAUDE_DIR/mcp.json" 2>/dev/null; then

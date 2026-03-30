@@ -1,0 +1,17 @@
+# Normalize line endings for all text files
+* text=auto eol=lf
+
+# Shell scripts must always use LF
+*.sh text eol=lf
+
+# JSON and Markdown
+*.json text eol=lf
+*.md text eol=lf
+
+# JavaScript
+*.js text eol=lf
+
+# Keep binary files as-is
+*.png binary
+*.jpg binary
+*.ico binary

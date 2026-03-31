@@ -1,0 +1,11 @@
+.git
+.env
+docker/.env
+*.md
+!agents/*.md
+!rules/**/*.md
+!skills/**/*.md
+!templates/*.md
+!scheduled-tasks/**/*.md
+!teams/**/*.json
+node_modules

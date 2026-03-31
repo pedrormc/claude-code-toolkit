@@ -1,0 +1,83 @@
+services:
+  claude:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: claude-sandbox
+    env_file:
+      - .env
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - N8N_API_URL=${N8N_API_URL:-}
+    stdin_open: true
+    tty: true
+
+    # ── Security ──
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+    # ── Resource limits ──
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: 8G
+        reservations:
+          cpus: "1"
+          memory: 2G
+
+    # ── Volumes ──
+    volumes:
+      # Workspace — ONLY this directory is accessible
+      - ${WORKSPACE_PATH:-./../workspace}:/workspace
+
+      # Persist Claude config between sessions
+      - claude-config:/home/coder/.claude
+
+      # Persist bash history
+      - claude-history:/commandhistory
+
+    # ── Tmpfs for scratch space ──
+    tmpfs:
+      - /tmp:size=512M,mode=1777
+
+    # ── Network ──
+    network_mode: bridge
+
+    # ── Healthcheck ──
+    healthcheck:
+      test: ["CMD", "claude", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── Interactive: abre o Claude Code direto ──
+  claude-interactive:
+    extends: claude
+    container_name: claude-interactive
+    command: claude
+    profiles:
+      - interactive
+
+  # ── Headless: automacao com prompt ──
+  claude-headless:
+    extends: claude
+    container_name: claude-headless
+    entrypoint: ["entrypoint.sh"]
+    command: >
+      claude -p "${CLAUDE_PROMPT:-Analyze the workspace}"
+      --allowedTools "${CLAUDE_ALLOWED_TOOLS:-Read,Glob,Grep,Bash}"
+      --output-format json
+    profiles:
+      - headless
+
+volumes:
+  claude-config:
+    name: claude-code-config
+  claude-history:
+    name: claude-code-history

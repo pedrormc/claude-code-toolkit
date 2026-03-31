@@ -11,17 +11,14 @@ else
   echo "[sandbox] Add --cap-add=NET_ADMIN --cap-add=NET_RAW to docker run for full isolation"
 fi
 
-# ── Validate API key ──
-if [ -z "$ANTHROPIC_API_KEY" ]; then
-  echo ""
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo "  ERROR: ANTHROPIC_API_KEY not set"
-  echo ""
-  echo "  Run with: docker compose run --rm claude"
-  echo "  And set ANTHROPIC_API_KEY in .env file"
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo ""
-  exit 1
+# ── Detect auth method ──
+AUTH_METHOD="none"
+if [ -n "$ANTHROPIC_API_KEY" ]; then
+  AUTH_METHOD="api-key"
+elif [ -f "$CLAUDE_CONFIG_DIR/.credentials.json" ]; then
+  AUTH_METHOD="oauth (saved)"
+else
+  AUTH_METHOD="oauth (login needed)"
 fi
 
 # ── Show sandbox status ──
@@ -32,10 +29,18 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "  User:       $(whoami)"
 echo "  Workspace:  /workspace"
 echo "  Config:     $CLAUDE_CONFIG_DIR"
-echo "  API Key:    ${ANTHROPIC_API_KEY:0:12}...${ANTHROPIC_API_KEY: -4}"
+echo "  Auth:       $AUTH_METHOD"
 echo "  Node:       $(node --version)"
 echo "  Claude:     $(claude --version 2>/dev/null || echo 'checking...')"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if [ "$AUTH_METHOD" = "oauth (login needed)" ]; then
+  echo ""
+  echo "  Para autenticar com Claude Max/Pro/Team, rode:"
+  echo "    claude login"
+  echo ""
+  echo "  Ou defina ANTHROPIC_API_KEY no .env para usar API key."
+fi
 echo ""
 
 # ── Execute command ──

@@ -2,6 +2,8 @@
 
 Setup completo e tunado do Claude Code para o time de desenvolvimento. Inclui agents customizados, rules, skills, hooks, scripts de notificacao, statusline personalizada, teams, scheduled tasks e templates.
 
+> **Parte do ecossistema [TRIFORCE](https://github.com/pedrormc/TRIFORCE)** — metodologia multi-ambiente Claude Code (Desktop/Mobile/VPS). Este repo e a **caixa de ferramentas** que cada ambiente instala. O TRIFORCE documenta **como montar** os ambientes do zero.
+
 ## Requisitos
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) v2.1+ instalado

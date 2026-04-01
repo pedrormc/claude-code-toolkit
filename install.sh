@@ -246,6 +246,32 @@ if [[ -d "$SCRIPT_DIR/templates" ]]; then
 fi
 log "$TEMPLATE_COUNT templates instalados"
 
+# ── Copy Identity Templates ──
+
+info "Copiando identity templates (TRIFORCE)..."
+if [[ -d "$SCRIPT_DIR/identity" ]]; then
+  mkdir -p "$CLAUDE_DIR/identity"
+  for f in "$SCRIPT_DIR/identity/"*.md; do
+    [[ -f "$f" ]] || continue
+    copy_verified "$f" "$CLAUDE_DIR/identity/$(basename "$f")" "identity/$(basename "$f")"
+  done
+  log "Identity templates copiados para ~/.claude/identity/"
+
+  # Suggest CLAUDE.md setup if not present
+  if [[ ! -f "$CLAUDE_DIR/CLAUDE.md" ]]; then
+    echo ""
+    warn "CLAUDE.md nao encontrado!"
+    info "Para configurar a identidade do seu ambiente, copie um template:"
+    info "  Desktop: cp ~/.claude/identity/desktop.md ~/.claude/CLAUDE.md"
+    info "  Mobile:  cp ~/.claude/identity/mobile.md ~/.claude/CLAUDE.md"
+    info "  VPS:     cp ~/.claude/identity/vps.md ~/.claude/CLAUDE.md"
+    info "  Veja: https://github.com/pedrormc/TRIFORCE"
+    echo ""
+  else
+    log "CLAUDE.md ja existe — identidade preservada"
+  fi
+fi
+
 # ── Copy Configs ──
 
 echo ""

@@ -401,6 +401,63 @@ else
   err "Alguns arquivos estao faltando. Verifique os erros acima."
 fi
 
+# ── Foundation v1 — Memory brain + hooks + scripts ──
+
+echo ""
+info "Instalando Foundation v1 (memory brain, hooks, scripts)..."
+
+# Backup existing settings.json before any Foundation changes
+if [[ -f "$CLAUDE_DIR/settings.json" && ! -f "$CLAUDE_DIR/settings.json.pre-foundation-bak" ]]; then
+  cp "$CLAUDE_DIR/settings.json" "$CLAUDE_DIR/settings.json.pre-foundation-bak"
+  log "Backup pre-Foundation: settings.json.pre-foundation-bak"
+fi
+
+# Copy hooks
+mkdir -p "$CLAUDE_DIR/hooks"
+if [[ -d "$SCRIPT_DIR/hooks" ]]; then
+  cp "$SCRIPT_DIR/hooks/"*.sh "$CLAUDE_DIR/hooks/"
+  chmod +x "$CLAUDE_DIR/hooks/"*.sh
+  log "4 Foundation hooks instalados"
+fi
+
+# Copy Foundation scripts (memory-* and foundation-*)
+mkdir -p "$CLAUDE_DIR/scripts"
+cp "$SCRIPT_DIR/scripts/memory-"*.sh "$CLAUDE_DIR/scripts/" 2>/dev/null || true
+cp "$SCRIPT_DIR/scripts/foundation-"*.sh "$CLAUDE_DIR/scripts/" 2>/dev/null || true
+cp "$SCRIPT_DIR/scripts/test-i4-fake-data.sh" "$CLAUDE_DIR/scripts/" 2>/dev/null || true
+chmod +x "$CLAUDE_DIR/scripts/memory-"*.sh "$CLAUDE_DIR/scripts/foundation-"*.sh "$CLAUDE_DIR/scripts/test-i4-fake-data.sh" 2>/dev/null || true
+log "Foundation scripts instalados (memory-*.sh, foundation-*.sh, test-i4)"
+
+# Copy auto-promote config
+mkdir -p "$CLAUDE_DIR/config"
+if [[ -f "$SCRIPT_DIR/config/auto-promote.yaml" ]]; then
+  cp "$SCRIPT_DIR/config/auto-promote.yaml" "$CLAUDE_DIR/config/"
+  log "auto-promote.yaml instalado"
+fi
+
+# Install Gstack skill if not already present
+if [[ ! -d "$CLAUDE_DIR/skills/gstack" && ! -d "$CLAUDE_DIR/plugins/gstack" ]]; then
+  info "Instalando Gstack de garrytan/gstack..."
+  if git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git "$CLAUDE_DIR/skills/gstack" 2>/dev/null; then
+    (cd "$CLAUDE_DIR/skills/gstack" && [[ -x ./setup ]] && ./setup) || warn "Gstack setup script falhou — verifique manualmente"
+    log "Gstack instalado (36 slash commands)"
+  else
+    warn "Falha ao clonar Gstack. Instale manualmente: git clone https://github.com/garrytan/gstack.git ~/.claude/skills/gstack"
+  fi
+else
+  log "Gstack ja presente"
+fi
+
+# Run Foundation smoke test (non-blocking — just reports)
+if [[ -x "$CLAUDE_DIR/scripts/foundation-smoke.sh" ]]; then
+  info "Rodando smoke test Foundation..."
+  if "$CLAUDE_DIR/scripts/foundation-smoke.sh" >/dev/null 2>&1; then
+    log "Foundation smoke: 13/13 passou"
+  else
+    warn "Foundation smoke: alguns testes falharam. Execute manualmente: ~/.claude/scripts/foundation-smoke.sh"
+  fi
+fi
+
 # ── Summary ──
 
 echo ""
@@ -419,9 +476,13 @@ printf "  ${CYAN}Rules:${NC}          $RULE_COUNT\n"
 printf "  ${CYAN}Skills:${NC}         $SKILL_COUNT\n"
 printf "  ${CYAN}Plugins:${NC}        $PLUGIN_COUNT\n"
 printf "  ${CYAN}Scripts:${NC}        $SCRIPT_COUNT\n"
+printf "  ${CYAN}Hooks:${NC}          4 (session-start, session-end, post-edit, save-session-mirror)\n"
 printf "  ${CYAN}Templates:${NC}      $TEMPLATE_COUNT\n"
 printf "  ${CYAN}Scheduled:${NC}      $TASK_COUNT\n"
 printf "  ${CYAN}Plataforma:${NC}     $OS\n"
+echo ""
+printf "  ${CYAN}Foundation:${NC} validate with ${BOLD}~/.claude/scripts/foundation-smoke.sh${NC}\n"
+printf "  ${CYAN}Rollback:${NC}   ${BOLD}~/.claude/scripts/foundation-uninstall.sh${NC}\n"
 echo ""
 
 # MCP keys reminder

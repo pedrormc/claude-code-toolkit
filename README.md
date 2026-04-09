@@ -758,6 +758,84 @@ Cada dev precisa conectar individualmente:
 
 ---
 
+## Foundation v1 — Memory Brain + Hooks
+
+O toolkit inclui o **Foundation v1**, um sistema unificado de memoria + hooks + scripts que conecta os 3 ambientes TRIFORCE (Desktop / Mobile / VPS) via o vault Obsidian como brain compartilhado.
+
+### O que instala
+
+**Hooks (4)** em `~/.claude/hooks/`:
+
+| Hook | Quando roda | O que faz |
+|------|-------------|-----------|
+| `session-start-memory-loader.sh` | SessionStart | Carrega standing orders + memoria global (4 secoes, ~444 linhas) do vault |
+| `post-edit-memory-validator.sh` | PostToolUse (Edit/Write) | Valida YAML frontmatter em arquivos do vault/Claude/memory, auto-commit |
+| `session-end-memory-writer.sh` | Stop | Atualiza `active.md` com a sessao, triggera rebuild do INDEX |
+| `save-session-vault-mirror.sh` | Custom | Mirror `~/.claude/sessions/*.tmp` para o vault |
+
+**Scripts de memoria (4)** em `~/.claude/scripts/`:
+
+| Script | Funcao |
+|--------|--------|
+| `memory-update.sh` | API unificada de escrita (`auto` / `claude` / `vault`) |
+| `memory-auto-promote.sh` | Cron diario — promove padroes cross-project para memoria global (Jaccard >= 0.75, >= 3 projetos, >= 7 dias, 10 safety nets) |
+| `memory-index-rebuild.sh` | Regenera `INDEX.md` a partir do estado atual do filesystem |
+| `memory-revert.sh` | Reverte uma promocao automatica por `entry_id` |
+
+**Scripts Foundation (4)** em `~/.claude/scripts/`:
+
+| Script | Funcao |
+|--------|--------|
+| `foundation-smoke.sh` | 13 smoke tests (S1-S13) — estrutura do vault, hooks, scripts, Gstack, MCPVault |
+| `foundation-validate.sh` | Smoke + 7 integration tests (I1-I7) |
+| `foundation-uninstall.sh` | Rollback universal — remove hooks/scripts/cron, preserva memoria do vault |
+| `test-i4-fake-data.sh` | Cria 3 entradas sinteticas de auto-memory (14 dias atras) para testar o pipeline de auto-promocao end-to-end |
+
+**Configs:**
+- `~/.claude/config/auto-promote.yaml` — thresholds do auto-promote (preset "Balanced")
+- `~/.claude/rules/common/namespace-cheatsheet.md` — guia de desempate para slash commands em caso de colisao entre plugins
+
+### Validacao
+
+Depois de `bash install.sh`:
+
+```bash
+~/.claude/scripts/foundation-smoke.sh
+# Esperado: 13 passed / 0 failed
+```
+
+Para validacao completa (smoke + integration):
+
+```bash
+~/.claude/scripts/foundation-validate.sh
+```
+
+### Rollback
+
+Foundation pode ser desinstalado sem tocar na memoria do vault:
+
+```bash
+~/.claude/scripts/foundation-uninstall.sh
+# Pergunta confirmacao, restaura settings.json.pre-foundation-bak,
+# remove hooks/scripts/cron, preserva ~/Documents/obsidiano/Claude/
+```
+
+Para rollback completo do vault (destrutivo — perde memoria):
+
+```bash
+rm -rf ~/Documents/obsidiano/Claude/
+git -C ~/Documents/obsidiano checkout pre-foundation-2026-04-09
+```
+
+### Pre-requisitos Foundation
+
+- Vault Obsidian clonado em `~/Documents/obsidiano` (Desktop/Windows) ou `~/obsidiano` (Linux/VPS)
+- MCPVault (`@bitbonsai/mcpvault`) configurado em `~/.claude/mcp.json` ou `~/.claude.json`
+- `jq` instalado (validacao de settings.json e auto-promote)
+- `git` no vault (auto-commit de memoria)
+
+---
+
 ## Filosofia do Setup
 
 ### Modelo de Agents

@@ -1,0 +1,20 @@
+# Foundation auto-promote thresholds — Balanced preset
+# Edit values here to tune promotion behavior. No code redeploy needed.
+
+filters:
+  min_projects: 3
+  min_age_days: 7
+  similarity_threshold: 0.75
+
+max_per_run: 5
+
+target_mapping:
+  feedback: preferences.md
+  reference: projects.md
+
+block_list_patterns:
+  - 'R\$|USD|EUR|\$\d'
+  - 'password|token|api_key|secret|\.env|credential'
+  - '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}'
+  - '\+?55 ?\d{2} ?\d{4,5}-?\d{4}'
+  - '\d{3}\.\d{3}\.\d{3}-\d{2}'

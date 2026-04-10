@@ -63,6 +63,14 @@ HEADER
 
 safe_cat "$VAULT/Claude/CLAUDE.md"
 
+# Load persona if CLAUDE_PERSONA is set (e.g. CLAUDE_PERSONA=zel)
+if [ -n "${CLAUDE_PERSONA:-}" ]; then
+  PERSONA_FILE="$VAULT/Claude/personas/${CLAUDE_PERSONA}.md"
+  echo ""
+  echo "=== 🎭 PERSONA: $CLAUDE_PERSONA (Claude/personas/${CLAUDE_PERSONA}.md) ==="
+  safe_cat "$PERSONA_FILE"
+fi
+
 echo ""
 echo "=== 🗺️ INDEX MEMÓRIA UNIFICADA (Claude/memory/INDEX.md) ==="
 safe_cat "$VAULT/Claude/memory/INDEX.md"

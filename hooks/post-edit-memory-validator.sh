@@ -6,7 +6,6 @@
 set -uo pipefail
 
 HOOK_INPUT=$(cat)
-TOOL_NAME=$(echo "$HOOK_INPUT" | jq -r '.tool_name // ""' 2>/dev/null || echo "")
 FILE_PATH=$(echo "$HOOK_INPUT" | jq -r '.tool_input.file_path // ""' 2>/dev/null || echo "")
 
 # Filter: only act on memory files (portable match: Unix / or Windows \)

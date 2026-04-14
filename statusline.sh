@@ -15,6 +15,8 @@ eval "$(echo "$INPUT" | jq -r '
   " branch=" + (.worktree.branch // "" | @sh)
 ')"
 
+# shellcheck disable=SC2154  # vars (model, ctx, duration_ms, etc) come from eval'd jq output above
+
 # Duration: ms -> Xm Ys
 if [ "$duration_ms" -gt 0 ] 2>/dev/null; then
   total_sec=$((duration_ms / 1000))

@@ -46,13 +46,15 @@ normalize() {
 jaccard() {
   local file_a="$1"
   local file_b="$2"
-  local tmp_a=$(mktemp)
-  local tmp_b=$(mktemp)
+  local tmp_a tmp_b
+  tmp_a=$(mktemp)
+  tmp_b=$(mktemp)
   normalize "$file_a" > "$tmp_a"
   normalize "$file_b" > "$tmp_b"
 
-  local a_count=$(wc -l < "$tmp_a")
-  local b_count=$(wc -l < "$tmp_b")
+  local a_count b_count
+  a_count=$(wc -l < "$tmp_a")
+  b_count=$(wc -l < "$tmp_b")
 
   # Exclude if either file is too long (>500 tokens)
   if [ "$a_count" -gt 500 ] || [ "$b_count" -gt 500 ]; then
@@ -61,8 +63,9 @@ jaccard() {
     return
   fi
 
-  local intersection=$(comm -12 "$tmp_a" "$tmp_b" | wc -l)
-  local union=$(sort -u "$tmp_a" "$tmp_b" | wc -l)
+  local intersection union
+  intersection=$(comm -12 "$tmp_a" "$tmp_b" | wc -l)
+  union=$(sort -u "$tmp_a" "$tmp_b" | wc -l)
 
   rm -f "$tmp_a" "$tmp_b"
 
@@ -76,7 +79,8 @@ jaccard() {
 block_listed() {
   local content="$1"
   if [ -f "$CONFIG" ]; then
-    local patterns=$(grep -A20 "block_list_patterns:" "$CONFIG" | grep "^\s*-" | sed "s/^\s*- '\(.*\)'$/\1/")
+    local patterns
+    patterns=$(grep -A20 "block_list_patterns:" "$CONFIG" | grep "^\s*-" | sed "s/^\s*- '\(.*\)'$/\1/")
     while IFS= read -r pattern; do
       [ -z "$pattern" ] && continue
       if echo "$content" | grep -qiE "$pattern" 2>/dev/null; then

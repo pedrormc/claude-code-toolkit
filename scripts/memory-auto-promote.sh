@@ -143,6 +143,7 @@ PROMOTED=0
 for gid in "${!PROMO_GROUPS[@]}"; do
   [ "$PROMOTED" -ge "$MAX_PER_RUN" ] && break
   if [ "${PROMO_GROUPS[$gid]}" -ge "$MIN_PROJECTS" ]; then
+    # shellcheck disable=SC2206  # GROUP_FILES values are space-separated paths set by us, controlled input
     files=(${GROUP_FILES[$gid]})
     first="${files[0]}"
 

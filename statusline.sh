@@ -1,5 +1,6 @@
 #!/bin/bash
 # Claude Code Statusline — optimized single-jq extraction
+# shellcheck disable=SC2154  # vars (model, ctx, duration_ms, cost_usd, project, sid, agent, branch) come from eval'd jq output
 
 INPUT=$(cat)
 
@@ -14,8 +15,6 @@ eval "$(echo "$INPUT" | jq -r '
   " agent=" + (.agent.name // "" | @sh) +
   " branch=" + (.worktree.branch // "" | @sh)
 ')"
-
-# shellcheck disable=SC2154  # vars (model, ctx, duration_ms, etc) come from eval'd jq output above
 
 # Duration: ms -> Xm Ys
 if [ "$duration_ms" -gt 0 ] 2>/dev/null; then

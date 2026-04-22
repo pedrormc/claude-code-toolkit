@@ -1,0 +1,100 @@
+{
+  "titulo_curto": "ATA",
+  "titulo": "Reunião de Alinhamento — Sprint Q2",
+  "empresa": "Singular",
+  "data": "16 de abril de 2026",
+  "hora_inicio": "14:00",
+  "hora_fim": "15:30",
+  "local": "Google Meet",
+  "tipo_reuniao": "Alinhamento de sprint",
+  "objetivo": "Revisar entregas da sprint anterior, alinhar prioridades da próxima e desbloquear pendências do time de produto.",
+  "participantes": {
+    "presentes": [
+      "Pedro Roberto — CTO",
+      "Marina Silva — Product Manager",
+      "João Costa — Tech Lead",
+      "Ana Beatriz — Designer"
+    ],
+    "ausentes": [
+      "Lucas Mendes — Engenheiro Backend (justificado, férias)"
+    ]
+  },
+  "pauta": [
+    "Retrospectiva da sprint anterior",
+    "Priorização da próxima sprint",
+    "Bloqueios técnicos e de produto",
+    "Alinhamento de release"
+  ],
+  "topicos": [
+    {
+      "titulo": "Tópico 1 — Retrospectiva da Sprint",
+      "discussao": [
+        "A sprint encerrada entregou 8 de 10 histórias planejadas. As duas histórias não concluídas envolvem integração com gateway de pagamento, que depende de homologação externa.",
+        "O time relatou boa velocidade nos primeiros quatro dias, com queda após o feriado. Marina sugeriu revisar a estimativa de sprints com feriados no meio."
+      ],
+      "decisoes": [
+        "Aprovada a prática de reduzir capacidade planejada em 20% em sprints com feriado",
+        "Histórias pendentes de pagamento movidas para o topo do próximo backlog"
+      ]
+    },
+    {
+      "titulo": "Tópico 2 — Priorização da Próxima Sprint",
+      "discussao": [
+        "Marina apresentou três epics candidatos: onboarding guiado, dashboard de métricas e integração com WhatsApp. Após discussão, o time concordou que onboarding é prioridade por afetar diretamente ativação de novos clientes.",
+        "João levantou risco técnico no onboarding: componente de tour guiado nunca foi implementado na stack atual. Sugeriu spike de 2 dias antes de comprometer a entrega completa."
+      ],
+      "decisoes": [
+        "Onboarding guiado é a prioridade da próxima sprint",
+        "Spike técnico de 2 dias aprovado antes do comprometimento final",
+        "Dashboard de métricas adiado para a sprint seguinte"
+      ]
+    },
+    {
+      "titulo": "Tópico 3 — Bloqueios Ativos",
+      "discussao": [
+        "Três bloqueios foram levantados: (a) acesso à API de produção do gateway, (b) ambiente de staging instável, (c) ausência de designer dedicado para o onboarding."
+      ],
+      "tabelas": [
+        {
+          "colunas": ["Bloqueio", "Impacto", "Dono"],
+          "linhas": [
+            ["API gateway sem acesso", "Alto — bloqueia 2 histórias", "Pedro"],
+            ["Staging instável", "Médio — atrasa QA", "João"],
+            ["Design dedicado", "Alto — trava onboarding", "Marina"]
+          ]
+        }
+      ],
+      "decisoes": [
+        "Pedro escalará acesso à API do gateway até 17/04",
+        "João abrirá ticket de infra para estabilizar staging nesta semana",
+        "Ana Beatriz alocada 60% ao onboarding a partir de segunda"
+      ]
+    }
+  ],
+  "encaminhamentos": {
+    "titulo": "Encaminhamentos",
+    "linhas": [
+      ["Ação", "Responsável", "Prazo"],
+      ["Escalar acesso à API do gateway", "Pedro", "17/04"],
+      ["Abrir ticket de staging", "João", "18/04"],
+      ["Conduzir spike de onboarding", "João", "22/04"],
+      ["Refinar histórias do onboarding", "Marina", "21/04"],
+      ["Preparar wireframes do onboarding", "Ana Beatriz", "23/04"]
+    ]
+  },
+  "proxima_reuniao": {
+    "data": "23 de abril de 2026",
+    "hora": "14:00",
+    "local": "Google Meet",
+    "pauta_prevista": [
+      "Resultado do spike técnico",
+      "Refinamento final das histórias de onboarding",
+      "Revisão de wireframes"
+    ]
+  },
+  "observacoes": "Reunião conduzida dentro do tempo previsto. Todos os participantes concordaram com os encaminhamentos antes do encerramento.",
+  "assinaturas": [
+    "Pedro Roberto — CTO",
+    "Marina Silva — PM"
+  ]
+}

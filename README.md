@@ -127,7 +127,12 @@ Todos em PT-BR, modelo Opus.
 
 ---
 
-### Skills Customizados (8)
+### Skills Customizados (9)
+
+#### Documentos Singular (.docx)
+| Skill | Arquivos | Descricao |
+|-------|----------|-----------|
+| `ata` | SKILL.md, build.py, template.docx, logos, accents.md | Gera Ata de Reuniao em .docx com template oficial Singular (Urbanist, header/footer, logo) a partir de texto livre |
 
 #### HubSpot
 | Skill | Arquivos | Descricao |

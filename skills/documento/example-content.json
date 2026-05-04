@@ -1,0 +1,77 @@
+{
+  "titulo_curto": "ESTRATÉGIA",
+  "titulo": "Singular Group — Donos, Células & Metas",
+  "subtitulo": "Estrutura organizacional para os próximos 18 dias",
+  "empresa": "Singular",
+  "autor": "Pedro Miranda — CEO",
+  "destinatario": "Sócios e líderes de célula",
+  "data": "3 de maio de 2026",
+  "tldr": "Adonai assume Marketing (caixa rápido), Pedro Rocha assume Consultório (estrutura recorrente), Hélio vira dono do PowerCoffee (volume + lead). 100% das vendas do Hélio dentro da Singular. Cada um responde por um número, não por uma função. Meta consolidada: ~R$ 180k/mês.",
+  "secoes": [
+    {
+      "titulo": "1. Decisão estratégica sobre o Hélio",
+      "paragrafos": [
+        "Hélio NÃO deve fechar cliente por fora — perde escala, quebra o modelo de carteira e aumenta dependência de venda individual.",
+        "100% das vendas dentro da Singular. Queremos construir máquina, não bico bem pago."
+      ]
+    },
+    {
+      "titulo": "2. Como o Hélio bate R$ 15k/mês",
+      "paragrafos": [
+        "Três alavancas de comissão disponíveis ao Hélio:"
+      ],
+      "tabelas": [
+        {
+          "colunas": ["Alavanca", "Comissão", "Para 15k", "Veredito"],
+          "linhas": [
+            ["Consultório (11%)", "~R$ 98 / cliente", "153 clientes", "Inviável curto prazo"],
+            ["Marketing (10%)", "R$ 250 / cliente", "60 clientes", "Pesado sozinho"],
+            ["PowerCoffee (20%)", "R$ 18 / unidade", "833 unidades", "Funciona — canal de volume"]
+          ]
+        }
+      ],
+      "destaque": "Mix ideal: 30 vendas/dia de PowerCoffee (R$ 16,2k) + 20 clientes de consultório (R$ 1,96k) + 5 de marketing (R$ 1,25k) = ~R$ 19k/mês."
+    },
+    {
+      "titulo": "3. Donos por vertical",
+      "paragrafos": [
+        "Cada vertical com um único dono responsável pelo número, sem sobreposição."
+      ],
+      "tabelas": [
+        {
+          "colunas": ["Vertical", "Dono", "Função econômica"],
+          "linhas": [
+            ["Marketing", "Adonai", "Caixa rápido"],
+            ["Consultório", "Pedro Rocha", "Receita recorrente"],
+            ["PowerCoffee", "Hélio (sup. CEO)", "Volume + lead"]
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "4. Metas semanais (não-negociáveis)",
+      "listas": [
+        {
+          "tipo": "bullet",
+          "itens": [
+            "Adonai → +2 clientes Marketing / semana",
+            "Pedro Rocha → +5 clientes Consultório / semana",
+            "Hélio → 30 vendas PowerCoffee / dia",
+            "Simon → conversão de leads (suporte às 3 células)"
+          ]
+        }
+      ]
+    }
+  ],
+  "conclusao": "O problema da Singular não é modelo, pessoas ou margem — é foco e sequência de execução. Com donos claros e ritmo de cobrança semanal, a meta de R$ 180k/mês é alcançável.",
+  "proximos_passos": [
+    "Comunicar a estrutura aos líderes de célula até 5 de maio",
+    "Implantar reunião semanal de cobrança (sextas, 9h)",
+    "Hélio começa rotina de PowerCoffee na segunda-feira (6 de maio)"
+  ],
+  "referencias": [
+    "PRIORIDADE.md — três abas master de prioridade",
+    "apresentacao-powercoff.html — apresentação aporte amigo PowerCoffee"
+  ],
+  "autor_rodape": "Pedro Miranda — CEO Singular Group · 03/05/2026"
+}

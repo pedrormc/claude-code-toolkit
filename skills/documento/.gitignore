@@ -1,0 +1,5 @@
+secrets.local.json
+__pycache__/
+*.pyc
+*.docx
+content.json

@@ -1,0 +1,118 @@
+{
+  "_comment": "Exemplo completo de content.json para a skill /slide. Cobre os 8 tipos de slide. Adaptado de uma tese fictícia.",
+  "meta": {
+    "title": "Singular Group — Tese de Expansão 2026",
+    "subtitle": "Plano operacional · 1º semestre",
+    "author": "Pedro Roberto Miranda · Singular Group",
+    "date": "01 de maio de 2026",
+    "footer_brand": "Singular Group"
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "eyebrow": "Tese de expansão",
+      "hero": "Singular Group",
+      "subtitle": "Plano operacional · 1º semestre 2026",
+      "footer_left": "Pedro Roberto Miranda · CEO",
+      "footer_right": "01 de maio de 2026"
+    },
+    {
+      "type": "summary-cards",
+      "eyebrow": "Resumo executivo",
+      "title": "Três frentes, um número consolidado.",
+      "cards": [
+        {
+          "tag": "Frente 1",
+          "title": "Marketing",
+          "body": "Caixa rápido. Meta de **30 contratos novos** no semestre.",
+          "recommended": true
+        },
+        {
+          "tag": "Frente 2",
+          "title": "Consultório",
+          "body": "Receita recorrente. Meta de **150 clientes ativos** no MRR."
+        },
+        {
+          "tag": "Frente 3",
+          "title": "PowerCoffee",
+          "body": "Volume + lead. Meta de **30 vendas/dia** no TikTok Shop."
+        }
+      ],
+      "footer_note": "Spoiler: chegamos no slide 6 com a recomendação de execução."
+    },
+    {
+      "type": "section-detail",
+      "badge": "Frente 1",
+      "title": "Marketing — caixa rápido",
+      "subtitle": "Adonai como dono. Comissão 10%. Meta semanal de 2 contratos.",
+      "cards": [
+        { "label": "O quê", "value": "Pacotes mensais de gestão de mídia paga e orgânica para clínicas e pequenas empresas." },
+        { "label": "Como", "value": "Time de 3 fechadores + Adonai no closing high-ticket. Pipeline alimentado por SDR." },
+        { "label": "Quando", "value": "Onboarding em **7 dias** após assinatura. Primeiro report em 30 dias." }
+      ],
+      "highlight_box": "Receita-alvo: **R$ 90k/mês** ao final do semestre, com retenção mínima de 80%."
+    },
+    {
+      "type": "compare-table",
+      "eyebrow": "Comparativo",
+      "title": "As 3 frentes lado a lado",
+      "columns": ["Critério", "Marketing", "Consultório", "PowerCoffee"],
+      "base_col_index": 1,
+      "rows": [
+        ["Dono", "Adonai", "Pedro Rocha", "Hélio (sup. CEO)"],
+        ["Tipo de receita", { "value": "Mensal recorrente", "strong": true }, "MRR consultivo", "Por venda"],
+        ["Meta semestral", { "value": "R$ 90k/mês", "strong": true }, "R$ 60k/mês", "30 vendas/dia"],
+        ["Margem", { "value": "55%", "positive": true }, { "value": "70%", "positive": true }, { "value": "20%", "negative": true }],
+        ["Horizonte de payoff", { "value": "60 dias", "strong": true }, "120 dias", "Imediato"]
+      ],
+      "footer_note": "Marketing entra com volume; Consultório com margem; PowerCoffee com lead pra dentro."
+    },
+    {
+      "type": "text-section",
+      "eyebrow": "Riscos",
+      "title": "O que pode dar errado",
+      "subtitle": "Três cenários monitorados semanalmente em weekly.",
+      "paragraphs": [
+        "Risco 1 — **execução fraca em Marketing**. Adonai já lidera, mas o time precisa de um Closer Sênior dedicado. Sem isso, o cap fica em 15-18 contratos por semestre, não 30.",
+        "Risco 2 — **churn no Consultório**. Cada cliente perdido custa R$ 2k/mês de MRR. A célula precisa de NPS > 8 e onboarding < 14 dias."
+      ],
+      "bullets": [
+        "Mitigador A: contratar Closer Sênior em até 30 dias",
+        "Mitigador B: implementar NPS automático no onboarding",
+        "Mitigador C: revisão semestral com gatilho de unwind se métricas não baterem"
+      ],
+      "highlight_box": "Decisão de fim de semestre: **se 2 das 3 frentes baterem 80% da meta**, dobra-se o orçamento de aquisição em julho."
+    },
+    {
+      "type": "recommendation",
+      "eyebrow": "Nossa recomendação",
+      "headline": "Execução em",
+      "accent": "paralelo",
+      "sub": "Três frentes simultâneas, com donos distintos e weekly cruzado.",
+      "items": [
+        { "title": "Donos definidos", "body": "Adonai · Pedro Rocha · Hélio. Cada um responde por um número, não por uma função." },
+        { "title": "Cadência semanal", "body": "Weekly de 30min com os 3 donos + CEO. Métricas no quadro, sem PDF." },
+        { "title": "Orçamento travado", "body": "Cada frente tem teto trimestral. Acima do teto, decisão de board." },
+        { "title": "Gatilho de unwind", "body": "Se uma frente ficar abaixo de 50% da meta em M3, ela é pausada e o caixa é realocado." }
+      ],
+      "footer_note": "Não é apostar em 3. É fazer 3 funcionarem porque a Singular tem maturidade pra rodar em paralelo."
+    },
+    {
+      "type": "next-steps",
+      "eyebrow": "Próximos passos",
+      "title": "3 decisões pra fechar essa semana",
+      "cards": [
+        { "head": "Closer Sênior", "question": "Quem vai liderar o pipeline de Marketing high-ticket?", "options": "Adonai puro · contratar · interno" },
+        { "head": "Onboarding", "question": "NPS automático entra no fluxo de Consultório quando?", "options": "Esta semana · M+1 · M+2" },
+        { "head": "Estoque PowerCoffee", "question": "Aporte mínimo para abrir prep center em SP?", "options": "R$ 18k · R$ 30k · R$ 54k" }
+      ],
+      "cta": "Decisão tomada nas três = arrancada em 7 dias."
+    },
+    {
+      "type": "closing",
+      "headline": "Vamos.",
+      "sub": "Pedro Roberto Miranda · CEO Singular Group",
+      "brand": "Singular Group · 2026"
+    }
+  ]
+}

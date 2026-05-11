@@ -253,6 +253,21 @@ Quando você for trabalhar em um projeto específico (ex: o site da Singular), c
 
 ## 4) Instalar e configurar os MCPs
 
+### 4.0) Visão geral dos MCPs disponíveis
+
+| MCP | O que faz | Status pro Simon (2026-05-11) |
+|---|---|---|
+| `hubspot-singular` | CRM Singular Group | ✅ Pedro mandou credenciais (`HUBSPOT_MCP_SETUP.md`) |
+| `hubspot-smup` | CRM SMUP | ✅ Mesmo arquivo |
+| `google-drive` | Drive/Docs/Sheets/Slides/Calendar | ⚙️ Setup OAuth próprio (`docs/GOOGLE_DRIVE_MCP_SETUP.md`) |
+| `obsidian` | Vault Obsidian local | ⚙️ Configurar quando criar um vault local |
+| `evolution` (WhatsApp) | Mensagens via Evolution API | 🕐 Pedro vai mandar credenciais depois |
+| `n8n` | Workflows self-hosted | 🕐 Opcional, sob demanda |
+| `serpapi` | Busca Google estruturada | 🕐 Opcional, sob demanda |
+| `TestSprite` | Geração de testes E2E | 🕐 Opcional, sob demanda |
+
+**Recomendação de ordem:** começa com **HubSpot** (rápido), depois **Google Drive** (longo mas essencial). Resto fica pra fase 2.
+
 ### 4.1) Listar MCPs atuais
 
 ```bash
@@ -357,20 +372,31 @@ export N8N_API_KEY="sua_n8n_key"
 export SERPAPI_MCP_URL="https://mcp.serpapi.com/SEU_TOKEN/mcp"
 ```
 
-### 4.4) Setup do Google Drive MCP (OAuth)
+### 4.4) Setup do Google Drive MCP (OAuth) — manual dedicado
 
-Esse é o mais chato. Pula se não for usar Drive na primeira semana.
+Esse setup é o mais longo (OAuth completo no Google Cloud Console). Reserva **45-60 minutos** ininterruptos. **NÃO está nesse arquivo** — está em manual separado:
 
-1. Vai em https://console.cloud.google.com/
-2. Cria um projeto novo (ou usa um existente)
-3. APIs & Services → **Enable APIs** → habilita: Google Drive API, Google Docs API, Google Sheets API, Google Slides API, Google Calendar API
-4. APIs & Services → **Credentials** → **Create Credentials** → **OAuth client ID** → **Desktop app**
-5. Baixa o JSON. Renomeia pra `gcp-oauth.keys.json`
-6. Move pra:
-   - Mac/Linux: `~/.codex/secrets/gcp-oauth.keys.json`
-   - Windows (Git Bash): `~/.codex/secrets/gcp-oauth.keys.json` (que é `C:\Users\Simon\.codex\secrets\`)
-7. Cria a pasta secrets se não existir: `mkdir -p ~/.codex/secrets`
-8. Na primeira execução do MCP ele vai abrir um navegador pedindo permissão — autoriza, e ele gera o `gcp-oauth.token.json` automaticamente
+📄 **`docs/GOOGLE_DRIVE_MCP_SETUP.md`** (na raiz do toolkit clonado)
+
+Esse manual te leva passo-a-passo:
+1. Fase 1 — Google Cloud Console: criar projeto, habilitar 5 APIs, configurar OAuth Consent Screen, criar credenciais Desktop, baixar JSON
+2. Fase 2 — Instalação local: pacote npm, pasta secrets, mover JSON, configurar Codex
+3. Fase 3 — Primeiro auth flow no navegador (gera token.json)
+4. Fase 4 — Smoke tests
+
+Pula esse passo se você não vai usar Drive na primeira semana. Volta quando precisar.
+
+### 4.5) Setup do HubSpot MCP
+
+Pedro te mandou um arquivo separado **`HUBSPOT_MCP_SETUP.md`** (não está no repo — recebeu via mensagem direta porque contém as credenciais reais da Singular).
+
+Esse arquivo te ensina a:
+1. Adicionar as 2 instâncias HubSpot (`hubspot-singular` e `hubspot-smup`)
+2. Validar com `codex mcp list`
+3. Smoke tests
+4. Lista de tools disponíveis (28+ ferramentas pra CRM)
+
+⚠️ Guarda esse arquivo em pasta fora do Git. **Nunca** commita.
 
 ### 4.5) Validar MCPs
 

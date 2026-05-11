@@ -1,0 +1,23 @@
+# Exemplo de variáveis pra um NDA-PF
+# Copie e edite. Nome do arquivo livre — passe via --vars
+
+parte:
+  nome: "Maria da Silva Santos"
+  tipo: "PF"
+  documento: "123.456.789-00"
+  rg: "1234567 SSP/DF"
+  estado_civil: "solteira"
+  profissao: "consultora"
+  endereco: "Rua das Acácias, 100, Apto 502"
+  bairro: "Asa Sul"
+  cidade_uf: "Brasília/DF"
+  cep: "70000-000"
+  apelido: "MARIA"
+  email: "maria@exemplo.com"
+
+contexto: "negociações para projeto de consultoria estratégica"
+prazo_vigencia: "1 (um) ano"
+prazo_pos_termino: "5 (cinco) anos"
+valor_multa: "R$ 100.000,00 (cem mil reais)"
+data_assinatura: "26 de abril de 2026"
+cidade_assinatura: "Brasília"

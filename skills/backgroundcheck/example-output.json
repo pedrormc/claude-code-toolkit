@@ -1,0 +1,146 @@
+{
+  "titulo_curto": "BACKGROUND CHECK",
+  "titulo": "Fulano da Silva Exemplo",
+  "subtitulo": "Dossiê reputacional — auto-consulta",
+  "empresa": "Singular",
+  "autor": "Sistema /backgroundcheck",
+  "data": "5 de maio de 2026",
+  "tldr": "Auto-consulta solicitada pelo próprio titular. Perfil público típico de executivo de tecnologia: presença consistente em LinkedIn e GitHub, vínculo societário ativo na Empresa Exemplo Ltda (CNPJ 00.000.000/0001-00). Sem matches públicos em Escavador no momento da consulta. Ressalva: busca por nome em 1º grau dos TJs estaduais foi limitada pós-LGPD — links abaixo permitem consulta manual com CPF.",
+  "secoes": [
+    {
+      "titulo": "1. Identidade & dados públicos",
+      "paragrafos": [
+        "Identificação a partir de fontes abertas. Dados sensíveis (CPF, endereço residencial, telefone) ficam fora do dossiê por padrão."
+      ],
+      "tabelas": [
+        {
+          "colunas": ["Campo", "Valor", "Fonte"],
+          "linhas": [
+            ["Nome", "Fulano da Silva Exemplo", "informado"],
+            ["Profissão pública", "CTO — Singular Group", "LinkedIn"],
+            ["GitHub", "github.com/pedrormc", "público"],
+            ["E-mail público", "exemplo@empresa.com", "informado"],
+            ["Cidade base", "Brasília/DF", "vínculo societário"]
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "2. Processos judiciais — varredura por instância",
+      "paragrafos": [
+        "Consulta automatizada via Escavador retornou sem matches públicos. Tribunais superiores (STF, STJ) e PJe-JT (trabalhista) aceitam busca por nome via UI — links abaixo. TJs estaduais pós-LGPD (DF, SP) frequentemente exigem CPF além do nome no formulário; a consulta automatizada gera o link com nome pré-preenchido pra agilizar."
+      ],
+      "tabelas": [
+        {
+          "colunas": ["Tribunal/Fonte", "Status", "Achados", "Link"],
+          "linhas": [
+            ["Escavador", "vazio", "0", "https://www.escavador.com/busca?q=Pedro+Roberto+Miranda"],
+            ["STF", "links-only", "—", "https://portal.stf.jus.br/processos/listarProcessos.asp?parte=Pedro+Roberto+Miranda"],
+            ["STJ", "links-only", "—", "https://processo.stj.jus.br/processo/pesquisa/?termo=Pedro+Roberto+Miranda"],
+            ["TST/PJe-JT (Trabalhista)", "links-only", "—", "https://pje.tst.jus.br/consultaprocessual/pages/consultas/ConsultaProcessual.seam?nomeParte=Pedro+Roberto+Miranda"],
+            ["TJDFT", "links-only", "—", "https://pje-consulta-publica.tjdft.jus.br/consulta-publica/?nomeDaParte=Pedro+Roberto+Miranda"],
+            ["TJSP e-SAJ", "links-only", "—", "https://esaj.tjsp.jus.br/cpopg/search.do?cbPesquisa=NMPARTE&dadosConsulta.valorConsulta=Pedro+Roberto+Miranda"],
+            ["CNJ Consulta Unificada", "links-only", "—", "https://corporativo.cnj.jus.br/consultapublica/?nomeParte=Pedro+Roberto+Miranda"]
+          ]
+        }
+      ],
+      "destaque": "Busca automatizada NÃO é substituta da varredura manual nos links — fontes públicas mudam, indexação tem latência."
+    },
+    {
+      "titulo": "3. Mídia, redes e presença pública",
+      "paragrafos": [
+        "Presença pública profissional via redes especializadas, sem matches em mídia tradicional ou notícias."
+      ],
+      "listas": [
+        {
+          "tipo": "bullet",
+          "itens": [
+            "LinkedIn — perfil público, atuação como CTO Singular Group",
+            "GitHub — pedrormc, repositórios open de toolkit Claude Code e TRIFORCE",
+            "Sem matches em notícias mainstream (Google News)",
+            "Sem registros em Imprensa Nacional / DOU"
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "4. Vínculos societários & profissionais",
+      "paragrafos": [
+        "Identificação via consulta indireta (Google em cnpj.biz / receita.fazenda.gov.br)."
+      ],
+      "listas": [
+        {
+          "tipo": "bullet",
+          "itens": [
+            "Sócio/administrador — Empresa Exemplo Ltda (CNPJ 00.000.000/0001-00)",
+            "Endereço comercial: Cowmeia Coworking, Águas Claras/DF",
+            "Sem registros em conselhos profissionais (OAB/CRM/CRC) localizados na busca pública"
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "5. Sanções, listas restritivas e PEP",
+      "tabelas": [
+        {
+          "colunas": ["Lista", "Status", "Link"],
+          "linhas": [
+            ["Portal Transparência — CEIS (sanções)", "sem registro", "https://portaldatransparencia.gov.br/sancoes/ceis"],
+            ["Portal Transparência — CNEP", "sem registro", "https://portaldatransparencia.gov.br/sancoes/cnep"],
+            ["TCU — Inelegíveis", "sem registro", "https://contas.tcu.gov.br/ords/f?p=INABILITADO:5"],
+            ["PEP (politicamente exposta)", "não enquadrado", "—"]
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "6. Análise consolidada",
+      "paragrafos": [
+        "Auto-consulta. Perfil público condizente com atuação declarada (executivo de tecnologia, sócio-administrador). Sem sinais de alerta nas fontes consultadas — porém a varredura automatizada de processos é limitada por restrições LGPD pós-2020 nos TJs estaduais.",
+        "Para uma due diligence completa, recomenda-se: (a) reexecutar busca manual nos links com CPF preenchido, (b) usar Escavador paid tier se houver suspeita de homônimo, (c) consultar Diários da Justiça históricos via biblioteca jurídica."
+      ],
+      "destaque": "Veredito: PROSSEGUIR — perfil limpo nas fontes consultadas. Reexecutar consulta em 6 meses se relação seguir."
+    },
+    {
+      "titulo": "7. Fontes consultadas (todos os links)",
+      "paragrafos": [
+        "Lista completa pra reprodutibilidade. Cada link foi consultado em 5/5/2026 — estado pode ter mudado."
+      ],
+      "tabelas": [
+        {
+          "colunas": ["#", "Fonte", "URL"],
+          "linhas": [
+            ["1", "Escavador", "https://www.escavador.com/busca?q=Pedro+Roberto+Miranda"],
+            ["2", "STF", "https://portal.stf.jus.br/processos/listarProcessos.asp?parte=Pedro+Roberto+Miranda"],
+            ["3", "STJ", "https://processo.stj.jus.br/processo/pesquisa/?termo=Pedro+Roberto+Miranda"],
+            ["4", "TST/PJe-JT", "https://pje.tst.jus.br/consultaprocessual/pages/consultas/ConsultaProcessual.seam?nomeParte=Pedro+Roberto+Miranda"],
+            ["5", "TJDFT", "https://pje-consulta-publica.tjdft.jus.br/consulta-publica/?nomeDaParte=Pedro+Roberto+Miranda"],
+            ["6", "TJSP e-SAJ", "https://esaj.tjsp.jus.br/cpopg/search.do?cbPesquisa=NMPARTE&dadosConsulta.valorConsulta=Pedro+Roberto+Miranda"],
+            ["7", "CNJ Consulta Unificada", "https://corporativo.cnj.jus.br/consultapublica/?nomeParte=Pedro+Roberto+Miranda"],
+            ["8", "DataJud (info)", "https://datajud-wiki.cnj.jus.br/api-publica/"],
+            ["9", "Vínculo PJ (Google)", "https://www.google.com/search?q=%22Pedro+Roberto+Miranda%22+site%3Areceita.fazenda.gov.br+OR+site%3Acnpj.biz"],
+            ["10", "Google geral", "https://www.google.com/search?q=%22Pedro+Roberto+Miranda%22"],
+            ["11", "Google LinkedIn", "https://www.google.com/search?q=%22Pedro+Roberto+Miranda%22+site%3Alinkedin.com"],
+            ["12", "Google Notícias", "https://www.google.com/search?q=%22Pedro+Roberto+Miranda%22&tbm=nws"],
+            ["13", "Google .gov.br", "https://www.google.com/search?q=%22Pedro+Roberto+Miranda%22+site%3Agov.br"],
+            ["14", "Imprensa Nacional", "https://www.google.com/search?q=%22Pedro+Roberto+Miranda%22+site%3Ain.gov.br"],
+            ["15", "Conselhos profissionais", "https://www.google.com/search?q=%22Pedro+Roberto+Miranda%22+%28OAB+OR+CRM+OR+CRO+OR+CRC+OR+CRP%29"],
+            ["16", "CVM/B3", "https://www.google.com/search?q=%22Pedro+Roberto+Miranda%22+site%3Acvm.gov.br+OR+site%3Ab3.com.br"],
+            ["17", "CEIS Portal Transparência", "https://portaldatransparencia.gov.br/sancoes/ceis?paginacaoSimples=true&termo=Pedro+Roberto+Miranda"],
+            ["18", "TCU inelegíveis", "https://contas.tcu.gov.br/ords/f?p=INABILITADO:5"]
+          ]
+        }
+      ]
+    }
+  ],
+  "proximos_passos": [
+    "Auto-consulta concluída — sem ação requerida. Reexecutar em 6 meses pra detectar novos registros.",
+    "Se em algum momento aparecer demanda judicial, abrir nova consulta com nº do processo direto no DataJud."
+  ],
+  "referencias": [
+    "Escavador — https://www.escavador.com",
+    "DataJud Wiki CNJ — https://datajud-wiki.cnj.jus.br/api-publica/",
+    "Portal Transparência — https://portaldatransparencia.gov.br/sancoes"
+  ],
+  "autor_rodape": "Background check gerado por /backgroundcheck · Singular · 05/05/2026"
+}

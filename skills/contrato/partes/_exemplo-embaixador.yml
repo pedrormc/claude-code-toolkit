@@ -1,0 +1,48 @@
+# Exemplo de variáveis pra contrato Embaixador (PF)
+# Modelo: Prestação de Serviço de Marketing — comissão por êxito + meta vesting + treinamento
+
+parte:
+  nome: "Isadora Cardoso de Sá Falcão"
+  tipo: "PF"
+  documento: "038.164.231-32"
+  rg: "27.2423-7 SSP-DF"
+  profissao: "Assessoria Jurídica e Analista de Imagem pessoal"
+  endereco: "Condomínio Jardim Botânico V"
+  bairro: "Setor Habitacional Jardim Botânico"
+  cidade_uf: "Brasília/DF"
+  cep: "71680-368"
+  apelido: "ISADORA"
+  email: ""
+
+# Objeto da prestação (default já vem do template — sobrescreva se quiser ajustar)
+# objeto: "liderança em projetos e serviços fornecidos pela CONTRATANTE..."
+
+# Treinamento (curso livre 40h)
+treinamento_horas: 40
+treinamento_valor: "R$ 25.500,00 (vinte e cinco mil e quinhentos reais)"
+
+# Pagamento
+percentual_comissao: "10% (dez por cento)"
+base_comissao: "de todas as retiradas feitas pelo sócio administrador do CNPJ da CONTRATANTE"
+meta_primeiro_contrato: "R$ 5.000,00 (cinco mil reais)"
+meta_recorrencia_total: "R$ 50.000,00 (cinquenta mil reais)"
+dia_pagamento: "5º (quinto) dia útil"
+
+# Bonificação
+bonificacao_renovacao: "R$ 100,00 (cem reais)"
+prazo_bonificacao: "3 (três) meses"
+
+# Penalidades — VALORES DEFAULT são os do contrato modelo, mas atenção:
+# A multa de R$ 3M tende a ser declarada abusiva (CC art. 412 — limite ao valor da obrigação principal).
+# Considere ajustar pra valor proporcional. A skill alerta isso após consultar o Nexo_Adv.
+multa_violacao: "R$ 3.000.000,00 (três milhões de reais)"
+prazo_multa: "3 (três) anos"
+multa_pos_extincao: "10 (dez) salários-mínimos vigentes à época"
+
+# Vigência e rescisão
+vigencia: "tempo indeterminado"
+aviso_rescisao: "30 (trinta) dias"
+
+# Assinatura
+data_assinatura: "27 de abril de 2026"
+cidade_assinatura: "Brasília"

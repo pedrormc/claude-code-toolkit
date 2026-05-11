@@ -1,6 +1,8 @@
 {
+  "_comment": "Template de MCP servers. NUNCA commitar com credenciais reais — usar placeholders ${VAR_NAME} e exportar via .env. Funciona tanto pra Claude Code quanto pra Codex CLI (formato compatível).",
   "mcpServers": {
     "obsidian": {
+      "_description": "MCPVault — leitura/escrita no vault Obsidian. Substituir PATH pelo caminho local do vault.",
       "command": "npx",
       "args": [
         "@bitbonsai/mcpvault@latest",
@@ -9,24 +11,40 @@
       "disabled": false
     },
     "TestSprite": {
+      "_description": "TestSprite MCP — geração de testes E2E. Pegar API key em https://testsprite.com",
       "command": "npx",
       "args": [
         "@testsprite/testsprite-mcp@latest"
       ],
       "env": {
-        "API_KEY": "YOUR_TESTSPRITE_API_KEY_HERE"
+        "API_KEY": "${TESTSPRITE_API_KEY}"
       },
       "disabled": false
     },
     "n8n": {
+      "_description": "n8n-mcp — controla workflows no self-hosted n8n. Instalar antes: npm i -g n8n-mcp",
       "command": "node",
       "args": [
         "PATH_TO_N8N_MCP/dist/mcp/index.js"
       ],
       "env": {
         "MCP_MODE": "stdio",
-        "N8N_API_URL": "YOUR_N8N_INSTANCE_URL",
-        "N8N_API_KEY": "YOUR_N8N_API_KEY_HERE"
+        "N8N_API_URL": "${N8N_API_URL}",
+        "N8N_API_KEY": "${N8N_API_KEY}"
+      },
+      "disabled": false
+    },
+    "serpapi": {
+      "_description": "SerpAPI MCP — busca Google estruturada. URL contém token de auth, gerar nova em https://serpapi.com/dashboard",
+      "url": "${SERPAPI_MCP_URL}"
+    },
+    "google-drive": {
+      "_description": "Google Drive MCP — CRUD em Docs/Sheets/Slides + Drive. Requer setup OAuth (ver SETUP_PROMPT.md).",
+      "command": "node",
+      "args": ["PATH_TO_GOOGLE_DRIVE_MCP/dist/index.js"],
+      "env": {
+        "GOOGLE_DRIVE_OAUTH_CREDENTIALS": "${HOME}/.claude/secrets/gcp-oauth.keys.json",
+        "GOOGLE_DRIVE_MCP_TOKEN_PATH": "${HOME}/.claude/secrets/gcp-oauth.token.json"
       },
       "disabled": false
     }

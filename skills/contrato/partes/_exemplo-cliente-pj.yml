@@ -1,0 +1,35 @@
+# Exemplo de variáveis pra contrato com Pessoa Jurídica
+# Use pra: nda-pj, mou, prestacao-servicos
+
+parte:
+  nome: "ACME TECNOLOGIA LTDA"
+  tipo: "PJ"
+  documento: "12.345.678/0001-90"
+  representante: "João Pedro Oliveira"
+  cargo: "Sócio-Diretor"
+  cpf_representante: "111.222.333-44"
+  rg: "9999999 SSP/SP"
+  endereco: "Av. Paulista, 1000, 10º andar, Conj. 101"
+  bairro: "Bela Vista"
+  cidade_uf: "São Paulo/SP"
+  cep: "01310-100"
+  apelido: "ACME"
+  email: "contato@acme.com.br"
+
+# Para NDA-PJ:
+contexto: "tratativas de parceria estratégica"
+prazo_vigencia: "1 (um) ano"
+prazo_pos_termino: "5 (cinco) anos"
+valor_multa: "R$ 100.000,00 (cem mil reais)"
+
+# Para Prestação de Serviços:
+objeto: "estruturação e implantação de operação comercial"
+prazo_meses: 12
+prazo_meses_extenso: "doze"
+investimento_inicial: "R$ 42.000,00 (quarenta e dois mil reais)"
+percentual_variavel: "1% (um por cento)"
+forma_pagamento: "O investimento inicial poderá ser pago à vista via PIX ou parcelado em 12 (doze) prestações no cartão de crédito."
+
+# Comum:
+data_assinatura: "26 de abril de 2026"
+cidade_assinatura: "Brasília"

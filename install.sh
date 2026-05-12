@@ -330,6 +330,8 @@ install_plugin "everything-claude-code" "everything-claude-code"
 install_plugin "superpowers" "superpowers-marketplace"
 install_plugin "ralph-skills" "ralph-marketplace"
 install_plugin "ui-ux-pro-max" "ui-ux-pro-max-skill"
+install_plugin "example-skills" "anthropic-agent-skills"
+install_plugin "vercel" "claude-plugins-official"
 
 # ── Install n8n-mcp (optional) ──
 
@@ -386,8 +388,15 @@ done
 
 check_exists "$CLAUDE_DIR/rules/parallel-agents.md" "rule: parallel-agents"
 
-# Skills
-for skill in hubspot-mcp-expert n8n-code-javascript n8n-code-python n8n-expression-syntax n8n-mcp-tools-expert n8n-node-configuration n8n-validation-expert n8n-workflow-patterns; do
+# Skills custom — 19 skills do Pedro
+for skill in \
+  ata documento slide \
+  backgroundcheck contrato \
+  mp4 obsidian pop prospect tese-investimento whatsapp-evolution \
+  hubspot-mcp-expert \
+  n8n-code-javascript n8n-code-python n8n-expression-syntax \
+  n8n-mcp-tools-expert n8n-node-configuration n8n-validation-expert \
+  n8n-workflow-patterns; do
   check_exists "$CLAUDE_DIR/skills/$skill/SKILL.md" "skill: $skill"
 done
 
@@ -417,8 +426,22 @@ mkdir -p "$CLAUDE_DIR/hooks"
 if [[ -d "$SCRIPT_DIR/hooks" ]]; then
   cp "$SCRIPT_DIR/hooks/"*.sh "$CLAUDE_DIR/hooks/"
   chmod +x "$CLAUDE_DIR/hooks/"*.sh
-  log "4 Foundation hooks instalados"
+  HOOK_COUNT=$(ls "$CLAUDE_DIR/hooks/"*.sh 2>/dev/null | wc -l)
+  log "$HOOK_COUNT hooks instalados"
 fi
+
+# Copy triforce config (3-tabs priority + per-env personas)
+if [[ -d "$SCRIPT_DIR/triforce" ]]; then
+  mkdir -p "$CLAUDE_DIR/triforce"
+  cp "$SCRIPT_DIR/triforce/"*.md "$CLAUDE_DIR/triforce/" 2>/dev/null || true
+  log "triforce/ instalado (3-abas-master config)"
+fi
+
+# Copy ALL scripts (not just memory-* and foundation-*)
+info "Copiando todos os scripts (whatsapp, brainstorm, obsidian-session, ralph...)..."
+cp "$SCRIPT_DIR/scripts/"*.js "$CLAUDE_DIR/scripts/" 2>/dev/null || true
+cp "$SCRIPT_DIR/scripts/"*.ps1 "$CLAUDE_DIR/scripts/" 2>/dev/null || true
+chmod +x "$CLAUDE_DIR/scripts/"*.js 2>/dev/null || true
 
 # Copy Foundation scripts (memory-* and foundation-*)
 mkdir -p "$CLAUDE_DIR/scripts"
@@ -476,7 +499,7 @@ printf "  ${CYAN}Rules:${NC}          $RULE_COUNT\n"
 printf "  ${CYAN}Skills:${NC}         $SKILL_COUNT\n"
 printf "  ${CYAN}Plugins:${NC}        $PLUGIN_COUNT\n"
 printf "  ${CYAN}Scripts:${NC}        $SCRIPT_COUNT\n"
-printf "  ${CYAN}Hooks:${NC}          4 (session-start, session-end, post-edit, save-session-mirror)\n"
+printf "  ${CYAN}Hooks:${NC}          ${HOOK_COUNT:-5} (session-start, session-end, post-edit, save-session-mirror, obsidian-auto-save)\n"
 printf "  ${CYAN}Templates:${NC}      $TEMPLATE_COUNT\n"
 printf "  ${CYAN}Scheduled:${NC}      $TASK_COUNT\n"
 printf "  ${CYAN}Plataforma:${NC}     $OS\n"

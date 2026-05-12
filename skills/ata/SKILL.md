@@ -34,19 +34,19 @@ Invoque quando o usuário:
 ├── build.py              (gerador .docx — não editar sem testar)
 ├── example-content.json  (exemplo de JSON válido — referência de estrutura)
 ├── assets/
-│   ├── template.docx         (template oficial Singular — fonte Urbanist, header/footer)
 │   ├── logo-singular.png     (logo oficial Singular — fundo claro, embutida no topo)
 │   ├── logo-singular.svg     (versão vetorizada — referência)
 │   └── isotipo-singular.png  (isotipo — variação compacta, reserva)
 └── references/
-    └── accents.md        (referência de acentuação PT-BR — norma culta)
+    └── accents.md        (ponteiro para ~/.claude/skills/pop/references/accents.md)
 ```
 
-Template `.docx` em `assets/template.docx` (fonte Urbanist, margens e seção da
-identidade Singular). A logo vetorizada é inserida programaticamente pelo
-`build.py` no topo de cada ata, usando `assets/logo-singular.png`.
+Template .docx é compartilhado com `/pop` em `~/.claude/skills/pop/template.docx`
+(mesma seção/margens/fonte Urbanist). A logo da Singular vetorizada é inserida
+programaticamente pelo `build.py` no topo de cada ata, usando
+`assets/logo-singular.png` (convertida do SVG oficial da marca).
 
-## Fluxo de execução (6 passos — NÃO pule etapas)
+## Fluxo de execução (7 passos — NÃO pule etapas)
 
 ### Passo 1 — Analisar o texto de entrada
 
@@ -74,7 +74,7 @@ marque `"A definir"` e sinalize ao usuário na entrega.
 ### Passo 2 — Aplicar norma culta do português
 
 Antes de gravar o JSON, revise toda a redação corrigindo acentuação conforme
-`references/accents.md`.
+`~/.claude/skills/pop/references/accents.md`.
 
 **Palavras frequentes em ata que SEMPRE conferir:**
 reunião, decisão, discussão, ação, encaminhamento, próxima, pauta, presentes,
@@ -172,12 +172,23 @@ Após gerar, confirme:
 - [ ] Nenhum erro na stdout (exceto o print "Gerado: ...")
 - [ ] JSON não tem campos "A definir" desnecessários — se houver, sinalize
 
-### Passo 6 — Entregar ao usuário
+### Passo 6 — Upload Drive (subpasta Atas)
 
-Resposta curta em 3 linhas:
+Sempre subir o `.docx` final pra subpasta **Atas** da Zel via MCP `google-drive`:
+
+- Tool: `mcp__google-drive__uploadFile`
+- Args: `localPath` (path absoluto do .docx gerado), `parentFolderId: "1pOFIGKACkLURrBInjqbrqRbyVULhtpBW"` (subpasta Atas), `convertToGoogleFormat: false`
+- Guardar o `link` retornado pra entregar ao usuário no passo 7.
+
+Não subir o `content.json` intermediário — só o .docx final.
+
+### Passo 7 — Entregar ao usuário
+
+Resposta curta em 4 linhas:
 1. Caminho absoluto do `.docx` gerado
-2. Resumo: assunto, data, nº de tópicos, nº de encaminhamentos, campos "A definir"
-3. Sugestão de próximo passo (abrir no Word, enviar aos participantes, converter para PDF)
+2. **Link Drive (subpasta Atas)** — vem do response do `uploadFile`
+3. Resumo: assunto, data, nº de tópicos, nº de encaminhamentos, campos "A definir"
+4. Sugestão de próximo passo (abrir no Word, enviar aos participantes, converter para PDF)
 
 ## Regras críticas
 
@@ -205,5 +216,5 @@ Resposta curta em 3 linhas:
 ## Referência
 
 - Exemplo completo: `example-content.json`
-- Acentuação: `references/accents.md`
-- Template oficial: `assets/template.docx` (imutável — use via `build.py`)
+- Acentuação: `~/.claude/skills/pop/references/accents.md` (compartilhado)
+- Template oficial: `~/.claude/skills/pop/template.docx` (imutável — use via `build.py`)

@@ -365,8 +365,8 @@ def main():
 
     content_path = Path(sys.argv[1])
     output_path = Path(sys.argv[2])
-    # Template oficial Singular (fonte Urbanist, header/footer com logo)
-    template_path = Path(__file__).parent / "assets" / "template.docx"
+    # Reutiliza o template da skill /pop (identidade visual Singular compartilhada)
+    template_path = Path(__file__).parent.parent / "pop" / "template.docx"
     if not template_path.exists():
         print(f"Erro: template não encontrado em {template_path}")
         sys.exit(1)

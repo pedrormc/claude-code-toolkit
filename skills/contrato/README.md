@@ -65,7 +65,7 @@ Digite no Claude Code:
 ```
 ou:
 ```
-faz um NDA com a Maria Silva, CPF 000, ela é consultora autônoma...
+faz um NDA com a Maria Silva, CPF 123, ela é consultora autônoma...
 ```
 
 A skill:

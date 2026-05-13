@@ -89,7 +89,9 @@ info "Criando diretorios..."
 dirs=(
   "$CLAUDE_DIR/agents"
   "$CLAUDE_DIR/rules/common"
+  "$CLAUDE_DIR/rules/core"
   "$CLAUDE_DIR/rules/typescript"
+  "$CLAUDE_DIR/patches"
   "$CLAUDE_DIR/scripts/ralph"
   "$CLAUDE_DIR/skills/learned"
   "$CLAUDE_DIR/plugins"
@@ -143,6 +145,12 @@ for f in "$SCRIPT_DIR/rules/common/"*.md; do
   [[ -f "$f" ]] || continue
   name=$(basename "$f")
   copy_verified "$f" "$CLAUDE_DIR/rules/common/$name" "rules/common/$name" && RULE_COUNT=$((RULE_COUNT + 1))
+done
+
+for f in "$SCRIPT_DIR/rules/core/"*.md; do
+  [[ -f "$f" ]] || continue
+  name=$(basename "$f")
+  copy_verified "$f" "$CLAUDE_DIR/rules/core/$name" "rules/core/$name" && RULE_COUNT=$((RULE_COUNT + 1))
 done
 
 for f in "$SCRIPT_DIR/rules/typescript/"*.md; do
@@ -388,6 +396,19 @@ done
 
 check_exists "$CLAUDE_DIR/rules/parallel-agents.md" "rule: parallel-agents"
 
+# Rules - core (rebuild 2026-05-12)
+for rule in identity task-orchestration; do
+  check_exists "$CLAUDE_DIR/rules/core/$rule.md" "rule: core/$rule"
+done
+
+# Audit scripts (rebuild 2026-05-12)
+for s in audit-hooks audit-sessions sync-triforce; do
+  check_exists "$CLAUDE_DIR/scripts/$s.sh" "script: $s"
+done
+
+# verify-ecc-patches hook (rebuild 2026-05-12)
+check_exists "$CLAUDE_DIR/hooks/verify-ecc-patches.sh" "hook: verify-ecc-patches"
+
 # Skills custom — 19 skills do Pedro
 for skill in \
   ata documento slide \
@@ -450,6 +471,21 @@ cp "$SCRIPT_DIR/scripts/foundation-"*.sh "$CLAUDE_DIR/scripts/" 2>/dev/null || t
 cp "$SCRIPT_DIR/scripts/test-i4-fake-data.sh" "$CLAUDE_DIR/scripts/" 2>/dev/null || true
 chmod +x "$CLAUDE_DIR/scripts/memory-"*.sh "$CLAUDE_DIR/scripts/foundation-"*.sh "$CLAUDE_DIR/scripts/test-i4-fake-data.sh" 2>/dev/null || true
 log "Foundation scripts instalados (memory-*.sh, foundation-*.sh, test-i4)"
+
+# ── Rebuild 2026-05-12: audit + observability scripts ──
+cp "$SCRIPT_DIR/scripts/audit-hooks.sh" "$CLAUDE_DIR/scripts/" 2>/dev/null || true
+cp "$SCRIPT_DIR/scripts/audit-sessions.sh" "$CLAUDE_DIR/scripts/" 2>/dev/null || true
+cp "$SCRIPT_DIR/scripts/sync-triforce.sh" "$CLAUDE_DIR/scripts/" 2>/dev/null || true
+chmod +x "$CLAUDE_DIR/scripts/audit-hooks.sh" "$CLAUDE_DIR/scripts/audit-sessions.sh" "$CLAUDE_DIR/scripts/sync-triforce.sh" 2>/dev/null || true
+log "Audit & observability scripts instalados (audit-hooks, audit-sessions, sync-triforce)"
+
+# Copy patches/ (ECC session-start filter, etc.)
+if [[ -d "$SCRIPT_DIR/patches" ]]; then
+  mkdir -p "$CLAUDE_DIR/patches"
+  cp "$SCRIPT_DIR/patches/"*.md "$CLAUDE_DIR/patches/" 2>/dev/null || true
+  PATCH_COUNT=$(ls "$CLAUDE_DIR/patches/"*.md 2>/dev/null | wc -l)
+  log "$PATCH_COUNT patches doc(s) instalados em patches/"
+fi
 
 # Copy auto-promote config
 mkdir -p "$CLAUDE_DIR/config"

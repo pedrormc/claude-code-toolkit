@@ -16,7 +16,10 @@ LATEST=$(ls -t "$SOURCE_DIR"/*-session.tmp 2>/dev/null | head -1 || true)
 
 if [ -n "$LATEST" ] && [ -f "$LATEST" ]; then
   DEST="$VAULT/$(basename "$LATEST" .tmp).md"
-  cp "$LATEST" "$DEST"
+  # Fix 2026-05-12 [DESKTOP]: idempotência — só copia se source é mais novo que dest.
+  if [ ! -f "$DEST" ] || [ "$LATEST" -nt "$DEST" ]; then
+    cp "$LATEST" "$DEST"
+  fi
 fi
 
 exit 0

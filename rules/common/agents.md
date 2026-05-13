@@ -1,49 +1,63 @@
-# Agent Orchestration
+# Agents — Sources of Truth
 
-## Available Agents
+## Agentes Customizados Locais (`~/.claude/agents/`)
 
-Located in `~/.claude/agents/`:
+5 agentes definidos pelo Pedro, especializados para o stack Singular:
 
-| Agent | Purpose | When to Use |
-|-------|---------|-------------|
-| planner | Implementation planning | Complex features, refactoring |
-| architect | System design | Architectural decisions |
-| tdd-guide | Test-driven development | New features, bug fixes |
-| code-reviewer (superpowers) | Code review | After writing code — use `superpowers:code-reviewer` (plan alignment + quality + architecture) |
-| security-reviewer | Security analysis | Before commits |
-| build-error-resolver | Fix build errors | When build fails |
-| e2e-runner | E2E testing | Critical user flows |
-| refactor-cleaner | Dead code cleanup | Code maintenance |
-| doc-updater | Documentation | Updating docs |
+| Agent | Propósito | Usar quando |
+|-------|-----------|-------------|
+| `frontend-specialist` | React 19, TS strict, Tailwind v4, acessibilidade | Frontend tasks |
+| `api-specialist` | Express REST API, middleware, PostgreSQL, integração backend | Backend tasks |
+| `devops-agent` | Vercel deploy, GitHub Actions, Docker, env management | DevOps/infra |
+| `research-agent` | Avaliação de libs, prior art, documentação, comparação | Pesquisa tech |
+| `prompt-engineer` | Otimizar CLAUDE.md, agents, skills, rules, hooks | Meta-tarefas Claude Code |
 
-## Immediate Agent Usage
+**SoT canônica:** os arquivos em `~/.claude/agents/*.md` são a fonte de verdade. Qualquer divergência entre rule e disco → arquivo no disco vence.
 
-No user prompt needed:
-1. Complex feature requests - Use **planner** agent
-2. Code just written/modified - Use **code-reviewer** agent
-3. Bug fix or new feature - Use **tdd-guide** agent
-4. Architectural decision - Use **architect** agent
+## Agentes Vindos de Plugins
 
-## Parallel Task Execution
+### everything-claude-code plugin
 
-ALWAYS use parallel Task execution for independent operations:
+Provê agentes que NÃO precisam estar em `~/.claude/agents/`. Invocação via Skill tool (`Skill(everything-claude-code:agent-harness-construction)`) ou agent system do plugin:
 
-```markdown
-# GOOD: Parallel execution
-Launch 3 agents in parallel:
-1. Agent 1: Security analysis of auth module
-2. Agent 2: Performance review of cache system
-3. Agent 3: Type checking of utilities
+- `planner` — planejamento de implementação
+- `code-reviewer` — review automatizada
+- `tdd-guide` — TDD enforcement
+- `security-reviewer` — análise de segurança
+- `build-error-resolver` — fix de build errors
+- `e2e-runner` — testes E2E
+- `refactor-cleaner` — dead code cleanup
+- `doc-updater` — atualização de docs
+- `architect` — design de sistemas
 
-# BAD: Sequential when unnecessary
-First agent 1, then agent 2, then agent 3
-```
+### superpowers plugin
 
-## Multi-Perspective Analysis
+- `superpowers:code-reviewer` — code review com plan alignment + quality + architecture (use via `Agent` tool)
 
-For complex problems, use split role sub-agents:
-- Factual reviewer
-- Senior engineer
-- Security expert
-- Consistency reviewer
-- Redundancy checker
+## Quando Usar Qual
+
+Cheatsheet centralizada em `~/.claude/rules/common/namespace-cheatsheet.md`. Resumo:
+
+| Tarefa | Agent preferido |
+|--------|-----------------|
+| Frontend React/TS | `frontend-specialist` (local) |
+| Backend Express/PG | `api-specialist` (local) |
+| Vercel deploy | `devops-agent` (local) |
+| Pesquisar lib | `research-agent` (local) |
+| Code review pré-merge | `superpowers:code-reviewer` |
+| TDD enforcement | ECC plugin `tdd-guide` |
+| Security audit | gstack `cso` skill (mais completo que agent) |
+| Build error | ECC plugin `build-error-resolver` |
+
+## Parallel Worktrees
+
+Agentes que **escrevem código** em paralelo: passar `isolation: "worktree"` no `Agent` tool. Detalhes em `~/.claude/rules/parallel-agents.md`.
+
+## Imediato (não precisa user prompt)
+
+- Feature complexa → `planner` (ECC) ou `superpowers:planning`
+- Código recém-escrito → `superpowers:code-reviewer` ou ECC `code-reviewer`
+- Bug fix ou nova feature → `tdd-guide` (ECC) com TDD
+- Decisão arquitetural → `architect` (ECC)
+
+*[Atualizado por: DESKTOP — 2026-05-12 — rebuild Phase 6: clarificação SoT local vs plugin agents]*

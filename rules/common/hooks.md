@@ -11,8 +11,9 @@
 Use with caution:
 - Enable for trusted, well-defined plans
 - Disable for exploratory work
-- Never use dangerously-skip-permissions flag
-- Configure `allowedTools` in `~/.claude.json` instead
+- Never bypass com `--dangerously-skip-permissions`
+- Configure `permissions.allow` em `~/.claude/settings.local.json` (project-scoped) ou `settings.json` (global)
+- Estado atual: `permissions.defaultMode: "auto"` + `skipAutoPermissionPrompt: true` (Desktop persona Master)
 
 ## TodoWrite Best Practices
 

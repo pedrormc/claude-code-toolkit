@@ -21,6 +21,34 @@ bash install.sh
 
 O script copia tudo para `~/.claude/` e instala os plugins automaticamente.
 
+## Audit & Observability (adicionado em 2026-05-12)
+
+Apos o rebuild de 2026-05-12 ([spec](docs/specs/2026-05-12-environment-rebuild-design.md) | [ARCHITECTURE](docs/ARCHITECTURE.md)), o toolkit inclui scripts de auditoria continua:
+
+```bash
+# Health check: 13 smoke-tests dos hooks criticos + settings.json
+~/.claude/scripts/audit-hooks.sh
+
+# Detecta sessions misroteadas (scheduled-task no flat pool, etc.)
+~/.claude/scripts/audit-sessions.sh [--fix]
+
+# Propaga config Desktop -> VPS via SSH
+~/.claude/scripts/sync-triforce.sh status
+~/.claude/scripts/sync-triforce.sh push [--dry-run]
+```
+
+**`verify-ecc-patches.sh`** roda automaticamente em todo SessionStart e re-aplica patches criticos do plugin ECC se updates os sobrescreverem (ver `patches/ecc-session-start-filter.md`).
+
+**Quando rodar audit-hooks.sh:**
+- Apos qualquer Edit em `~/.claude/settings.json` ou `~/.claude/hooks/`
+- Apos `claude --update` (que pode sobrescrever patches)
+- Mensalmente como rotina
+- Antes de `sync-triforce.sh push`
+
+**Rules Soberanas** (em `rules/core/`):
+1. **3 Abas Master** (`identity.md`) — categorizar todo input em plano/singular/skip
+2. **Task Orchestration** (`task-orchestration.md`) — toda task aciona melhor combinação agents+skills
+
 ---
 
 ## Raio-X Completo
@@ -29,13 +57,14 @@ O script copia tudo para `~/.claude/` e instala os plugins automaticamente.
 
 | Item | Valor |
 |------|-------|
-| Claude Code | v2.1.83 |
-| Modelo padrao | Opus 4.6 (1M context) |
-| Effort level | `high` |
-| Autocompact | 50% |
+| Claude Code | v2.1.140 |
+| Modelo padrao | Opus 4.7 (1M context) |
+| Effort level | `xhigh` |
+| Autocompact | 75% (era 50%; ver [rebuild 2026-05-12](docs/specs/2026-05-12-environment-rebuild-design.md)) |
 | Agent Teams | habilitado |
 | ECC Hook Profile | `strict` |
 | Auto updates | `latest` channel |
+| Skill overrides | 51 entries (silencia stacks fora do dominio, ~5K tokens economizados/turn) |
 
 ---
 

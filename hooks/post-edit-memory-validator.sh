@@ -6,7 +6,10 @@
 set -uo pipefail
 
 HOOK_INPUT=$(cat)
-FILE_PATH=$(echo "$HOOK_INPUT" | jq -r '.tool_input.file_path // ""' 2>/dev/null || echo "")
+# Fix 2026-05-12 [DESKTOP]: jq → node fallback se jq não estiver no PATH do hook env.
+FILE_PATH=$(echo "$HOOK_INPUT" | jq -r '.tool_input.file_path // ""' 2>/dev/null \
+  || echo "$HOOK_INPUT" | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{try{const j=JSON.parse(d);console.log(j.tool_input?.file_path||"")}catch(e){console.log("")}})' 2>/dev/null \
+  || echo "")
 
 # Filter: only act on memory files (portable match: Unix / or Windows \)
 case "$FILE_PATH" in

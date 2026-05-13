@@ -17,13 +17,27 @@ TIMESTAMP=$(date +"%Y-%m-%d %H:%M")
 ENV_TAG="${CLAUDE_ENV_TAG:-DESKTOP}"
 CWD_BASE=$(basename "$(pwd)")
 
-# Append new session entry under "## Últimas 3 sessões" section
+# Prepend new session entry under "## Últimas 3 sessões" section, TRUNCATE to keep=3.
+# Fix 2026-05-12 [DESKTOP]: awk antigo nunca truncava — active.md inflava sem limite.
 LINE="- $TIMESTAMP $ENV_TAG: $CWD_BASE"
+KEEP=3
 TMP=$(mktemp)
-awk -v line="$LINE" '
+awk -v line="$LINE" -v keep="$KEEP" '
+  BEGIN { in_section = 0; count = 0 }
   /^## Últimas 3 sessões/ {
     print
     print line
+    in_section = 1
+    count = 1
+    next
+  }
+  in_section && /^- / {
+    if (count < keep) { print; count++ }
+    next
+  }
+  in_section && (/^## / || /^$/) {
+    in_section = 0
+    print
     next
   }
   { print }

@@ -6,11 +6,11 @@
 >
 > Cada skill é uma subpasta com `SKILL.md` (instruções + protocolo) e arquivos auxiliares (scripts Python/JS, templates `.md`/`.docx`, exemplos JSON, references).
 >
-> **Total: 19 skills custom + Gstack (36+ via clone do `garrytan/gstack`).**
+> **Total: 21 skills custom + Gstack (36+ via clone do `garrytan/gstack`).**
 
 ---
 
-## 1) Documentos Singular (.docx com identidade visual)
+## 1) Documentos Singular (.docx / .pdf)
 
 ### `/ata`
 **Folder:** [`skills/ata/`](../skills/ata)
@@ -39,6 +39,20 @@ Cria **apresentação Singular** (capa, resumo, detalhes, comparativo, recomenda
 
 **Como invocar:** "monta uma apresentação sobre X"
 **Deps:** python-pptx (opcional).
+
+### `/pdf`
+**Folder:** [`skills/pdf/`](../skills/pdf)
+Transforma texto livre em **documento PDF final** com identidade visual Singular (logo Singular no topo de cada pagina, fonte Urbanist, paleta preto/branco/cinza). Compartilha o mesmo schema da skill `/documento`, mas produz PDF imutavel. Ideal pra versao final apresentavel a cliente, socio ou fornecedor.
+
+**Como invocar:** "/pdf" / "gera um PDF" / "monta um PDF pra cliente"
+**Deps:** reportlab, Pillow.
+
+### `/reuniao`
+**Folder:** [`skills/reuniao/`](../skills/reuniao)
+**Suite generativa de documentos pos-reuniao.** Orquestrador que reusa `/ata`, `/documento` e `/pop` para gerar a suite completa de documentos derivados de uma reuniao, agrupada em pasta Drive dedicada `Zel/reuniao <slug>/`. Analisa o texto da reuniao, consulta catalogo de 17 tipos canonicos, sugere quais documentos fazem sentido, e gera apenas os que o Pedro aprovar. Inclui `clientes.json` com mapeamento de clientes, `montadores.py` e `reuniao.py` como orquestrador, e suite de testes (regression + smoke).
+
+**Como invocar:** "/reuniao <transcricao>" / "processa essa reuniao" / "monta a pasta dessa reuniao"
+**Deps:** reusa build.py de /ata, /documento, /pop. Sem deps extras.
 
 ---
 
@@ -190,5 +204,5 @@ Não está duplicado neste toolkit pra evitar fork desnecessário — sempre pux
 
 ---
 
-*[Catálogo atualizado: 2026-05-11]*
+*[Catálogo atualizado: 2026-05-25]*
 *[Toolkit: github.com/pedrormc/claude-code-toolkit]*

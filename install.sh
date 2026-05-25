@@ -93,6 +93,7 @@ dirs=(
   "$CLAUDE_DIR/rules/typescript"
   "$CLAUDE_DIR/patches"
   "$CLAUDE_DIR/scripts/ralph"
+  "$CLAUDE_DIR/scripts/memory"
   "$CLAUDE_DIR/skills/learned"
   "$CLAUDE_DIR/plugins"
   "$CLAUDE_DIR/teams/default/inboxes"
@@ -187,7 +188,7 @@ log "$SKILL_COUNT skills instalados"
 info "Instalando scripts..."
 SCRIPT_COUNT=0
 
-for f in claude-notify.js toast-notify.js; do
+for f in claude-notify.js; do
   if [[ -f "$SCRIPT_DIR/scripts/$f" ]]; then
     copy_verified "$SCRIPT_DIR/scripts/$f" "$CLAUDE_DIR/scripts/$f" "scripts/$f" && SCRIPT_COUNT=$((SCRIPT_COUNT + 1))
   fi
@@ -197,6 +198,15 @@ if [[ -d "$SCRIPT_DIR/scripts/ralph" ]]; then
   for f in "$SCRIPT_DIR/scripts/ralph/"*; do
     [[ -f "$f" ]] || continue
     copy_verified "$f" "$CLAUDE_DIR/scripts/ralph/$(basename "$f")" "scripts/ralph/$(basename "$f")" && SCRIPT_COUNT=$((SCRIPT_COUNT + 1))
+  done
+fi
+
+# Memory scripts (Singular_Memory / Backoffice Pro Max)
+if [[ -d "$SCRIPT_DIR/scripts/memory" ]]; then
+  mkdir -p "$CLAUDE_DIR/scripts/memory"
+  for f in "$SCRIPT_DIR/scripts/memory/"*.py; do
+    [[ -f "$f" ]] || continue
+    copy_verified "$f" "$CLAUDE_DIR/scripts/memory/$(basename "$f")" "scripts/memory/$(basename "$f")" && SCRIPT_COUNT=$((SCRIPT_COUNT + 1))
   done
 fi
 
@@ -409,9 +419,9 @@ done
 # verify-ecc-patches hook (rebuild 2026-05-12)
 check_exists "$CLAUDE_DIR/hooks/verify-ecc-patches.sh" "hook: verify-ecc-patches"
 
-# Skills custom — 19 skills do Pedro
+# Skills custom — 21 skills do Pedro
 for skill in \
-  ata documento slide \
+  ata documento pdf reuniao slide \
   backgroundcheck contrato \
   mp4 obsidian pop prospect tese-investimento whatsapp-evolution \
   hubspot-mcp-expert \
@@ -424,6 +434,7 @@ done
 # Directories
 check_exists "$CLAUDE_DIR/skills/learned" "dir: skills/learned"
 check_exists "$CLAUDE_DIR/templates" "dir: templates"
+check_exists "$CLAUDE_DIR/scripts/memory" "dir: scripts/memory"
 
 if [[ "$VALID" == true ]]; then
   log "Validacao completa — todos os arquivos presentes"
@@ -468,9 +479,8 @@ chmod +x "$CLAUDE_DIR/scripts/"*.js 2>/dev/null || true
 mkdir -p "$CLAUDE_DIR/scripts"
 cp "$SCRIPT_DIR/scripts/memory-"*.sh "$CLAUDE_DIR/scripts/" 2>/dev/null || true
 cp "$SCRIPT_DIR/scripts/foundation-"*.sh "$CLAUDE_DIR/scripts/" 2>/dev/null || true
-cp "$SCRIPT_DIR/scripts/test-i4-fake-data.sh" "$CLAUDE_DIR/scripts/" 2>/dev/null || true
-chmod +x "$CLAUDE_DIR/scripts/memory-"*.sh "$CLAUDE_DIR/scripts/foundation-"*.sh "$CLAUDE_DIR/scripts/test-i4-fake-data.sh" 2>/dev/null || true
-log "Foundation scripts instalados (memory-*.sh, foundation-*.sh, test-i4)"
+chmod +x "$CLAUDE_DIR/scripts/memory-"*.sh "$CLAUDE_DIR/scripts/foundation-"*.sh 2>/dev/null || true
+log "Foundation scripts instalados (memory-*.sh, foundation-*.sh)"
 
 # ── Rebuild 2026-05-12: audit + observability scripts ──
 cp "$SCRIPT_DIR/scripts/audit-hooks.sh" "$CLAUDE_DIR/scripts/" 2>/dev/null || true

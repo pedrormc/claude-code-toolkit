@@ -1,0 +1,77 @@
+{
+  "titulo_curto": "RELATÓRIO",
+  "titulo": "Relatório de Cliente Oculto — Loja Exemplo",
+  "subtitulo": "Diagnóstico de cardápio, atendimento, operação e pós-venda",
+  "empresa": "Singular",
+  "autor": "Singular Group",
+  "destinatario": "Equipe gestora da loja",
+  "data": "15 de maio de 2026",
+  "tldr": "Visita identificou três frentes críticas: cardápio mal dimensionado, atendimento dependente de uma única pessoa e pós-venda inexistente. Loja tem ativo humano excepcional e potencial claro — falta padronização e disciplina executiva para destravar o resultado.",
+  "secoes": [
+    {
+      "titulo": "1. O que é cliente oculto",
+      "paragrafos": [
+        "Cliente oculto, ou mystery shopper, é técnica de pesquisa de mercado em que um avaliador treinado se passa por consumidor real para mensurar, de forma estruturada e imparcial, a experiência entregue por um estabelecimento.",
+        "A técnica é reconhecida internacionalmente, enquadrada na ISO 20252:2019 e nas diretrizes da MSPA — Mystery Shopping Professionals Association."
+      ]
+    },
+    {
+      "titulo": "2. Premissas ideais",
+      "paragrafos": ["Um programa de cliente oculto sério segue regras claras:"],
+      "listas": [
+        {
+          "tipo": "bullet",
+          "itens": [
+            "Anonimato absoluto durante a visita",
+            "Padronização do roteiro (checklist uniforme)",
+            "Perfil aderente ao público-alvo da loja",
+            "Repetibilidade — 2 a 4 visitas por mês",
+            "Controle de viés via briefing pré-visita"
+          ]
+        }
+      ],
+      "destaque": "Sem essas premissas, o cliente oculto deixa de ser pesquisa e vira opinião."
+    },
+    {
+      "titulo": "3. Achados — atendimento",
+      "paragrafos": [
+        "Avaliação por eixos cobrindo abordagem, condução do pedido e fluxo operacional."
+      ],
+      "tabelas": [
+        {
+          "colunas": ["Eixo", "Observação", "Severidade"],
+          "linhas": [
+            ["Abordagem", "Cordial mas sem padrão de saudação", "Média"],
+            ["Cardápio", "Atendente perguntou pedido 4 vezes", "Alta"],
+            ["Sugestão ativa", "Não houve upsell", "Média"]
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "4. Plano de ação",
+      "tabelas": [
+        {
+          "colunas": ["Frente", "Ação", "Prazo"],
+          "linhas": [
+            ["Atendimento", "Roteiro fixo de pedido (cocção + opções)", "15 dias"],
+            ["Treinamento", "Padronizar onboarding com referência técnica", "30 dias"],
+            ["Pós-venda", "Automatizar WhatsApp com confirmação e agradecimento", "30 dias"]
+          ]
+        }
+      ]
+    }
+  ],
+  "conclusao": "A loja não precisa mudar de tese de negócio — precisa de disciplina operacional. Resolvidos os itens críticos, sai do modo dependência e entra em modo escalável.",
+  "proximos_passos": [
+    "Apresentar relatório à gestão da loja",
+    "Priorizar ações imediatas: refrigeração e pagamento",
+    "Agendar segunda visita em 30 dias para medir evolução"
+  ],
+  "referencias": [
+    "MSPA — Code of Professional Standards and Ethics",
+    "ISO 20252:2019 — Market, opinion and social research",
+    "SERVQUAL (Parasuraman, Zeithaml & Berry, 1988)"
+  ],
+  "autor_rodape": "Singular Group · Relatório de Cliente Oculto · 15/05/2026"
+}

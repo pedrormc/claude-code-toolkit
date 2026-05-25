@@ -1,8 +1,11 @@
 {
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75",
     "ECC_HOOK_PROFILE": "strict"
+  },
+  "permissions": {
+    "defaultMode": "auto"
   },
   "hooks": {
     "Notification": [
@@ -24,7 +27,8 @@
           {
             "type": "command",
             "command": "node \"$HOME/.claude/scripts/claude-notify.js\"",
-            "timeout": 10000
+            "timeout": 10000,
+            "async": true
           }
         ]
       },
@@ -33,7 +37,21 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/session-end-memory-writer.sh"
+            "command": "~/.claude/hooks/session-end-memory-writer.sh",
+            "timeout": 10000,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/obsidian-auto-save.sh",
+            "timeout": 15000
           }
         ]
       }
@@ -80,7 +98,7 @@
           {
             "type": "command",
             "command": "printf '\\033]0;Claude Code - Trabalhando...\\007' > /dev/tty 2>/dev/null || true",
-            "timeout": 2
+            "timeout": 2000
           }
         ]
       }
@@ -91,7 +109,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/session-start-memory-loader.sh"
+            "command": "~/.claude/hooks/verify-ecc-patches.sh",
+            "timeout": 3000,
+            "async": false
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/session-start-memory-loader.sh",
+            "timeout": 10000,
+            "async": true
           }
         ]
       },
@@ -100,7 +126,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "any-buddy apply --silent"
+            "command": "any-buddy apply --silent",
+            "async": true,
+            "timeout": 30000
           }
         ]
       }
@@ -135,7 +163,9 @@
     "everything-claude-code@everything-claude-code": true,
     "superpowers@superpowers-marketplace": true,
     "ralph-skills@ralph-marketplace": true,
-    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true,
+    "example-skills@anthropic-agent-skills": true,
+    "vercel@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "everything-claude-code": {
@@ -161,11 +191,75 @@
         "source": "github",
         "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
       }
+    },
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
     }
   },
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "autoUpdatesChannel": "latest",
-  "disabledPlugins": [
-    "ralph-skills@1.0.0"
-  ]
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "theme": "light",
+  "skipAutoPermissionPrompt": true,
+  "skillOverrides": {
+    "everything-claude-code:cpp-coding-standards": "off",
+    "everything-claude-code:cpp-testing": "off",
+    "everything-claude-code:perl-patterns": "off",
+    "everything-claude-code:perl-security": "off",
+    "everything-claude-code:perl-testing": "off",
+    "everything-claude-code:swift-concurrency-6-2": "off",
+    "everything-claude-code:swift-actor-persistence": "off",
+    "everything-claude-code:swift-protocol-di-testing": "off",
+    "everything-claude-code:swiftui-patterns": "off",
+    "everything-claude-code:foundation-models-on-device": "off",
+    "everything-claude-code:kotlin-coroutines-flows": "off",
+    "everything-claude-code:compose-multiplatform-patterns": "off",
+    "everything-claude-code:android-clean-architecture": "off",
+    "everything-claude-code:kotlin-reviewer": "off",
+    "everything-claude-code:golang-patterns": "off",
+    "everything-claude-code:golang-testing": "off",
+    "everything-claude-code:go-build": "off",
+    "everything-claude-code:go-review": "off",
+    "everything-claude-code:go-test": "off",
+    "everything-claude-code:go-build-resolver": "off",
+    "everything-claude-code:go-reviewer": "off",
+    "everything-claude-code:java-coding-standards": "off",
+    "everything-claude-code:jpa-patterns": "off",
+    "everything-claude-code:springboot-tdd": "off",
+    "everything-claude-code:springboot-verification": "off",
+    "everything-claude-code:springboot-security": "off",
+    "everything-claude-code:springboot-patterns": "off",
+    "everything-claude-code:gradle-build": "off",
+    "everything-claude-code:django-tdd": "off",
+    "everything-claude-code:django-verification": "off",
+    "everything-claude-code:django-security": "off",
+    "everything-claude-code:django-patterns": "off",
+    "everything-claude-code:python-testing": "user-invocable-only",
+    "everything-claude-code:python-patterns": "user-invocable-only",
+    "everything-claude-code:python-review": "user-invocable-only",
+    "everything-claude-code:python-reviewer": "user-invocable-only",
+    "everything-claude-code:clickhouse-io": "off",
+    "everything-claude-code:customs-trade-compliance": "off",
+    "everything-claude-code:energy-procurement": "off",
+    "everything-claude-code:carrier-relationship-management": "off",
+    "everything-claude-code:logistics-exception-management": "off",
+    "everything-claude-code:returns-reverse-logistics": "off",
+    "everything-claude-code:quality-nonconformance": "off",
+    "everything-claude-code:production-scheduling": "off",
+    "everything-claude-code:inventory-demand-planning": "off",
+    "everything-claude-code:visa-doc-translate": "off",
+    "everything-claude-code:videodb": "off",
+    "everything-claude-code:plankton-code-quality": "off",
+    "everything-claude-code:nutrient-document-processing": "off",
+    "everything-claude-code:investor-outreach": "off",
+    "everything-claude-code:investor-materials": "off"
+  },
+  "skillListingMaxDescChars": 200,
+  "disabledPlugins": []
 }

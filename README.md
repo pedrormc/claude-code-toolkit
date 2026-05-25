@@ -65,12 +65,13 @@ Apos o rebuild de 2026-05-12 ([spec](docs/specs/2026-05-12-environment-rebuild-d
 | ECC Hook Profile | `strict` |
 | Auto updates | `latest` channel |
 | Skill overrides | 51 entries (silencia stacks fora do dominio, ~5K tokens economizados/turn) |
+| Singular_Memory | Qdrant hybrid (dense+sparse) — recall/ingest automatico pra artefatos Singular |
 
 ---
 
-### Plugins (4) — Onde moram os 255 skills, 64 agents e 141 rules
+### Plugins (6) — Onde moram os 255 skills, 64 agents e 141 rules
 
-> **IMPORTANTE:** Os plugins sao a fonte de ~95% dos skills/agents. Sem eles, voce so tem os 5 agents e 8 skills customizados. O `install.sh` instala todos automaticamente, mas se precisar instalar manualmente, siga as instrucoes abaixo.
+> **IMPORTANTE:** Os plugins sao a fonte de ~95% dos skills/agents. Sem eles, voce so tem os 5 agents e 21 skills customizados. O `install.sh` instala todos automaticamente, mas se precisar instalar manualmente, siga as instrucoes abaixo.
 
 | Plugin | Marketplace ID | GitHub Repo | O que traz |
 |--------|---------------|-------------|------------|
@@ -78,6 +79,8 @@ Apos o rebuild de 2026-05-12 ([spec](docs/specs/2026-05-12-environment-rebuild-d
 | **Superpowers** | `superpowers` | [obra/superpowers-marketplace](https://github.com/obra/superpowers-marketplace) | 14 skills, 1 agent — brainstorming, plan mode, TDD, debugging, parallel agents |
 | **Ralph Skills** | `ralph-skills` | [snarktank/ralph](https://github.com/snarktank/ralph) | 2 skills — PRD generator e conversor para formato Ralph |
 | **UI/UX Pro Max** | `ui-ux-pro-max` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 14 skills — 50+ estilos, 161 paletas, 57 fonts, 99 UX guidelines |
+| **Example Skills** | `example-skills` | [anthropics/skills](https://github.com/anthropics/skills) | Skills oficiais Anthropic — /docx, /pdf, /xlsx, /pptx, /canvas-design, /claude-api |
+| **Vercel** | `vercel` | [claude-plugins-official](https://github.com/anthropics/claude-code-plugins) | 20+ skills — deploy, env vars, AI SDK, Next.js, routing, middleware, Turbopack |
 
 #### Como instalar os plugins manualmente
 
@@ -93,6 +96,8 @@ claude plugins install everything-claude-code --marketplace everything-claude-co
 claude plugins install superpowers --marketplace superpowers-marketplace
 claude plugins install ralph-skills --marketplace ralph-marketplace
 claude plugins install ui-ux-pro-max --marketplace ui-ux-pro-max-skill
+claude plugins install example-skills --marketplace anthropic-agent-skills
+claude plugins install vercel
 
 # 3. Verifique a instalacao:
 claude plugins list
@@ -156,36 +161,59 @@ Todos em PT-BR, modelo Opus.
 
 ---
 
-### Skills Customizados (9)
+### Skills Customizados (21)
 
-#### Documentos Singular (.docx)
-| Skill | Arquivos | Descricao |
-|-------|----------|-----------|
-| `ata` | SKILL.md, build.py, template.docx, logos, accents.md | Gera Ata de Reuniao em .docx com template oficial Singular (Urbanist, header/footer, logo) a partir de texto livre |
+#### Documentos Singular (.docx / .pdf)
+| Skill | Descricao |
+|-------|-----------|
+| `ata` | Ata de Reuniao em .docx com template oficial Singular |
+| `documento` | Documento formal .docx (briefing, memo, plano, RFC, analise) |
+| `pop` | Procedimento Operacional Padrao em .docx |
+| `slide` | Apresentacao HTML standalone (scroll-snap, animacoes) + PPTX opcional |
+| `pdf` | Documento PDF final com identidade Singular (reportlab) |
+| `reuniao` | Suite completa pos-reuniao: orquestra /ata + /documento + /pop numa pasta Drive dedicada |
 
-#### HubSpot
-| Skill | Arquivos | Descricao |
-|-------|----------|-----------|
-| `hubspot-mcp-expert` | SKILL.md, CRM_OPERATIONS.md | Guia expert para HubSpot MCP — contacts, deals, engagements, associations |
+#### Operacoes Comerciais / Inteligencia
+| Skill | Descricao |
+|-------|-----------|
+| `contrato` | Gera contratos Singular (NDA/MOU/PS/RC/Embaixador) com Qdrant Nexo_Adv |
+| `backgroundcheck` | Due diligence reputacional — processos, midia, socios, sancoes |
+| `prospect` | Prospeccao comercial porta-a-porta da Asa Norte |
+| `tese-investimento` | Teses de investimento com checklist + 5 personas criticas |
 
-#### n8n (Workflow Automation)
-| Skill | Arquivos | Descricao |
-|-------|----------|-----------|
-| `n8n-code-javascript` | 6 arquivos | JavaScript em Code nodes — $input/$json, HTTP requests, DateTime |
-| `n8n-code-python` | 6 arquivos | Python em Code nodes — _input/_json, standard library |
-| `n8n-expression-syntax` | 4 arquivos | Sintaxe `{{}}`, $json/$node, erros comuns |
-| `n8n-mcp-tools-expert` | 5 arquivos | Guia de tools MCP — search, validate, templates, workflows |
-| `n8n-node-configuration` | 4 arquivos | Configuracao de nodes, dependencias, campos obrigatorios |
-| `n8n-validation-expert` | 4 arquivos | Erros de validacao, false positives, profiles |
-| `n8n-workflow-patterns` | 7 arquivos | Padroes: webhook, HTTP API, database, AI agent, scheduled tasks |
+#### Comunicacao & Utilidades
+| Skill | Descricao |
+|-------|-----------|
+| `whatsapp-evolution` | Envia texto/docs/imagem/audio/video via WhatsApp (Evolution API) |
+| `mp4` | Converte MP4 em MP3 via ffmpeg |
+| `obsidian` | Salva recap da sessao Claude Code no vault Obsidian |
+
+#### n8n Workflow Automation (7 skills)
+| Skill | Descricao |
+|-------|-----------|
+| `n8n-code-javascript` | JS em Code nodes — $input/$json, HTTP, DateTime |
+| `n8n-code-python` | Python em Code nodes — _input/_json, stdlib |
+| `n8n-expression-syntax` | Sintaxe {{ }}, erros comuns |
+| `n8n-mcp-tools-expert` | Guia de tools MCP n8n |
+| `n8n-node-configuration` | Config de nodes, deps, campos obrigatorios |
+| `n8n-validation-expert` | Erros de validacao, false positives |
+| `n8n-workflow-patterns` | Padroes: webhook, HTTP API, DB, AI agent |
+
+#### HubSpot CRM
+| Skill | Descricao |
+|-------|-----------|
+| `hubspot-mcp-expert` | Guia expert HubSpot MCP — contacts, deals, engagements |
 
 ---
 
 ### Skills/Agents dos Plugins (Inventario Completo)
 
-> Quando voce digita `/` no Claude Code, a lista e montada combinando seus skills customizados + todos os skills dos plugins abaixo. Por isso voce ve muito mais que 8 skills.
+> Quando voce digita `/` no Claude Code, a lista e montada combinando seus 21 skills customizados + todos os skills dos plugins abaixo. Por isso voce ve muito mais que 21 skills.
 
-#### Everything Claude Code (ECC) — 20 skills + 9 agents
+#### Everything Claude Code (ECC) — 20 skills visiveis + 9 agents
+
+> **Nota:** ECC traz ~217 skills no total, mas ~51 estao silenciados via `skillOverrides` no `settings.json` (stacks fora do dominio: Perl, Swift, Kotlin, Android, Go, Java, Spring Boot, Django, C++, logistics, supply chain etc.). Isso economiza ~5K tokens/turn. Os skills listados abaixo sao os que estao ativos.
+
 | Tipo | Nome | Descricao |
 |------|------|-----------|
 | skill | `plan` | Criar planos de implementacao |
@@ -301,6 +329,32 @@ cp config/mcp.json ~/.claude/mcp.json
 #    - Gmail, Google Calendar, Google Drive, HubSpot, Excalidraw
 #    Cada dispositivo precisa autenticar individualmente.
 ```
+
+---
+
+### Singular_Memory — Memoria Permanente (Qdrant)
+
+Sistema de memoria permanente da Singular Group implementado sobre Qdrant. Permite recall de contexto (clientes, projetos, investidas, decisoes) antes de responder e ingest automatico apos criar artefatos.
+
+| Item | Valor |
+|------|-------|
+| Stack | Qdrant + OpenAI text-embedding-3-large + fastembed bm42 |
+| Collection | `Singular_Memory` |
+| Schema | Hybrid dense+sparse |
+| Taxonomy | 3D: layer (front/middle/back-office/opco/investida/cliente) x area (11 valores) x entidade |
+
+**Scripts** (em `scripts/memory/`):
+| Script | Funcao |
+|--------|--------|
+| `create_collection.py` | Cria collection no Qdrant com schema hybrid |
+| `add_doc.py` | Adiciona documento ao Qdrant (parent-child chunking) |
+| `consolidate_jsonl.py` | Consolida JSONL de memoria |
+| `seed_from_jsonl.py` | Seed inicial a partir de JSONL |
+
+**Regra Soberana #3:** Todo trabalho Singular DEVE:
+1. **RECALL** antes de responder sobre clientes/projetos/investidas
+2. **INGEST** depois de criar contratos/atas/POPs/slides/propostas
+3. **CATALOGAR** com taxonomy 3D em frontmatter
 
 ---
 
@@ -585,15 +639,28 @@ claude-code-toolkit/
 │       ├── ralph.sh
 │       ├── CLAUDE.md
 │       └── prd.json.example
-├── skills/                      # 8 skills customizados
+├── skills/                      # 21 skills customizados
+│   ├── ata/
+│   ├── backgroundcheck/
+│   ├── contrato/
+│   ├── documento/
 │   ├── hubspot-mcp-expert/
+│   ├── mp4/
 │   ├── n8n-code-javascript/
 │   ├── n8n-code-python/
 │   ├── n8n-expression-syntax/
 │   ├── n8n-mcp-tools-expert/
 │   ├── n8n-node-configuration/
 │   ├── n8n-validation-expert/
-│   └── n8n-workflow-patterns/
+│   ├── n8n-workflow-patterns/
+│   ├── obsidian/
+│   ├── pdf/
+│   ├── pop/
+│   ├── prospect/
+│   ├── reuniao/
+│   ├── slide/
+│   ├── tese-investimento/
+│   └── whatsapp-evolution/
 ├── teams/                       # Agent teams config
 │   └── default/
 │       └── inboxes/
@@ -682,10 +749,12 @@ claude plugins install everything-claude-code --marketplace everything-claude-co
 claude plugins install superpowers --marketplace superpowers-marketplace
 claude plugins install ralph-skills --marketplace ralph-marketplace
 claude plugins install ui-ux-pro-max --marketplace ui-ux-pro-max-skill
+claude plugins install example-skills --marketplace anthropic-agent-skills
+claude plugins install vercel
 
 # PASSO 3: Verifique:
 claude plugins list
-# Deve mostrar 4 plugins enabled
+# Deve mostrar 6 plugins enabled
 
 # Se algum falhar, tente instalar manualmente via /plugins no Claude Code
 ```
@@ -697,6 +766,8 @@ claude plugins list
 | Superpowers | https://github.com/obra/superpowers-marketplace |
 | Ralph Skills | https://github.com/snarktank/ralph |
 | UI/UX Pro Max | https://github.com/nextlevelbuilder/ui-ux-pro-max-skill |
+| Example Skills | https://github.com/anthropics/skills |
+| Vercel | https://github.com/anthropics/claude-code-plugins |
 
 ### 12. MCP Servers locais
 ```bash
@@ -730,7 +801,7 @@ nano ~/.claude/mcp.json
 ```
 [ ] 1. git clone https://github.com/pedrormc/claude-code-toolkit.git
 [ ] 2. cd claude-code-toolkit && bash install.sh
-[ ] 3. Verificar que 4 plugins foram instalados: claude plugins list
+[ ] 3. Verificar que 6 plugins foram instalados: claude plugins list
 [ ] 4. Se algum plugin falhou: reinstalar manualmente (ver secao 11)
 [ ] 5. Instalar n8n-mcp: npm install -g n8n-mcp
 [ ] 6. Editar ~/.claude/mcp.json com suas API keys
@@ -760,13 +831,15 @@ Quando voce digita `/` no Claude Code, ele monta a lista combinando **4 camadas*
 ```
 ~/.claude/
 ├── agents/          <- CAMADA 1: Agents customizados (5 neste repo)
-├── skills/          <- CAMADA 2: Skills customizados (8 neste repo)
+├── skills/          <- CAMADA 2: Skills customizados (21 neste repo)
 ├── rules/           <- CAMADA 2: Rules customizadas (16 neste repo)
-├── plugins/cache/   <- CAMADA 3: Skills/agents dos plugins (42 skills + 10 agents)
-│   ├── everything-claude-code/  -> 20 skills, 9 agents, 130+ rules
+├── plugins/cache/   <- CAMADA 3: Skills/agents dos plugins (6 plugins)
+│   ├── everything-claude-code/  -> 20 skills visiveis, 9 agents, 130+ rules
 │   ├── superpowers-marketplace/ -> 18 skills, 1 agent
 │   ├── ralph-marketplace/       -> 2 skills
-│   └── ui-ux-pro-max-skill/     -> 1 skill
+│   ├── ui-ux-pro-max-skill/     -> 1 skill
+│   ├── anthropic-agent-skills/  -> 12 skills (docx, pdf, xlsx, pptx, etc.)
+│   └── vercel/                  -> 20+ skills (deploy, AI SDK, Next.js, etc.)
 ├── teams/           <- CAMADA 2: Agent teams e inboxes
 ├── scheduled-tasks/ <- CAMADA 2: Tarefas agendadas (cron-like)
 └── [Cloud MCPs]     <- CAMADA 4: Connectors OAuth (Gmail, Calendar, Drive, HubSpot, Excalidraw)

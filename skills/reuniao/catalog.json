@@ -1,0 +1,176 @@
+{
+  "version": "1.0",
+  "tipos": [
+    {
+      "key": "ata-reuniao",
+      "skill_base": "ata",
+      "label": "Ata da reunião (detalhada)",
+      "naming_template": "ata-reuniao-singular-<cliente>.docx",
+      "scope": "external_specific",
+      "flag": "always",
+      "triggers": [],
+      "fields_required": []
+    },
+    {
+      "key": "doc-tarefas-completas",
+      "skill_base": "documento",
+      "label": "Tarefas completas (consolidado de action items)",
+      "naming_template": "doc-tarefas-completas.docx",
+      "scope": "internal",
+      "flag": "auto_suggest",
+      "auto_suggest_condition": "len(master.encaminhamentos) >= 2",
+      "triggers": [],
+      "fields_required": ["encaminhamentos"]
+    },
+    {
+      "key": "doc-plano-comercial",
+      "skill_base": "documento",
+      "label": "Plano comercial (específico do cliente)",
+      "naming_template": "doc-plano-comercial-<cliente>.docx",
+      "scope": "external_specific",
+      "flag": null,
+      "triggers": ["plano comercial", "metas vendas", "abordagem comercial", "ticket médio", "funil"],
+      "fields_required": ["plano_comercial"]
+    },
+    {
+      "key": "doc-proposta-comercial",
+      "skill_base": "documento",
+      "label": "Proposta comercial (entregue ao cliente)",
+      "naming_template": "doc-proposta-comercial-<cliente>.docx",
+      "scope": "external_specific",
+      "flag": null,
+      "triggers": ["proposta", "escopo", "valor", "prazo de entrega", "termos comerciais"],
+      "fields_required": ["proposta_comercial"]
+    },
+    {
+      "key": "doc-decisao",
+      "skill_base": "documento",
+      "label": "Decisão (ADR-style)",
+      "naming_template": "doc-decisao-<assunto>.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["decidimos", "decisão", "ADR", "consequências", "escolha estratégica"],
+      "fields_required": ["decisao_adr"]
+    },
+    {
+      "key": "doc-briefing-posicionamento",
+      "skill_base": "documento",
+      "label": "Briefing de posicionamento",
+      "naming_template": "doc-briefing-posicionamento.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["posicionamento", "público-alvo", "tom de voz", "branding", "identidade"],
+      "fields_required": ["briefing_posicionamento"]
+    },
+    {
+      "key": "doc-cronograma-editorial",
+      "skill_base": "documento",
+      "label": "Cronograma editorial",
+      "naming_template": "doc-cronograma-editorial.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["calendário de posts", "cronograma de conteúdo", "frequência publicações"],
+      "fields_required": ["cronograma_editorial"]
+    },
+    {
+      "key": "doc-estrategia-canal",
+      "skill_base": "documento",
+      "label": "Estratégia de canal (TikTok/Instagram/etc.)",
+      "naming_template": "doc-estrategia-canal.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["tiktok", "instagram", "youtube", "shop", "canal vendas digital"],
+      "fields_required": ["estrategia_canal"]
+    },
+    {
+      "key": "doc-fabrica-marketing",
+      "skill_base": "documento",
+      "label": "Fábrica de marketing",
+      "naming_template": "doc-fabrica-de-marketing.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["operação marketing", "pipeline produção", "fluxo criativo", "fábrica conteúdo"],
+      "fields_required": ["fabrica_marketing"]
+    },
+    {
+      "key": "doc-marketplace",
+      "skill_base": "documento",
+      "label": "Estratégia de marketplace",
+      "naming_template": "doc-marketplace-singular.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["marketplace", "amazon", "mercado livre", "shopee", "magalu"],
+      "fields_required": ["marketplace"]
+    },
+    {
+      "key": "doc-memo-ficha-tecnica",
+      "skill_base": "documento",
+      "label": "Memo / ficha técnica",
+      "naming_template": "doc-memo-ficha-tecnica.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["ficha técnica", "especificação produto", "atributos", "memo"],
+      "fields_required": ["memo_ficha_tecnica"]
+    },
+    {
+      "key": "doc-organizacao",
+      "skill_base": "documento",
+      "label": "Organização interna",
+      "naming_template": "doc-organizacao-singular.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["organograma", "donos", "células", "estrutura time", "responsabilidades"],
+      "fields_required": ["organizacao"]
+    },
+    {
+      "key": "doc-plano-embaixadores",
+      "skill_base": "documento",
+      "label": "Plano de embaixadores",
+      "naming_template": "doc-plano-embaixadores.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["embaixadores", "afiliados", "influenciadores", "creators"],
+      "fields_required": ["plano_embaixadores"]
+    },
+    {
+      "key": "doc-leadgen",
+      "skill_base": "documento",
+      "label": "Estratégia de lead generation",
+      "naming_template": "doc-plug-rank-leadgen.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["lead gen", "captação", "tráfego pago", "anúncios", "ranqueamento"],
+      "fields_required": ["leadgen"]
+    },
+    {
+      "key": "pop-roteiro-roleplay",
+      "skill_base": "pop",
+      "label": "POP roteiro de role-play comercial",
+      "naming_template": "pop-roteiro-roleplay-<cliente>.docx",
+      "scope": "external_specific",
+      "flag": null,
+      "triggers": ["script vendas", "role play", "treinamento comercial", "objeções", "abordagem"],
+      "fields_required": ["roteiro_roleplay"]
+    },
+    {
+      "key": "pop-stand-vendas",
+      "skill_base": "pop",
+      "label": "POP operação de stand de vendas",
+      "naming_template": "pop-stand-vendas-<cliente>.docx",
+      "scope": "external_specific",
+      "flag": null,
+      "triggers": ["stand vendas", "operação ponto", "evento presencial", "ativação"],
+      "fields_required": ["stand_vendas"]
+    },
+    {
+      "key": "pop-evento-degustacao",
+      "skill_base": "pop",
+      "label": "POP evento de degustação",
+      "naming_template": "pop-evento-degustacao-<local>.docx",
+      "scope": "internal",
+      "flag": null,
+      "triggers": ["degustação", "evento físico", "academia", "ativação ponto venda"],
+      "fields_required": ["evento_degustacao"]
+    }
+  ]
+}

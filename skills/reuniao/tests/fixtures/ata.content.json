@@ -1,0 +1,11 @@
+{
+  "titulo_curto": "ATA",
+  "titulo": "Reunião de Smoke Test",
+  "empresa": "Singular",
+  "data": "19 de maio de 2026",
+  "tipo_reuniao": "Smoke",
+  "objetivo": "Validar regressão do build.py da /ata",
+  "participantes": {"presentes": ["Pedro Roberto — CTO"], "ausentes": []},
+  "topicos": [{"titulo": "Tópico 1 — Validação", "discussao": ["Texto fictício pra regressão."], "decisoes": ["Aprovar fixture."]}],
+  "encaminhamentos": {"titulo": "Encaminhamentos", "linhas": [["Ação", "Responsável", "Prazo"], ["Manter fixture estável", "Pedro", "sempre"]]}
+}

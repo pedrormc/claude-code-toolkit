@@ -1,0 +1,11 @@
+{
+  "titulo_curto": "TESTE",
+  "titulo": "Documento de Regressão",
+  "empresa": "Singular",
+  "data": "19 de maio de 2026",
+  "tldr": "Fixture pra regression test.",
+  "secoes": [
+    {"titulo": "1. Seção única", "paragrafos": ["Parágrafo fictício."]}
+  ],
+  "autor_rodape": "Singular Group · 19 de maio de 2026"
+}

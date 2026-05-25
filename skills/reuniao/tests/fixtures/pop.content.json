@@ -1,0 +1,10 @@
+{
+  "titulo_curto": "POP",
+  "titulo": "Processo Operacional de Smoke Test",
+  "empresa": "Singular",
+  "versao": "1.0",
+  "data": "19 de maio de 2026",
+  "objetivo": "Validar regressão do build.py do /pop.",
+  "fluxo_titulo": "Fluxo em 1 Passo",
+  "passos": [{"titulo": "Passo 1 — Smoke", "paragrafos": ["Texto fictício."]}]
+}

@@ -3,6 +3,45 @@
 All notable changes to claude-code-toolkit are documented here.
 Format inspired by [Keep a Changelog](https://keepachangelog.com/).
 
+## [2026-05-25] — Sync completo: skills, scripts, config, plugins
+
+### Added
+
+**Skills:**
+- `skills/pdf/` — Documento PDF final com identidade Singular (reportlab + Urbanist + logo). Mesmo schema do `/documento`, produz PDF imutavel. Criada 2026-05-15.
+- `skills/reuniao/` — Suite generativa pos-reuniao. Orquestrador que reusa `/ata` + `/documento` + `/pop` pra gerar suite completa numa pasta Drive dedicada. Catalogo 17 tipos, `montadores.py`, `reuniao.py`, suite de testes (regression + smoke). Criada 2026-05-20.
+
+**Scripts:**
+- `scripts/memory/` — 5 scripts Python pro sistema Singular_Memory (Qdrant): `create_collection.py`, `add_doc.py`, `consolidate_jsonl.py`, `seed_from_jsonl.py`, `__init__.py`. Stack: qdrant-client + OpenAI text-embedding-3-large + fastembed bm42.
+
+**Plugins:**
+- Example Skills (anthropics/skills) — skills oficiais Anthropic: /docx, /pdf, /xlsx, /pptx, /canvas-design, /claude-api.
+- Vercel (claude-plugins-official) — 20+ skills: deploy, env vars, AI SDK, Next.js, routing, middleware, Turbopack.
+
+### Changed
+
+**Config (settings.json):**
+- `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`: 50% → 75%
+- `effortLevel`: high → xhigh
+- Added `permissions.defaultMode: "auto"` e `skipAutoPermissionPrompt: true`
+- Added `SessionEnd` hook (obsidian-auto-save.sh, timeout 15s)
+- Added async/timeout em Stop hooks e SessionStart hooks
+- Added `verify-ecc-patches.sh` sync em SessionStart (timeout 3s)
+- Fixed `UserPromptSubmit` timeout: 2 → 2000 (era milissegundos truncado)
+- Added `skillOverrides`: 48 entries silenciando stacks fora do dominio (~5K tokens/turn economizados)
+- Added `voice`, `theme`, `skillListingMaxDescChars`
+- Cleaned `disabledPlugins` (ralph-skills fix)
+
+**Docs:**
+- `docs/SKILLS_CATALOG.md` — adicionados /pdf e /reuniao, count 19 → 21
+- `README.md` — plugins 4 → 6, skills 9 → 21, section Singular_Memory, config atualizado
+
+### Removed
+- `scripts/test-i4-fake-data.sh` — test artifact nao mais usado
+- `scripts/toast-notify.js` — substituido por claude-notify.js
+
+---
+
 ## [Unreleased] - 2026-05-13
 
 ### Added — Rebuild estrutural 2026-05-12

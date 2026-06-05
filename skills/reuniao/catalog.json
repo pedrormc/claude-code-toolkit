@@ -1,5 +1,6 @@
 {
-  "version": "1.0",
+  "version": "1.1",
+  "_learned_convention": "Tipos NOVOS brainstormados são anexados aqui automaticamente (flag='learned') quando o Pedro aprova. Shape: {key, skill_base(documento|pop), label, naming_template, scope, flag:'learned', montador('generico'|'generico_pop'), master_field, triggers[], fields_required[], learned_at, learned_from}. Append-only; nunca sobrescreve entradas existentes.",
   "tipos": [
     {
       "key": "ata-reuniao",
@@ -20,7 +21,9 @@
       "flag": "auto_suggest",
       "auto_suggest_condition": "len(master.encaminhamentos) >= 2",
       "triggers": [],
-      "fields_required": ["encaminhamentos"]
+      "fields_required": [
+        "encaminhamentos"
+      ]
     },
     {
       "key": "doc-plano-comercial",
@@ -29,8 +32,16 @@
       "naming_template": "doc-plano-comercial-<cliente>.docx",
       "scope": "external_specific",
       "flag": null,
-      "triggers": ["plano comercial", "metas vendas", "abordagem comercial", "ticket médio", "funil"],
-      "fields_required": ["plano_comercial"]
+      "triggers": [
+        "plano comercial",
+        "metas vendas",
+        "abordagem comercial",
+        "ticket médio",
+        "funil"
+      ],
+      "fields_required": [
+        "plano_comercial"
+      ]
     },
     {
       "key": "doc-proposta-comercial",
@@ -39,8 +50,16 @@
       "naming_template": "doc-proposta-comercial-<cliente>.docx",
       "scope": "external_specific",
       "flag": null,
-      "triggers": ["proposta", "escopo", "valor", "prazo de entrega", "termos comerciais"],
-      "fields_required": ["proposta_comercial"]
+      "triggers": [
+        "proposta",
+        "escopo",
+        "valor",
+        "prazo de entrega",
+        "termos comerciais"
+      ],
+      "fields_required": [
+        "proposta_comercial"
+      ]
     },
     {
       "key": "doc-decisao",
@@ -49,8 +68,16 @@
       "naming_template": "doc-decisao-<assunto>.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["decidimos", "decisão", "ADR", "consequências", "escolha estratégica"],
-      "fields_required": ["decisao_adr"]
+      "triggers": [
+        "decidimos",
+        "decisão",
+        "ADR",
+        "consequências",
+        "escolha estratégica"
+      ],
+      "fields_required": [
+        "decisao_adr"
+      ]
     },
     {
       "key": "doc-briefing-posicionamento",
@@ -59,8 +86,16 @@
       "naming_template": "doc-briefing-posicionamento.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["posicionamento", "público-alvo", "tom de voz", "branding", "identidade"],
-      "fields_required": ["briefing_posicionamento"]
+      "triggers": [
+        "posicionamento",
+        "público-alvo",
+        "tom de voz",
+        "branding",
+        "identidade"
+      ],
+      "fields_required": [
+        "briefing_posicionamento"
+      ]
     },
     {
       "key": "doc-cronograma-editorial",
@@ -69,8 +104,14 @@
       "naming_template": "doc-cronograma-editorial.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["calendário de posts", "cronograma de conteúdo", "frequência publicações"],
-      "fields_required": ["cronograma_editorial"]
+      "triggers": [
+        "calendário de posts",
+        "cronograma de conteúdo",
+        "frequência publicações"
+      ],
+      "fields_required": [
+        "cronograma_editorial"
+      ]
     },
     {
       "key": "doc-estrategia-canal",
@@ -79,8 +120,16 @@
       "naming_template": "doc-estrategia-canal.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["tiktok", "instagram", "youtube", "shop", "canal vendas digital"],
-      "fields_required": ["estrategia_canal"]
+      "triggers": [
+        "tiktok",
+        "instagram",
+        "youtube",
+        "shop",
+        "canal vendas digital"
+      ],
+      "fields_required": [
+        "estrategia_canal"
+      ]
     },
     {
       "key": "doc-fabrica-marketing",
@@ -89,8 +138,15 @@
       "naming_template": "doc-fabrica-de-marketing.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["operação marketing", "pipeline produção", "fluxo criativo", "fábrica conteúdo"],
-      "fields_required": ["fabrica_marketing"]
+      "triggers": [
+        "operação marketing",
+        "pipeline produção",
+        "fluxo criativo",
+        "fábrica conteúdo"
+      ],
+      "fields_required": [
+        "fabrica_marketing"
+      ]
     },
     {
       "key": "doc-marketplace",
@@ -99,8 +155,16 @@
       "naming_template": "doc-marketplace-singular.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["marketplace", "amazon", "mercado livre", "shopee", "magalu"],
-      "fields_required": ["marketplace"]
+      "triggers": [
+        "marketplace",
+        "amazon",
+        "mercado livre",
+        "shopee",
+        "magalu"
+      ],
+      "fields_required": [
+        "marketplace"
+      ]
     },
     {
       "key": "doc-memo-ficha-tecnica",
@@ -109,8 +173,15 @@
       "naming_template": "doc-memo-ficha-tecnica.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["ficha técnica", "especificação produto", "atributos", "memo"],
-      "fields_required": ["memo_ficha_tecnica"]
+      "triggers": [
+        "ficha técnica",
+        "especificação produto",
+        "atributos",
+        "memo"
+      ],
+      "fields_required": [
+        "memo_ficha_tecnica"
+      ]
     },
     {
       "key": "doc-organizacao",
@@ -119,8 +190,16 @@
       "naming_template": "doc-organizacao-singular.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["organograma", "donos", "células", "estrutura time", "responsabilidades"],
-      "fields_required": ["organizacao"]
+      "triggers": [
+        "organograma",
+        "donos",
+        "células",
+        "estrutura time",
+        "responsabilidades"
+      ],
+      "fields_required": [
+        "organizacao"
+      ]
     },
     {
       "key": "doc-plano-embaixadores",
@@ -129,8 +208,15 @@
       "naming_template": "doc-plano-embaixadores.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["embaixadores", "afiliados", "influenciadores", "creators"],
-      "fields_required": ["plano_embaixadores"]
+      "triggers": [
+        "embaixadores",
+        "afiliados",
+        "influenciadores",
+        "creators"
+      ],
+      "fields_required": [
+        "plano_embaixadores"
+      ]
     },
     {
       "key": "doc-leadgen",
@@ -139,8 +225,16 @@
       "naming_template": "doc-plug-rank-leadgen.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["lead gen", "captação", "tráfego pago", "anúncios", "ranqueamento"],
-      "fields_required": ["leadgen"]
+      "triggers": [
+        "lead gen",
+        "captação",
+        "tráfego pago",
+        "anúncios",
+        "ranqueamento"
+      ],
+      "fields_required": [
+        "leadgen"
+      ]
     },
     {
       "key": "pop-roteiro-roleplay",
@@ -149,8 +243,16 @@
       "naming_template": "pop-roteiro-roleplay-<cliente>.docx",
       "scope": "external_specific",
       "flag": null,
-      "triggers": ["script vendas", "role play", "treinamento comercial", "objeções", "abordagem"],
-      "fields_required": ["roteiro_roleplay"]
+      "triggers": [
+        "script vendas",
+        "role play",
+        "treinamento comercial",
+        "objeções",
+        "abordagem"
+      ],
+      "fields_required": [
+        "roteiro_roleplay"
+      ]
     },
     {
       "key": "pop-stand-vendas",
@@ -159,8 +261,15 @@
       "naming_template": "pop-stand-vendas-<cliente>.docx",
       "scope": "external_specific",
       "flag": null,
-      "triggers": ["stand vendas", "operação ponto", "evento presencial", "ativação"],
-      "fields_required": ["stand_vendas"]
+      "triggers": [
+        "stand vendas",
+        "operação ponto",
+        "evento presencial",
+        "ativação"
+      ],
+      "fields_required": [
+        "stand_vendas"
+      ]
     },
     {
       "key": "pop-evento-degustacao",
@@ -169,8 +278,15 @@
       "naming_template": "pop-evento-degustacao-<local>.docx",
       "scope": "internal",
       "flag": null,
-      "triggers": ["degustação", "evento físico", "academia", "ativação ponto venda"],
-      "fields_required": ["evento_degustacao"]
+      "triggers": [
+        "degustação",
+        "evento físico",
+        "academia",
+        "ativação ponto venda"
+      ],
+      "fields_required": [
+        "evento_degustacao"
+      ]
     }
   ]
 }

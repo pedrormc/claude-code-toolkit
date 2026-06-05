@@ -3,6 +3,18 @@
 All notable changes to claude-code-toolkit are documented here.
 Format inspired by [Keep a Changelog](https://keepachangelog.com/).
 
+## [2026-06-05] - Sync /reuniao + /documento (evolucao + sanitizacao publica)
+
+### Changed
+- `skills/reuniao/` - sincronizada a evolucao: skill virou brainstorm de valor (ata sempre + ate ~5 derivados de alto impacto, propondo tipos NOVOS) com AUTO-IMPROVE (catalogo aprende tipos aprovados, append-only idempotente). Novos montadores genericos (`monta_doc_generico`/`monta_pop_generico` + `GENERIC_MONTADORES`) constroem qualquer tipo a partir do master.json. `reuniao.py`: override de catalogo por env `REUNIAO_CATALOG`, `resolve_montador()`, merge de learned_types, persistencia via `helpers.append_learned_type`. `catalog.json` v1.0 -> v1.1 (+`_learned_convention`). Novo teste `tests/smoke-learning.sh`.
+- `skills/documento/` - `build.py` ganhou `rewrite_header_subtitle()` (corrige vazamento do subtitulo do template POP em docs nao-POP). Fonte `assets/fonts/Urbanist-Regular.ttf` (OFL) adicionada pra build standalone. SKILL.md: +frontmatter bu/cross_bu + linha /pdf.
+
+### Security (sanitizacao antes do push publico, via sweep adversarial de 5 agentes)
+- `skills/documento/secrets.local.json` NAO sincronizado (segredo real: Evolution API key, telefones, Drive ID). So o `.example` vai pro repo; `.gitignore` cobre.
+- `skills/reuniao/clientes.json` REMOVIDO do repo (tinha nomes reais de cliente). Substituido por `clientes.example.json` generico + novo `skills/reuniao/.gitignore` (clientes.json, catalog.bak.*, clientes.bak.*, __pycache__/, *.pyc).
+- `catalog.json`: removidas as 4 entradas `flag=learned` (vazavam o nome de uma reuniao interna "BP unificado" + estrategia: pro-labore, vesting, holding, OKRs). Publico fica com os 17 tipos seed + a estrutura v1.1.
+- Backups locais `*.bak.*` e `__pycache__/` nunca sincronizados.
+
 ## [2026-06-05] - Fase 2 (follow-ups da auditoria): pipeline BU 4D end-to-end
 
 ### Added

@@ -1,0 +1,5 @@
+clientes.json
+catalog.bak.*
+clientes.bak.*
+__pycache__/
+*.pyc

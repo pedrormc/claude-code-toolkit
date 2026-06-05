@@ -76,6 +76,36 @@ def clear_document_body(doc):
         body.remove(child)
 
 
+def rewrite_header_subtitle(doc, subtitle):
+    """Sobrescreve o subtítulo do header herdado do template POP.
+    Mantém 'SINGULAR' + separador e injeta <subtitle> dinâmico (default: 'Documento').
+    Evita vazamento de 'Processo Operacional Padrão de Vendas' em docs que não são POP.
+    """
+    for section in doc.sections:
+        hdr = section.header
+        for p in hdr.paragraphs:
+            runs = p.runs
+            if not runs:
+                continue
+            has_singular = any("SINGULAR" in r.text.upper() for r in runs)
+            if not has_singular:
+                continue
+            first = True
+            for r in runs:
+                if first and "SINGULAR" in r.text.upper():
+                    first = False
+                    continue
+                r.text = ""
+            for r in runs:
+                if "SINGULAR" in r.text.upper():
+                    r.text = "SINGULAR"
+                    break
+            tail = p.add_run(f"  |  {subtitle}")
+            tail.font.name = URBANIST
+            tail.font.size = Pt(10)
+            tail.font.color.rgb = CINZA
+
+
 def add_logo(doc):
     if not LOGO_PATH.exists():
         return
@@ -303,6 +333,10 @@ def add_autor_rodape(doc, autor):
 def build(content, template_path, output_path):
     doc = Document(template_path)
     clear_document_body(doc)
+    rewrite_header_subtitle(
+        doc,
+        content.get("header_subtitle") or content.get("titulo_curto", "Documento"),
+    )
 
     add_title_block(
         doc,

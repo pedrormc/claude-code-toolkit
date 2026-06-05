@@ -64,9 +64,17 @@ def monta_ata_reuniao(master):
     cliente = meta.get("cliente", {})
     encam = master.get("encaminhamentos", [])
 
+    # Título: reuniões internas (sem cliente externo) não levam o sufixo "× cliente".
+    _cli_nome = (cliente.get("nome") or "").strip()
+    _tipo = meta.get("tipo_reuniao", "Alinhamento")
+    if _cli_nome and _cli_nome.lower() not in ("interna", "interno", "singular"):
+        _titulo = f"Reunião de {_tipo} — Singular × {_cli_nome}"
+    else:
+        _titulo = f"Reunião de {_tipo} — Singular"
+
     return {
         "titulo_curto": "ATA",
-        "titulo": f"Reunião de {meta.get('tipo_reuniao', 'Alinhamento')} — Singular × {cliente.get('nome', 'interna')}",
+        "titulo": _titulo,
         "header_subtitle": "Ata de Reunião",
         "empresa": "Singular",
         "data": meta["data"],
@@ -86,7 +94,7 @@ def monta_ata_reuniao(master):
         },
         "proxima_reuniao": master.get("proxima_reuniao", {}),
         "observacoes": master.get("observacoes", ""),
-        "assinaturas": [],
+        "assinaturas": master.get("assinaturas", []),
     }
 
 
@@ -424,6 +432,75 @@ def monta_doc_leadgen(master):
         ],
         "autor_rodape": _autor_rodape(master),
     }
+
+# ============================================================
+# GENÉRICOS — montadores p/ tipos NOVOS brainstormados (auto-improve)
+# Não ficam no MONTADORES (precisam de `spec`). Despachados em reuniao.py
+# quando o catálogo traz spec["montador"] == "generico" | "generico_pop".
+# ============================================================
+
+def _plan_field(master, spec):
+    """Chave em master.json onde mora o plano de conteúdo do doc brainstormado.
+    Default: spec['master_field'], senão key com hífens→underscores.
+    """
+    field = spec.get("master_field") or spec["key"].replace("-", "_")
+    return master.get(field, {}) or {}
+
+
+def monta_doc_generico(master, spec):
+    """Montador genérico p/ QUALQUER documento brainstormado (skill base: /documento).
+    O plano de conteúdo (titulo/tldr/secoes/...) vem inteiro do master.json, montado
+    pelo Claude no passo de brainstorm. Schema-alvo idêntico ao /documento/build.py.
+
+    Plano esperado em master[<master_field>]:
+      {titulo, titulo_curto?, subtitulo?, tldr?, destinatario?,
+       secoes: [{titulo, paragrafos?|listas?|destaque?|tabelas?}], proximos_passos?}
+    """
+    plan = _plan_field(master, spec)
+    cliente = master["meta"].get("cliente", {})
+    secoes = plan.get("secoes") or [{"titulo": "Conteúdo", "paragrafos": ["A definir"]}]
+    return {
+        "titulo_curto": plan.get("titulo_curto", "DOC"),
+        "titulo": plan.get("titulo") or spec.get("label") or "Documento",
+        "subtitulo": plan.get("subtitulo", cliente.get("vertical", "")),
+        "empresa": "Singular",
+        "destinatario": plan.get("destinatario", ""),
+        "data": master["meta"]["data"],
+        "tldr": plan.get("tldr", ""),
+        "secoes": secoes,
+        "proximos_passos": plan.get("proximos_passos", []),
+        "autor_rodape": _autor_rodape(master),
+    }
+
+
+def monta_pop_generico(master, spec):
+    """Montador genérico p/ QUALQUER POP brainstormado (skill base: /pop).
+    Plano esperado em master[<master_field>]:
+      {titulo, objetivo?, versao?, fluxo_titulo?, perfil_secao?,
+       passos: [{titulo, paragrafos?|listas?|acao_final?}]}
+    """
+    plan = _plan_field(master, spec)
+    passos = plan.get("passos") or [{"titulo": "Passo 1", "paragrafos": ["A definir"]}]
+    out = {
+        "titulo_curto": "POP",
+        "titulo": plan.get("titulo") or spec.get("label") or "Processo Operacional",
+        "empresa": "Singular",
+        "versao": plan.get("versao", "1.0"),
+        "data": master["meta"]["data"],
+        "objetivo": plan.get("objetivo", "A definir"),
+        "fluxo_titulo": plan.get("fluxo_titulo", f"Fluxo em {len(passos)} Passos"),
+        "passos": passos,
+    }
+    if plan.get("perfil_secao"):
+        out["perfil_secao"] = plan["perfil_secao"]
+    return out
+
+
+GENERIC_MONTADORES = {
+    "generico": monta_doc_generico,
+    "generico_pop": monta_pop_generico,
+}
+
 
 # ============================================================
 # REGISTRY — atualizado em cada chunk

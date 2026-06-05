@@ -1,5 +1,7 @@
 ---
 name: documento
+bu: backoffice-tech
+cross_bu: [consultorio-operacional, consultorio-comercial]
 description: Transforma texto livre (notas, draft, brain-dump, conversa de WhatsApp, copy de email) em um documento formal .docx com identidade visual da Singular (fonte Urbanist, logo no topo, paleta preto/branco). Schema flexível para qualquer tipo de documento — estratégia, briefing, memo, plano, decisão, análise, RFC, one-pager. Aplica norma culta do português. Use quando o usuário digitar /documento, ou pedir "monta um documento", "organiza isso num doc", "transforma em documento", "documento bonito da Singular".
 ---
 
@@ -285,13 +287,14 @@ Resposta curta em 4 linhas:
 
 ## Diferença das skills irmãs
 
-| Skill | Quando |
-|-------|--------|
-| `/ata` | Reunião com participantes, decisões e encaminhamentos |
-| `/pop` | Processo Operacional Padrão com passo-a-passo executável |
-| `/contrato` | Documento jurídico (NDA, MOU, prestação) |
-| `/tese-investimento` | Tese de investimento estruturada |
-| `/documento` | **Tudo o resto** — estratégia, memo, briefing, plano, análise |
+| Skill | Saída | Quando |
+|-------|-------|--------|
+| `/ata` | .docx | Reunião com participantes, decisões e encaminhamentos |
+| `/pop` | .docx | Processo Operacional Padrão com passo-a-passo executável |
+| `/contrato` | .docx | Documento jurídico (NDA, MOU, prestação) |
+| `/tese-investimento` | .docx | Tese de investimento estruturada |
+| `/documento` | .docx | **Tudo o resto editável** — estratégia, memo, briefing, plano, análise |
+| `/pdf` | **.pdf** | **Documento final pra apresentar a cliente / sócio / fornecedor** — mesmo schema do `/documento`, saída imutável |
 
 ## Referência
 

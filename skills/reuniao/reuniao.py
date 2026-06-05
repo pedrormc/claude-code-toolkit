@@ -9,6 +9,7 @@ gera N .docx invocando os build.py das skills irmãs via subprocess.
 Política transacional: partial success aceito. Aborta apenas se 0 docs geram.
 """
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -16,7 +17,11 @@ from subprocess import TimeoutExpired
 
 SKILL_DIR = Path(__file__).parent
 sys.path.insert(0, str(SKILL_DIR))
-from montadores import MONTADORES
+from montadores import MONTADORES, GENERIC_MONTADORES
+from helpers import append_learned_type
+
+# Catálogo. Override via env REUNIAO_CATALOG (usado pelos testes pra não poluir o real).
+CATALOG_PATH = Path(os.environ.get("REUNIAO_CATALOG") or (SKILL_DIR / "catalog.json"))
 
 SKILL_BASE_BUILD = {
     "ata": Path.home() / ".claude/skills/ata/build.py",
@@ -29,7 +34,7 @@ MIN_DOCX_SIZE = 30_000
 
 
 def load_catalog():
-    return json.loads((SKILL_DIR / "catalog.json").read_text(encoding="utf-8"))
+    return json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
 
 
 def _slug_assunto(master):
@@ -54,10 +59,32 @@ def resolve_filename(spec, master):
     return name
 
 
+def resolve_montador(key, spec):
+    """Resolve o montador. Tipos canônicos → MONTADORES[key] (fn(master)).
+    Tipos NOVOS/aprendidos → genérico via spec['montador'], com spec injetado.
+    Retorna uma callable fn(master) ou None.
+    """
+    fn = MONTADORES.get(key)
+    if fn:
+        return fn
+    gen = spec.get("montador")
+    gen_fn = GENERIC_MONTADORES.get(gen)
+    if gen_fn:
+        return lambda m: gen_fn(m, spec)
+    return None
+
+
 def main(master_path, selection_path, output_dir):
     master = json.loads(Path(master_path).read_text(encoding="utf-8"))
     selection = json.loads(Path(selection_path).read_text(encoding="utf-8"))
     catalog = {e["key"]: e for e in load_catalog()["tipos"]}
+
+    # Auto-improve: tipos NOVOS brainstormados nesta reunião. Mescla no catálogo
+    # em memória pra conseguir construí-los AGORA; persiste depois (só os que geraram).
+    learned_specs = {e["key"]: e for e in selection.get("learned_types", [])}
+    for key, spec in learned_specs.items():
+        catalog.setdefault(key, spec)
+
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
 
@@ -78,7 +105,7 @@ def main(master_path, selection_path, output_dir):
         if not spec:
             failures.append({"key": key, "reason": "key não está no catálogo"})
             continue
-        montador = MONTADORES.get(key)
+        montador = resolve_montador(key, spec)
         if not montador:
             failures.append({"key": key, "reason": "montador não implementado"})
             continue
@@ -127,10 +154,26 @@ def main(master_path, selection_path, output_dir):
             "failures": failures,
             "reason": "zero builders geraram .docx",
         }
+
+    # Auto-improve (automático): persiste no catálogo todo tipo NOVO que gerou .docx OK.
+    # Best-effort — falha aqui nunca derruba a entrega (o doc já foi gerado).
+    learned_persisted, learned_skipped = [], []
+    built_keys = {r["key"] for r in results}
+    for key in learned_specs:
+        if key not in built_keys:
+            continue
+        try:
+            ok, motivo = append_learned_type(CATALOG_PATH, learned_specs[key])
+            (learned_persisted if ok else learned_skipped).append({"key": key, "motivo": motivo})
+        except Exception as e:
+            learned_skipped.append({"key": key, "motivo": f"erro ao persistir: {e}"})
+
     return {
         "status": "ok" if not failures else "partial",
         "docs": results,
         "failures": failures,
+        "learned_persisted": learned_persisted,
+        "learned_skipped": learned_skipped,
     }
 
 

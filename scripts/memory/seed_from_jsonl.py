@@ -36,6 +36,11 @@ from qdrant_client import QdrantClient, models
 from openai import OpenAI
 from fastembed import SparseTextEmbedding
 
+try:
+    from memory.taxonomy import coerce_taxonomy
+except ImportError:  # quando rodado de dentro de scripts/memory/
+    from taxonomy import coerce_taxonomy
+
 load_dotenv(os.path.expanduser("~/.claude/.env"))
 
 # ===================== CONFIG =====================
@@ -194,7 +199,15 @@ def main():
         print("[dry-run] mostrando tagging:")
         for d in docs[:20]:
             t = tag_from_path(d.get("path", ""))
-            print(f"  {d.get('path','?')[:60]:60s} -> {t}")
+            for _k in ("layer", "area", "entidade"):
+                if _k in d:
+                    t[_k] = d[_k]
+            _tax, _inf = coerce_taxonomy(
+                {"layer": t["layer"], "area": t["area"], "entidade": t["entidade"],
+                 "bu": d.get("bu"), "cross_bu": d.get("cross_bu")}, infer=True)
+            _flag = " (bu inferida baixa conf)" if _inf else ""
+            print(f"  {d.get('path','?')[:50]:50s} -> {t['layer']}/{t['entidade']} "
+                  f"bu={_tax['bu']}{_flag}")
         return 0
 
     # Clientes
@@ -251,8 +264,23 @@ def main():
             save_checkpoint(processed)
             continue
 
-        # 3) Tags por path
+        # 3) Tags por path (heuristica) + override explicito do record + bu (4a dimensao)
         tags_path = tag_from_path(full_path)
+        for _k in ("layer", "area", "entidade"):
+            if _k in doc:  # presenca da chave: None explicito tambem sobrescreve o chute do path
+                tags_path[_k] = doc[_k]
+        tax, _inferred = coerce_taxonomy(
+            {"layer": tags_path["layer"], "area": tags_path["area"],
+             "entidade": tags_path["entidade"], "bu": doc.get("bu"),
+             "cross_bu": doc.get("cross_bu")},
+            infer=True,
+        )
+        if _inferred:
+            log_jsonl({"file_id": file_id, "path": full_path,
+                       "status": "bu-inferred-lowconf", "bu": tax["bu"],
+                       "at": datetime.utcnow().isoformat()})
+            print(f"    [bu] inferida (baixa confianca): {tax['bu']} <- "
+                  f"{tags_path['layer']}/{tags_path['area']}/{tags_path['entidade']}")
 
         # 4) Embed em batches
         try:
@@ -281,9 +309,11 @@ def main():
                         "schema_version": "v1",
                         "embedding_model": "openai-text-embedding-3-large",
                         "type": "dado-mestre",
-                        "layer": tags_path["layer"],
-                        "area": tags_path["area"],
-                        "entidade": tags_path["entidade"],
+                        "layer": tax["layer"],
+                        "area": tax["area"],
+                        "entidade": tax["entidade"],
+                        "bu": tax["bu"],
+                        "cross_bu": tax["cross_bu"],
                         "title": name,
                         "child_text": child,
                         "parent_context": parent,
@@ -320,7 +350,7 @@ def main():
             elapsed = time.time() - started
             rate = (count_ok + count_skip + count_err + count_block) / max(elapsed, 1)
             print(f"  [{i+1}/{len(docs)}] OK {name[:50]:50s} ({len(all_points)} chunks, "
-                  f"{tags_path['layer']}/{tags_path['entidade']}) [{rate:.1f}/s, "
+                  f"{tags_path['layer']}/{tags_path['entidade']} bu={tax['bu']}) [{rate:.1f}/s, "
                   f"{total_chunks} total]")
 
         except Exception as e:

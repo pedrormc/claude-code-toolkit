@@ -1,9 +1,13 @@
 """
 Cliente de busca jurídica no Qdrant Nexo_Adv (REST direto via httpx).
 
-Por que httpx em vez de qdrant-client?
-- Cloudflare na frente expõe só HTTPS:443; o qdrant-client Python tenta porta 6333 por default mesmo com URL HTTPS, gera ConnectTimeout.
-- httpx fala REST puro contra o domínio público, sem assumir porta/gRPC.
+URL canônica: http://3.237.66.68:6333 (IP direto do Lightsail, porta REST 6333).
+Verificado 2026-06-05 (541ms, serve Nexo_Adv). O domínio legado
+qdrant.blackgroup-bia.shop (Cloudflare HTTPS:443) ainda funciona como fallback,
+porém é mais lento (701ms) e adiciona uma dependência de proxy.
+
+Por que httpx em vez de qdrant-client? httpx fala REST puro e não assume gRPC,
+então funciona igual contra o IP:6333 ou contra o domínio Cloudflare.
 
 Uso CLI:
     python qdrant_search.py "obrigação de meio versus resultado"
@@ -31,7 +35,7 @@ SKILL_DIR = SCRIPT_DIR.parent
 
 load_dotenv(SKILL_DIR / ".env")
 
-QDRANT_URL = os.getenv("QDRANT_URL", "https://seu-qdrant.exemplo.com").rstrip("/")
+QDRANT_URL = os.getenv("QDRANT_URL", "http://3.237.66.68:6333").rstrip("/")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "Nexo_Adv")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "text-embedding-3-large")

@@ -26,10 +26,13 @@ PAYLOAD_INDICES = [
     ("layer", "keyword"),
     ("area", "keyword"),
     ("entidade", "keyword"),
+    ("bu", "keyword"),
+    ("cross_bu", "keyword"),
     ("type", "keyword"),
     ("session_id", "keyword"),
     ("source_file", "keyword"),
     ("session_date", "keyword"),
+    ("zel", "keyword"),  # per-Zel isolation (D2) — turn-summary rows; seed rows have no 'zel'
 ]
 
 

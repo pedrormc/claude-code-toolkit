@@ -3,6 +3,23 @@
 All notable changes to claude-code-toolkit are documented here.
 Format inspired by [Keep a Changelog](https://keepachangelog.com/).
 
+## [2026-06-05] - Fase 2 (follow-ups da auditoria): pipeline BU 4D end-to-end
+
+### Added
+- `scripts/memory/taxonomy.py` - modulo canonico unico das 4 dimensoes (layer/area/entidade/bu + cross_bu): valida slugs e infere bu via infer_bu(). Importado por seed, create_collection e /ingest. Fecha o gap "valores hardcoded em cada script".
+- `skills/ingest/` - skill /ingest: indexa UM artefato canonico no Singular_Memory exigindo taxonomy 4D EXPLICITA (sem fallback silencioso). Wrapper sobre seed_from_jsonl, valida via taxonomy.py, idempotente por UUID5. Fase 3 do Backoffice Pro Max.
+- `skills/new-projeto-backoffice/` - skill de scaffold do padrao de arquitetura obrigatorio (memory/ + MEMORY.md + PROJETO.md + Qdrant + Obsidian + Git) ja com bu, na arvore plano/singular/_bu/<bu>/<slug>/.
+- `scripts/sync-rules.sh` - detector de drift dos marcadores das regras soberanas (#1/#3/#4) nas copias derivadas + sync de rules/core pro toolkit. Plugavel no audit-hooks.sh via --check (exit 1 em drift).
+
+### Changed
+- `scripts/memory/seed_from_jsonl.py` - payload do Singular_Memory agora grava bu + cross_bu (4a dimensao); le taxonomy EXPLICITA do record (override por presenca de chave, corrige vazamento de area inferida em layer=opco); infer_bu loga quando a bu vem de inferencia de baixa confianca (nunca silencioso).
+- `scripts/memory/create_collection.py` - adiciona payload indices bu + cross_bu (keyword) pra filtro rapido por BU no recall. (Criar os indices no Qdrant ao vivo fica a cargo do operador.)
+- `skills/contrato/` - URL do Qdrant Nexo_Adv trocada de https://qdrant.blackgroup-bia.shop (Cloudflare legado, 701ms) para http://3.237.66.68:6333 (IP direto Lightsail, 541ms, verificado servindo Nexo_Adv). Mantem httpx REST. Atualiza qdrant_search.py (default + comentario) e .env.example.
+
+### Notes
+- Taxonomy 4D fechada de ponta a ponta: /bu classifica, /ingest valida + indexa, seed grava bu no payload Qdrant.
+- Verificado: infer_bu (6 casos), seed --dry-run (override explicito + inferencia), contrato smoke test real contra o IP (resultado Nexo_Adv score 0.56), sync-rules --check (3/3 markers PASS).
+
 ## [2026-06-05] - Regra Soberana #4: Categorizacao por BU + sync de governanca
 
 ### Added

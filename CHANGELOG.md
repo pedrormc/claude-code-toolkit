@@ -3,6 +3,26 @@
 All notable changes to claude-code-toolkit are documented here.
 Format inspired by [Keep a Changelog](https://keepachangelog.com/).
 
+## [2026-06-05] - Regra Soberana #4: Categorizacao por BU + sync de governanca
+
+### Added
+
+**Regra nova:**
+- `rules/core/bu-categorization.md` - REGRA SOBERANA #4. Todo artefato Singular recebe uma BU primaria (campo `bu` + `cross_bu`), 4a dimensao da taxonomia (soma a layer/area/entidade). 5 BUs core (Simon/Arthur Trojan/Carol/Ana Luiza/Robertinho+Volpi) + Apoio + Portfolio + Macro. Gate dos 3 Pilares antes de classificar. Fonte: doc "O Essencial" da Singular.
+
+**Skill nova:**
+- `skills/bu/` - classificador `/bu`. Recebe artefato/projeto/ideia, roda os 3 Pilares como gate, aplica a heuristica, decide o slug primario (+ cross_bu), aponta a pasta e devolve frontmatter pronto pra ingest no Singular_Memory.
+
+### Changed
+
+- `rules/core/identity.md` - SINCRONIZADO (estava 11 dias atras). Agora traz a Regra Soberana #3 (Catalogacao Singular, decretada 2026-05-19) que faltava, mais a nova secao "Categorizacao por BU" (#4). Inclui a revisao de 2026-06-05: "Claudia sem responsabilidade" foi REVISADA, Claudia = dona de apoio-pessoas + candidata a apoio-cs (doc "O Essencial" prevalece).
+
+### Notes
+
+- Taxonomia BU documentada em `~/.claude/projects/.../memory/feedback_bu_taxonomy_singular.md` (SoT dos slugs/donos) + manifesto `bu-classification-manifest.json` (179 itens do ecossistema classificados).
+- Hook leve `bu-tag-reminder.js` (Node, non-blocking, async) lembra de taguear artefato Singular sem BU. Instalado no settings.json local (PostToolUse).
+- Pendencias de follow-up da auditoria: regenerar `ALL_RULES.md` (stale desde 2026-03-29); sincronizar deltas de `skills/reuniao` e `skills/documento`; corrigir URL Qdrant legada na `skills/contrato`; criar skills `/ingest` e `/new-projeto-backoffice`; criar `scripts/sync-rules.sh`.
+
 ## [2026-05-25] — Sync completo: skills, scripts, config, plugins
 
 ### Added

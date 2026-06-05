@@ -194,6 +194,19 @@ else
   ((RESULT_FAIL++)) || true
 fi
 
+# 14. sync-rules.sh — sem drift das Regras Soberanas (#1 3 Abas / #3 Catalogacao / #4 BU)
+if [[ -x "$HOME/.claude/scripts/sync-rules.sh" ]]; then
+  if bash "$HOME/.claude/scripts/sync-rules.sh" --check >/dev/null 2>&1; then
+    RESULTS+=("  PASS  sync-rules.sh --check (sem drift de regra soberana)")
+    ((RESULT_OK++)) || true
+  else
+    RESULTS+=("  FAIL  sync-rules.sh --check: uma Regra Soberana sumiu de uma copia derivada")
+    ((RESULT_FAIL++)) || true
+  fi
+else
+  skip_test "sync-rules.sh --check" "not executable"
+fi
+
 # ============ Print results ============
 echo ""
 printf '%s\n' "${RESULTS[@]}"

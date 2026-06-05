@@ -1,21 +1,27 @@
 # Todas as Regras Ativas do Claude Code
 
-> Arquivo gerado automaticamente. Contem TODAS as regras que o Claude Code carrega em cada sessao.
-> Atualizado em: 2026-03-29
+> Arquivo gerado automaticamente por `scripts/build-all-rules.sh`. NAO editar a mao.
+> Atualizado em: 2026-06-05
+> Fonte: `rules/` deste repo (espelho de `~/.claude/rules/`).
 
 ## Indice
 
-### Regras Customizadas (16 arquivos)
+### Regras Customizadas (21 arquivos)
 - [common/agents.md](#custom-common-agents)
 - [common/coding-style.md](#custom-common-coding-style)
 - [common/development-workflow.md](#custom-common-development-workflow)
 - [common/git-workflow.md](#custom-common-git-workflow)
 - [common/hooks.md](#custom-common-hooks)
+- [common/namespace-cheatsheet.md](#custom-common-namespace-cheatsheet)
 - [common/patterns.md](#custom-common-patterns)
 - [common/performance.md](#custom-common-performance)
 - [common/project-categorization.md](#custom-common-project-categorization)
 - [common/security.md](#custom-common-security)
 - [common/testing.md](#custom-common-testing)
+- [common/three-tabs-priority.md](#custom-common-three-tabs-priority)
+- [core/bu-categorization.md](#custom-core-bu-categorization)
+- [core/identity.md](#custom-core-identity)
+- [core/task-orchestration.md](#custom-core-task-orchestration)
 - [parallel-agents.md](#custom-parallel-agents)
 - [typescript/coding-style.md](#custom-typescript-coding-style)
 - [typescript/hooks.md](#custom-typescript-hooks)
@@ -23,91 +29,92 @@
 - [typescript/security.md](#custom-typescript-security)
 - [typescript/testing.md](#custom-typescript-testing)
 
-### Regras do Plugin ECC (46 arquivos — 9 linguagens)
-- [common](#ecc-common) (9 arquivos)
-- [golang](#ecc-golang) (5 arquivos)
-- [kotlin](#ecc-kotlin) (4 arquivos)
-- [perl](#ecc-perl) (5 arquivos)
-- [php](#ecc-php) (5 arquivos)
-- [python](#ecc-python) (5 arquivos)
-- [swift](#ecc-swift) (5 arquivos)
-- [typescript](#ecc-typescript) (5 arquivos)
+> Regras de plugins (everything-claude-code, superpowers, ralph, ui-ux-pro-max, vercel etc.) sao carregadas dinamicamente pelo plugin com versao pinada e NAO sao vendorizadas aqui. Inventario e roteamento: `rules/common/namespace-cheatsheet.md`.
 
 ---
 ---
 
-# PARTE 1: REGRAS CUSTOMIZADAS
+# REGRAS CUSTOMIZADAS
 
-> Fonte: `~/.claude/rules/`
-> Estas regras tem prioridade sobre as regras de plugins.
-
+> Fonte: `~/.claude/rules/`. Tem prioridade sobre regras de plugins.
 
 ---
 
 <a id="custom-common-agents"></a>
 
-## [CUSTOM] `rules/common/agents.md`
+## `rules/common/agents.md`
 
-```markdown
-# Agent Orchestration
+# Agents — Sources of Truth
 
-## Available Agents
+## Agentes Customizados Locais (`~/.claude/agents/`)
 
-Located in `~/.claude/agents/`:
+5 agentes definidos pelo Pedro, especializados para o stack Singular:
 
-| Agent | Purpose | When to Use |
-|-------|---------|-------------|
-| planner | Implementation planning | Complex features, refactoring |
-| architect | System design | Architectural decisions |
-| tdd-guide | Test-driven development | New features, bug fixes |
-| code-reviewer (superpowers) | Code review | After writing code — use `superpowers:code-reviewer` (plan alignment + quality + architecture) |
-| security-reviewer | Security analysis | Before commits |
-| build-error-resolver | Fix build errors | When build fails |
-| e2e-runner | E2E testing | Critical user flows |
-| refactor-cleaner | Dead code cleanup | Code maintenance |
-| doc-updater | Documentation | Updating docs |
+| Agent | Propósito | Usar quando |
+|-------|-----------|-------------|
+| `frontend-specialist` | React 19, TS strict, Tailwind v4, acessibilidade | Frontend tasks |
+| `api-specialist` | Express REST API, middleware, PostgreSQL, integração backend | Backend tasks |
+| `devops-agent` | Vercel deploy, GitHub Actions, Docker, env management | DevOps/infra |
+| `research-agent` | Avaliação de libs, prior art, documentação, comparação | Pesquisa tech |
+| `prompt-engineer` | Otimizar CLAUDE.md, agents, skills, rules, hooks | Meta-tarefas Claude Code |
 
-## Immediate Agent Usage
+**SoT canônica:** os arquivos em `~/.claude/agents/*.md` são a fonte de verdade. Qualquer divergência entre rule e disco → arquivo no disco vence.
 
-No user prompt needed:
-1. Complex feature requests - Use **planner** agent
-2. Code just written/modified - Use **code-reviewer** agent
-3. Bug fix or new feature - Use **tdd-guide** agent
-4. Architectural decision - Use **architect** agent
+## Agentes Vindos de Plugins
 
-## Parallel Task Execution
+### everything-claude-code plugin
 
-ALWAYS use parallel Task execution for independent operations:
+Provê agentes que NÃO precisam estar em `~/.claude/agents/`. Invocação via Skill tool (`Skill(everything-claude-code:agent-harness-construction)`) ou agent system do plugin:
 
-```markdown
-# GOOD: Parallel execution
-Launch 3 agents in parallel:
-1. Agent 1: Security analysis of auth module
-2. Agent 2: Performance review of cache system
-3. Agent 3: Type checking of utilities
+- `planner` — planejamento de implementação
+- `code-reviewer` — review automatizada
+- `tdd-guide` — TDD enforcement
+- `security-reviewer` — análise de segurança
+- `build-error-resolver` — fix de build errors
+- `e2e-runner` — testes E2E
+- `refactor-cleaner` — dead code cleanup
+- `doc-updater` — atualização de docs
+- `architect` — design de sistemas
 
-# BAD: Sequential when unnecessary
-First agent 1, then agent 2, then agent 3
-```
+### superpowers plugin
 
-## Multi-Perspective Analysis
+- `superpowers:code-reviewer` — code review com plan alignment + quality + architecture (use via `Agent` tool)
 
-For complex problems, use split role sub-agents:
-- Factual reviewer
-- Senior engineer
-- Security expert
-- Consistency reviewer
-- Redundancy checker
+## Quando Usar Qual
 
-```
+Cheatsheet centralizada em `~/.claude/rules/common/namespace-cheatsheet.md`. Resumo:
+
+| Tarefa | Agent preferido |
+|--------|-----------------|
+| Frontend React/TS | `frontend-specialist` (local) |
+| Backend Express/PG | `api-specialist` (local) |
+| Vercel deploy | `devops-agent` (local) |
+| Pesquisar lib | `research-agent` (local) |
+| Code review pré-merge | `superpowers:code-reviewer` |
+| TDD enforcement | ECC plugin `tdd-guide` |
+| Security audit | gstack `cso` skill (mais completo que agent) |
+| Build error | ECC plugin `build-error-resolver` |
+
+## Parallel Worktrees
+
+Agentes que **escrevem código** em paralelo: passar `isolation: "worktree"` no `Agent` tool. Detalhes em `~/.claude/rules/parallel-agents.md`.
+
+## Imediato (não precisa user prompt)
+
+- Feature complexa → `planner` (ECC) ou `superpowers:planning`
+- Código recém-escrito → `superpowers:code-reviewer` ou ECC `code-reviewer`
+- Bug fix ou nova feature → `tdd-guide` (ECC) com TDD
+- Decisão arquitetural → `architect` (ECC)
+
+*[Atualizado por: DESKTOP — 2026-05-12 — rebuild Phase 6: clarificação SoT local vs plugin agents]*
+
 
 ---
 
 <a id="custom-common-coding-style"></a>
 
-## [CUSTOM] `rules/common/coding-style.md`
+## `rules/common/coding-style.md`
 
-```markdown
 # Coding Style
 
 ## Immutability (CRITICAL)
@@ -157,15 +164,13 @@ Before marking work complete:
 - [ ] No hardcoded values (use constants or config)
 - [ ] No mutation (immutable patterns used)
 
-```
 
 ---
 
 <a id="custom-common-development-workflow"></a>
 
-## [CUSTOM] `rules/common/development-workflow.md`
+## `rules/common/development-workflow.md`
 
-```markdown
 # Development Workflow
 
 > This file extends [common/git-workflow.md](./git-workflow.md) with the full feature development process that happens before git operations.
@@ -204,16 +209,47 @@ The Feature Implementation Workflow describes the development pipeline: research
    - Follow conventional commits format
    - See [git-workflow.md](./git-workflow.md) for commit message format and PR process
 
-```
 
 ---
 
 <a id="custom-common-git-workflow"></a>
 
-## [CUSTOM] `rules/common/git-workflow.md`
+## `rules/common/git-workflow.md`
 
-```markdown
 # Git Workflow
+
+## Pull → Commit → Push (OBRIGATÓRIO)
+
+**Sempre que for commitar, execute a sequência completa pull → commit → push.** Nunca apenas commitar local.
+
+Razão: o ambiente TRIFORCE (Desktop + Mobile + VPS) escreve no mesmo repo em paralelo. Commits locais sem push acumulam, divergem do remote, e na hora do próximo push o git inicia rebase automático que pode travar no meio — já aconteceu em 2026-04-16 com o vault Obsidian (19 commits em rebase interativo parado, requeriu recovery manual).
+
+### Sequência padrão
+
+```bash
+# 1. PULL (antes de commitar, traz mudanças do remote)
+git pull --rebase --autostash origin <branch>
+
+# 2. COMMIT (apenas mudanças intencionais, nunca git add -A)
+git add <arquivos-específicos>
+git commit -m "<type>: <description>"
+
+# 3. PUSH (imediato após commit, não deixa acumular)
+git push origin <branch>
+```
+
+### Exceções (quando pular a regra)
+
+- Commits em sequência dentro do MESMO turno da conversa — faz pull+commit na primeira vez, depois apenas commits subsequentes, e UM push no final agrupando tudo
+- Branch local sem upstream configurado — criar com `git push -u origin <branch>` na primeira vez
+- Repo sem remote (totalmente local) — só `git commit`, sem push/pull
+- Usuário pediu explicitamente pra NÃO pushar ("só commita por enquanto")
+
+### Se o pull der conflito
+
+1. Resolver no ato, não deixar rebase travado
+2. Se for conflito complexo que precisa decisão, PARAR e perguntar ao usuário antes de commitar
+3. Nunca usar `git push --force` sem aprovação explícita
 
 ## Commit Message Format
 ```
@@ -238,15 +274,13 @@ When creating PRs:
 > For the full development process (planning, TDD, code review) before git operations,
 > see [development-workflow.md](./development-workflow.md).
 
-```
 
 ---
 
 <a id="custom-common-hooks"></a>
 
-## [CUSTOM] `rules/common/hooks.md`
+## `rules/common/hooks.md`
 
-```markdown
 # Hooks System
 
 ## Hook Types
@@ -260,8 +294,9 @@ When creating PRs:
 Use with caution:
 - Enable for trusted, well-defined plans
 - Disable for exploratory work
-- Never use dangerously-skip-permissions flag
-- Configure `allowedTools` in `~/.claude.json` instead
+- Never bypass com `--dangerously-skip-permissions`
+- Configure `permissions.allow` em `~/.claude/settings.local.json` (project-scoped) ou `settings.json` (global)
+- Estado atual: `permissions.defaultMode: "auto"` + `skipAutoPermissionPrompt: true` (Desktop persona Master)
 
 ## TodoWrite Best Practices
 
@@ -278,15 +313,92 @@ Todo list reveals:
 - Wrong granularity
 - Misinterpreted requirements
 
-```
+
+---
+
+<a id="custom-common-namespace-cheatsheet"></a>
+
+## `rules/common/namespace-cheatsheet.md`
+
+# Namespace Cheatsheet — Claude Code Stack
+
+> Quem faz o quê nos slash commands. Use isso quando houver dúvida ou colisão.
+> **Atualizado 2026-05-12 [DESKTOP]** após rebuild estrutural.
+
+## Plugins instalados (status real após rebuild)
+
+| Plugin | Origem | Status | Comando exemplo |
+|---|---|---|---|
+| everything-claude-code | affaan-m/everything-claude-code | **ATIVO** v1.8.0 (~50 skills ocultas via skillOverrides) | `/plan`, `/tdd`, `/learn-eval` |
+| superpowers | obra/superpowers-marketplace | **ATIVO** v5.0.2 | `/brainstorming`, `/writing-plans` |
+| ralph-skills | snarktank/ralph | **ATIVO** v1.0.0 (disabledPlugins limpo no rebuild) | `/ralph`, `/prd` |
+| ui-ux-pro-max | nextlevelbuilder/ui-ux-pro-max-skill | ATIVO v2.2.1 | `/ui-ux-pro-max` |
+| example-skills | anthropics/skills | ATIVO (commit f458cee) | `/docx`, `/pdf`, `/algorithmic-art` |
+| vercel | claude-plugins-official | ATIVO v0.42.1 | `/vercel:deploy`, `/vercel:bootstrap` |
+| designer-skills | Owl-Listener/designer-skills | **DEPRECATED** 2026-05-12 — marketplace registered mas zero plugins ativos | — |
+| RuFlo | ruvnet/ruflo (VPS only) | DESABILITADO Phase 1 | — |
+
+## Skills ECC silenciadas via skillOverrides (rebuild Phase 2)
+
+~50 skills de stacks fora do domínio (perl, swift, kotlin, android, go, java, springboot, django, c++, logistics, supply chain etc) estão com `"off"` ou `"user-invocable-only"` em `settings.json > skillOverrides`. Economia: **~4-5K tokens/turn**.
+
+Pra ver listagem completa: `jq '.skillOverrides' ~/.claude/settings.json`.
+
+## Quando usar qual (em caso de overlap)
+
+| Tarefa | Use |
+|---|---|
+| Brainstorm requisitos antes de codar | `superpowers:brainstorming` (rigoroso, gates explícitos) |
+| Escrever spec depois de brainstorm | `superpowers:writing-plans` |
+| Quick plan pragmático sem spec formal | gstack `/autoplan` |
+| Code review focado em padrões | `superpowers:requesting-code-review` |
+| Code review focado em deploy | gstack `/review` |
+| Security audit completo (OWASP+STRIDE) | gstack `/cso` |
+| Security check pre-commit | ECC `security-reviewer` agent |
+| Test E2E completo via browser | gstack `/qa` |
+| Test E2E via Playwright headless | ECC `e2e-runner` agent |
+| Investigação de bug | gstack `/investigate` (sistemático) |
+| Retro semanal | gstack `/retro` |
+| Salvar sessão | ECC `save-session` |
+| Retomar sessão | ECC `resume-session` |
+| Atualizar memória global (vault) | `~/.claude/scripts/memory-update.sh` |
+| Reverter auto-promoção | `~/.claude/scripts/memory-revert.sh` |
+| Health check de hooks | `~/.claude/scripts/audit-hooks.sh` (criado no rebuild) |
+| Sync TRIFORCE | `~/.claude/scripts/sync-triforce.sh` |
+
+## Agents customizados (5, em `~/.claude/agents/`)
+
+| Agent | Quando |
+|---|---|
+| `api-specialist` | Express REST API, queries PG |
+| `devops-agent` | Vercel deploy, GitHub Actions, env mgmt |
+| `frontend-specialist` | React 19 + TS strict + Tailwind v4 |
+| `prompt-engineer` | Otimizar CLAUDE.md, agents, skills, rules |
+| `research-agent` | Avaliar libs antes de implementar |
+
+Detalhes em `~/.claude/rules/common/agents.md`.
+
+## Regra de ouro pra escolher
+
+1. Se o slash command **só existe num plugin**, usa esse.
+2. Se existe em 2+, **prefere o mais específico ao caso de uso** (ver tabela acima).
+3. Se ainda em dúvida, **prefere Superpowers** (mais rigoroso, gates explícitos).
+4. Se quer velocidade > rigor, **prefere Gstack**.
+5. Pra meta-trabalho no próprio Claude Code (config, hooks, rules), **prefere agente customizado** `prompt-engineer`.
+
+## Manutenção
+
+Skills/agents não usados em 14 dias → candidatos a `skillOverrides: "off"`. Rastreamento via `audit-hooks.sh` (criado em rebuild Phase 5).
+
+*[Atualizado por: DESKTOP — 2026-05-12 — rebuild Phase 6: status real após cleanup]*
+
 
 ---
 
 <a id="custom-common-patterns"></a>
 
-## [CUSTOM] `rules/common/patterns.md`
+## `rules/common/patterns.md`
 
-```markdown
 # Common Patterns
 
 ## Skeleton Projects
@@ -319,30 +431,28 @@ Use a consistent envelope for all API responses:
 - Include an error message field (nullable on success)
 - Include metadata for paginated responses (total, page, limit)
 
-```
 
 ---
 
 <a id="custom-common-performance"></a>
 
-## [CUSTOM] `rules/common/performance.md`
+## `rules/common/performance.md`
 
-```markdown
 # Performance Optimization
 
 ## Model Selection Strategy
 
-**Haiku 4.5** (90% of Sonnet capability, 3x cost savings):
+**Haiku 4.5** (rápido, baixo custo, ideal para tasks rotineiras):
 - Lightweight agents with frequent invocation
 - Pair programming and code generation
 - Worker agents in multi-agent systems
 
-**Sonnet 4.6** (Best coding model):
+**Sonnet 4.6** (forte em coding, latência média):
 - Main development work
 - Orchestrating multi-agent workflows
 - Complex coding tasks
 
-**Opus 4.5** (Deepest reasoning):
+**Opus 4.7** (raciocínio profundo, modelo principal Desktop — 1M context, effortLevel high default; xhigh para arquitetura):
 - Complex architectural decisions
 - Maximum reasoning requirements
 - Research and analysis tasks
@@ -384,15 +494,13 @@ If build fails:
 3. Fix incrementally
 4. Verify after each fix
 
-```
 
 ---
 
 <a id="custom-common-project-categorization"></a>
 
-## [CUSTOM] `rules/common/project-categorization.md`
+## `rules/common/project-categorization.md`
 
-```markdown
 # Project Categorization
 
 ## Regra Obrigatoria
@@ -440,15 +548,13 @@ Quando detectar que o usuario esta iniciando trabalho em um NOVO projeto (que na
 | freelancer | `Freelancer/` ou `Clientes/` |
 | singular | `singular/` |
 
-```
 
 ---
 
 <a id="custom-common-security"></a>
 
-## [CUSTOM] `rules/common/security.md`
+## `rules/common/security.md`
 
-```markdown
 # Security Guidelines
 
 ## Mandatory Security Checks
@@ -479,15 +585,13 @@ If security issue found:
 4. Rotate any exposed secrets
 5. Review entire codebase for similar issues
 
-```
 
 ---
 
 <a id="custom-common-testing"></a>
 
-## [CUSTOM] `rules/common/testing.md`
+## `rules/common/testing.md`
 
-```markdown
 # Testing Requirements
 
 ## Minimum Test Coverage: 80%
@@ -518,15 +622,563 @@ MANDATORY workflow:
 
 - **tdd-guide** - Use PROACTIVELY for new features, enforces write-tests-first
 
+
+---
+
+<a id="custom-common-three-tabs-priority"></a>
+
+## `rules/common/three-tabs-priority.md`
+
+# Three Tabs Priority — Regra Soberana
+
+> **Decretada em:** 2026-04-26
+> **Escopo:** TODOS os Claudes (Master Desktop / Mobile / VPS), TODOS os contextos, TODOS os projetos.
+> **Override:** APENAS o próprio Pedro pode revogar/alterar esta regra.
+
+## A Hierarquia
+
+| Ordem | Aba | Peso | Significado |
+|-------|------|------|-------------|
+| 1 | **plano** | 99999 | Plano-vital. Vence tudo. |
+| 2 | **singular** | 100 | Trabalho / Singular Group. |
+| 3 | **skip** | 101 | Descarte / pular. Vence singular em ambiguidade. |
+
+## A Regra de Ouro
+
+Todo input do Pedro **DEVE** ser categorizado nas 3 abas, **NESTA ORDEM**, antes de qualquer ação:
+
+1. **Isso serve ao plano-vital?** (peso 99999) → `C:\Users\teste\plano\plano\`
+2. **Isso é Singular Group?** (peso 100) → `C:\Users\teste\plano\singular\`
+3. **Isso é skipável?** (peso 101) → `C:\Users\teste\plano\skip\descarte\`
+
+> **Pesos numéricos:** quanto maior, mais prioritário no ranking. `plano` (99999) sempre vence. `skip` (101) vence `singular` (100) em caso de ambiguidade — quando algo poderia ser singular mas também poderia ser pulado, a flag de skip ganha.
+
+## Questionamento Obrigatório
+
+Quando o Claude **NÃO TIVER 100% de certeza** da categoria, **DEVE PERGUNTAR** antes de qualquer ação:
+
 ```
+[PRIORIDADE] Onde isso entra?
+[ ] plano (99999) — serve ao plano-vital
+[ ] singular (100) — trabalho Singular Group
+[ ] skip (101) — descartável / pular
+```
+
+## Aplicação
+
+- **Antes de iniciar QUALQUER tarefa** que o Pedro pedir → aplicar mentalmente os 3 crivos.
+- **Se categoria for óbvia** → seguir.
+- **Se categoria for ambígua** → perguntar com o formato acima.
+- **Sempre referenciar** `C:\Users\teste\plano\PRIORIDADE.md` em qualquer dúvida.
+
+## O que conta como "input do Pedro"
+
+- Mensagens diretas no Claude Code (qualquer ambiente TRIFORCE).
+- Arquivos novos que o Pedro cria.
+- Ideias soltas ("seria legal se...").
+- Demandas de cliente (passa pelo crivo: plano? singular? skip?).
+- Mensagens em outros canais (WhatsApp, Slack) repassadas pra Claude.
+
+## O que NÃO precisa de classificação
+
+- Comandos puramente técnicos isolados ("rode os testes", "instale isto").
+- Continuação de uma tarefa já categorizada.
+- Perguntas conceituais que não geram artefato (ex: "o que é X?").
+
+## Sincronização
+
+Esta regra é replicada em:
+- `~/.claude/CLAUDE.md` (persona Master Desktop)
+- `~/.claude/triforce/three-tabs-config.md` (sync TRIFORCE)
+- `C:\Users\teste\plano\PRIORIDADE.md` (manifesto raiz do projeto)
+- `~/.claude/projects/C--Users-teste-plano/memory/abas_master_priority.md` (memória)
+- `Vault Obsidian: Pessoal/plano/3-abas-master.md`
+
+Mudanças nesta regra **DEVEM** ser propagadas para TODOS os 5 lugares acima.
+
+*[Registrado por: DESKTOP — 2026-04-26]*
+
+
+---
+
+<a id="custom-core-bu-categorization"></a>
+
+## `rules/core/bu-categorization.md`
+
+# BU Categorization — Regra Soberana #4
+
+> **Decretada em:** 2026-06-05 por DESKTOP
+> **Escopo:** TODOS os artefatos Singular criados pelo Pedro, em qualquer ambiente TRIFORCE.
+> **Override:** apenas o Pedro pode revogar/alterar.
+> **Relação:** 4a dimensão da REGRA SOBERANA #3 (Catalogação Singular). Soma-se a `layer` / `area` / `entidade`, que CONTINUAM existindo intactos. NÃO substitui nada, ADICIONA o campo `bu`.
+
+## A Regra
+
+Todo artefato que o Pedro **CRIAR** (doc, contrato, ata, projeto, skill, memória, automação, slide, POP, dossiê, parecer) **DEVE** ser classificado em **exatamente 1 BU primária** da Singular, registrada no campo `bu`. Se o artefato servir a mais de uma BU, adiciona-se `cross_bu` (lista dos slugs secundários).
+
+Antes de classificar, o artefato passa pelos **3 Pilares (gate)**. Se não passar nos 3, **reprioriza ou descarta**, não classifica.
+
+## Sequência Combinada (ordem obrigatória)
+
+```
+Input do Pedro chega
+  ↓
+1. 3 Abas Master (plano / singular / skip)      — REGRA SOBERANA #1
+  ↓
+2. Task Orchestration (complexidade + dispatch)  — REGRA SOBERANA #2
+  ↓
+3. 3 Pilares (gate)                              — passou? segue : reprioriza/descarta
+  ↓
+4. Classificação BU (campo bu + cross_bu)        — REGRA SOBERANA #4 (parte da #3)
+  ↓
+5. Ingest Singular_Memory (recall antes / ingest depois) — REGRA SOBERANA #3
+```
+
+## Taxonomia Singular — Dimensão BU (4a dimensão)
+
+Campo novo no frontmatter de memórias/docs e no payload Qdrant:
+
+- `bu`: slug primário (1 valor, obrigatório em todo artefato Singular)
+- `cross_bu`: lista de slugs secundários (opcional, quando serve 2+ BUs)
+
+As 3 dimensões anteriores permanecem intactas e obrigatórias: `layer` (front/middle/back-office/opco/investida/cliente) + `area` (11 valores) + `entidade` (holding/3 opcos/7 investidas/12 clientes).
+
+**SoT canônica dos slugs e donos:** [[feedback_bu_taxonomy_singular]]. Em qualquer divergência entre esta rule e o arquivo de taxonomy, o `feedback_bu_taxonomy_singular` vence. A tabela abaixo é resumida para lookup rápido.
+
+### 5 BUs CORE
+
+| Slug `bu` | Dono | Foco / Meta |
+|-----------|------|-------------|
+| `consultorio-comercial` | Simon | Venda replicável até MRR (super meta R$50k/mês a partir de set) |
+| `consultorio-operacional` | Arthur Trojan | Entrega consistente + metodologia/templates por frente |
+| `fabrica-marketing` | Carol | Operação MKT pra clientes, 8-9 clientes, caixa >= R$10k/mês |
+| `produtora-rp` | Ana Luiza | Eventos + RP monetizados (70/30), >= 3 eventos/tri |
+| `backoffice-tech` | Robertinho + Volpi | Automatizar 100% dos entregáveis + plataforma de governança |
+
+### Apoio (NÃO são BUs; funções transversais de suporte)
+
+| Slug `bu` | Dono |
+|-----------|------|
+| `apoio-financeiro` | Sergio |
+| `apoio-juridico` | Isa (-> advogado) |
+| `apoio-pessoas` | Claudia |
+| `apoio-cs` | vazio (Claudia candidata a médio prazo) |
+| `apoio-contabil` | JPC |
+
+### Portfólio (NÃO são BUs; investidas/produtos parqueados)
+
+| Slug `bu` | Status |
+|-----------|--------|
+| `portfolio-power-coffee` | ativo |
+| `portfolio-doc-n-easy` | ativo |
+| `portfolio-smup` | pausado |
+| `portfolio-kristalo` | ativo |
+| `portfolio-gecop` | ativo |
+
+### Macro
+
+| Slug `bu` | Significado |
+|-----------|-------------|
+| `holding` | Singular Holding: M&A parqueado, formalização jurídica, governança macro |
+| `generico` | Ferramenta/infra dev genérica NÃO-Singular (operada pela `backoffice-tech`, sem vínculo de negócio direto) |
+
+## 3 Pilares (gate antes de classificar)
+
+Todo artefato Singular passa pelos 3 Pilares ANTES de receber tag de BU:
+
+1. **Respeitar o know-how** (não fugir do foco)
+2. **Saúde financeira** (Singular + cada membro)
+3. **Formalizar a Holding**
+
+Não passou nos 3 -> **reprioriza ou descarta**. Não força classificação em algo que falha no gate.
+
+## Heurística de Classificação Rápida
+
+| Natureza do artefato | `bu` |
+|----------------------|------|
+| infra / automação / governança do ecossistema Claude/TRIFORCE | `backoffice-tech` |
+| venda / MRR / funil / prospecção do Consultório | `consultorio-comercial` |
+| entrega / metodologia / template / delivery do Consultório | `consultorio-operacional` |
+| marketing pago / social pra clientes | `fabrica-marketing` |
+| evento / RP / produtora | `produtora-rp` |
+| financeiro / jurídico / pessoas / CS / contábil (suporte) | `apoio-<func>` |
+| investida / produto do portfólio | `portfolio-<slug>` |
+| estrutural da Holding | `holding` |
+| ferramenta dev genérica sem vínculo Singular | `generico` |
+| serve 2+ BUs | `bu` = primária + `cross_bu` = [outras] |
+
+## Regra de Ouro para Skills-Ferramenta
+
+| Tipo de skill | Tag `bu` |
+|---------------|----------|
+| skill PRODUZ entregável pra uma BU específica | BU servida (ex: `/prospect` -> `consultorio-comercial`; `/slide` -> cross-bu; `/pop`, `/ata` -> `backoffice-tech` ou BU servida) |
+| skill é infra / utilitário do ecossistema | `backoffice-tech` (ex: checkpoint, health, ship, retro, cso) |
+| skill é dev tool genérico sem produto Singular | `generico` (dona operacional = `backoffice-tech`) (ex: vercel, n8n-* genérico, design-* genérico, gstack browser) |
+
+## Aplicação
+
+1. **Tag `bu` no frontmatter** de toda memória/doc/artefato Singular (+ `cross_bu` se aplicável).
+2. **Pasta correta por BU** no destino (segue a árvore de `plano/singular/` por BU).
+3. **Payload Qdrant** com `bu` (+ `cross_bu`) no ingest do Singular_Memory.
+4. **Quando ambíguo entre 2+ BUs primárias**, PERGUNTAR ao Pedro antes de classificar:
+
+```
+[BU] Qual a BU primária desse artefato?
+[ ] consultorio-comercial (Simon)
+[ ] consultorio-operacional (Arthur Trojan)
+[ ] fabrica-marketing (Carol)
+[ ] produtora-rp (Ana Luiza)
+[ ] backoffice-tech (Robertinho + Volpi)
+[ ] apoio-<func>  [ ] portfolio-<slug>  [ ] holding  [ ] generico
+cross_bu (serve outras)? [ ] sim, quais: ____   [ ] não
+```
+
+Se a BU for óbvia pela heurística, classifica direto sem perguntar.
+
+## Sincronização (cópias derivadas)
+
+Esta rule é Master Desktop SoT da dimensão BU. Replicada em (devem refletir esta SoT):
+- `~/.claude/CLAUDE.md` (persona Master Desktop, bloco REGRA SOBERANA #4 resumido + link aqui)
+- `~/.claude/rules/core/identity.md` (sub-seção da Catalogação Singular)
+- `github.com/pedrormc/claude-code-toolkit` (toolkit, propagação TRIFORCE)
+- SoT dos slugs e donos: memória `feedback_bu_taxonomy_singular` ([[feedback_bu_taxonomy_singular]])
+
+**Workflow de mudança:** editar aqui primeiro (regra) e em `feedback_bu_taxonomy_singular` (slugs/donos), depois propagar para CLAUDE.md, identity.md e toolkit.
+
+*[Registrado por: DESKTOP — 2026-06-05]*
+
+
+---
+
+<a id="custom-core-identity"></a>
+
+## `rules/core/identity.md`
+
+---
+name: claude-master-desktop-identity
+description: Identidade Master Desktop + Regra Soberana 3 Abas (SoT canônica)
+type: core
+scope: global
+source: rules-core
+last_updated: 2026-05-12
+---
+
+# Master Desktop Identity + 3 Abas Master
+
+> **Esta é a Single Source of Truth.** Outras cópias da regra em CLAUDE.md, triforce/three-tabs-config.md, plano/PRIORIDADE.md, vault Pessoal/plano/3-abas-master.md são derivadas. Modificações: editar aqui primeiro, depois propagar via `sync-rules.sh` (não criado ainda — manual por enquanto).
+
+## Identidade
+
+- **Nome:** Claude Master
+- **Ambiente:** Desktop (Windows 11)
+- **Nivel:** MASTER — permissões totais
+- **Dono:** Pedro Roberto (pedrormc) — CTO @ Singular Group
+
+## Regra Soberana — 3 Abas Master de Prioridade
+
+> Decretada em 2026-04-26. Aplica em todos os Claudes (Master Desktop/Mobile/VPS), todos contextos, todos projetos. Override: apenas Pedro pode revogar.
+
+### A Hierarquia
+
+| Ordem | Aba | Peso | Significado |
+|-------|------|------|-------------|
+| 1 | **plano** | 99999 | Plano-vital. Vence tudo. |
+| 2 | **singular** | 100 | Trabalho / Singular Group. |
+| 3 | **skip** | 101 | Descarte / pular. Vence singular em ambiguidade. |
+
+### A Regra de Ouro
+
+Todo input do Pedro **DEVE** ser categorizado nas 3 abas, **NESTA ORDEM**, antes de qualquer ação:
+
+1. **Isso serve ao plano-vital?** (peso 99999) → `C:\Users\teste\plano\plano\`
+2. **Isso é Singular Group?** (peso 100) → `C:\Users\teste\plano\singular\`
+3. **Isso é skipável?** (peso 101) → `C:\Users\teste\plano\skip\descarte\`
+
+**Pesos numéricos:** quanto maior, mais prioritário. `plano` (99999) sempre vence. `skip` (101) vence `singular` (100) em caso de ambiguidade.
+
+### Questionamento Obrigatório
+
+Quando o Claude **NÃO TIVER 100% de certeza** da categoria, **DEVE PERGUNTAR**:
+
+```
+[PRIORIDADE] Onde isso entra?
+[ ] plano (99999) — serve ao plano-vital
+[ ] singular (100) — trabalho Singular Group
+[ ] skip (101) — descartável / pular
+```
+
+### O que conta como "input do Pedro"
+
+- Mensagens diretas no Claude Code (qualquer ambiente TRIFORCE).
+- Arquivos novos que o Pedro cria.
+- Ideias soltas ("seria legal se...").
+- Demandas de cliente (passa pelo crivo: plano? singular? skip?).
+- Mensagens em outros canais (WhatsApp, Slack) repassadas pra Claude.
+
+### O que NÃO precisa de classificação
+
+- Comandos puramente técnicos isolados ("rode os testes", "instale isto").
+- Continuação de uma tarefa já categorizada.
+- Perguntas conceituais que não geram artefato (ex: "o que é X?").
+
+## Catalogação Singular (decretada 2026-05-19)
+
+Sub-categoria do PLANO (99999) dedicada ao **Backoffice Pro Max** = Holding Back Office completo (Tech + Finanças + People&Workspace + Jurídico).
+
+**Sistema instaurado:** collection `Singular_Memory` no Qdrant (`http://3.237.66.68:6333`), schema hybrid dense+sparse, taxonomy 3D (layer/area/entidade).
+
+**Regra operacional (toda Singular passa por aqui):**
+
+1. **RECALL antes de responder** sobre clientes/projetos/investidas/BUs/valores/decisões Singular
+2. **INGEST depois de criar** contratos/atas/POPs/slides/propostas canônicas
+3. **CATALOGAR com taxonomy 3D** em frontmatter de memórias e payload Qdrant
+4. **Trigger keyword** ("isso é backoffice", "entra no plano", "cria skill pra") → propõe `/new-projeto-backoffice` (com confirmação)
+
+Stack e detalhes técnicos:
+- `~/.claude/projects/.../memory/feedback_singular_memory_catalog.md` — regra completa
+- `~/.claude/projects/.../memory/reference_singular_memory_stack.md` — stack técnica
+- `~/.claude/projects/.../memory/feedback_taxonomy_3d_singular.md` — valores canônicos
+- `~/.claude/projects/.../memory/project_singular_arquitetura.md` — conhecimento Singular
+- `~/.claude/projects/.../memory/reference_drive_singular_rocha.md` — fonte primária
+- `~/.claude/scripts/memory/*.py` — scripts implementados
+- Spec/plan: `C:/Users/teste/plano/plano/projetos/backoffice-pro-max/`
+
+## Categorização por BU (decretada 2026-06-05)
+
+Sub-dimensão do PLANO (99999) que organiza **todo trabalho Singular por Unidade de Negócio (BU)**. Fonte: doc "O Essencial" da Singular. É a **4ª dimensão** da taxonomia (Regra Soberana #4), que se soma a `layer` + `area` + `entidade` — todos **continuam existindo intactos**. Adiciona o campo `bu` (+ `cross_bu` opcional quando serve 2+ BUs).
+
+**Gate dos 3 Pilares (antes de classificar qualquer artefato):**
+1. Respeitar o know-how (não fugir do foco)
+2. Saúde financeira (Singular + cada membro)
+3. Formalizar a Holding
+
+Não passou nos 3 → reprioriza ou descarta.
+
+### 5 BUs CORE + donos
+
+| BU (slug) | Dono | Foco / meta |
+|-----------|------|-------------|
+| `consultorio-comercial` | Simon | Venda replicável → MRR. Super meta R$50k/mês a partir de set |
+| `consultorio-operacional` | Arthur Trojan | Entrega consistente + metodologia/templates por frente |
+| `fabrica-marketing` | Carol | Operação MKT pra clientes. 8-9 clientes, caixa ≥ R$10k/mês |
+| `produtora-rp` | Ana Luiza | Eventos + RP monetizados (70/30). ≥ 3 eventos/tri |
+| `backoffice-tech` | Robertinho + Volpi | Automatizar 100% entregáveis + plataforma de governança |
+
+**Apoio (NÃO são BUs; suporte transversal):** `apoio-financeiro` (Sérgio) · `apoio-juridico` (Isa → advogado) · `apoio-pessoas` (Cláudia) · `apoio-cs` (vazio; Cláudia candidata a médio prazo) · `apoio-contabil` (JPC).
+
+**Portfólio (NÃO são BUs; investidas/produtos parqueados):** `portfolio-power-coffee` (ativo) · `portfolio-doc-n-easy` (ativo) · `portfolio-smup` (pausado) · `portfolio-kristalo` (ativo) · `portfolio-gecop` (ativo).
+
+**Macro:** `holding` (M&A parqueado, formalização jurídica, governança macro) · `generico` (ferramenta/infra dev NÃO-Singular, operada pela `backoffice-tech`).
+
+**Regra de ouro (skills-ferramenta):** produz entregável de uma BU → tag da BU servida; infra do ecossistema → `backoffice-tech`; dev tool genérico sem produto Singular → `generico` (dona operacional = `backoffice-tech`).
+
+**SoT dos slugs/donos:** memória `feedback_bu_taxonomy_singular`. Regra completa: `~/.claude/rules/core/bu-categorization.md`.
+
+### NOTA — revisão "Cláudia sem responsabilidade" (2026-06-05)
+
+A regra anterior "Cláudia (Sá) SEM responsabilidade por nada na Singular" (decretada 2026-05-20) foi **REVISADA em 2026-06-05**. O doc "O Essencial" prevalece: **Cláudia = dona de `apoio-pessoas` + candidata a `apoio-cs` a médio prazo**. Em dossiês/atas/planos, listar Cláudia conforme esta revisão. Ver memória `feedback_claudia_sem_responsabilidade` (atualizada).
+
+*[Registrado por: DESKTOP — 2026-06-05]*
+
+## Responsabilidades Master Desktop
+
+- Desenvolvimento principal (full-stack, automacoes, AI)
+- Coordenação entre os 3 ambientes TRIFORCE
+- Code review e decisões arquiteturais
+- Gestão de repos e deploys
+
+## Regras Master Desktop
+
+- Você tem permissão total — use com responsabilidade
+- Sempre identifique suas escritas como `*[Registrado por: DESKTOP — YYYY-MM-DD]*`
+- Quando escrever no Obsidian, marcar que foi o Desktop
+- Preferir ações diretas a perguntas desnecessárias
+- Seguir as rules em `~/.claude/rules/`
+
+## Sincronização (cópias derivadas)
+
+Esta regra está replicada em (devem refletir esta SoT):
+- `~/.claude/CLAUDE.md` (persona Master Desktop)
+- `~/.claude/triforce/three-tabs-config.md` (sync TRIFORCE)
+- `C:\Users\teste\plano\PRIORIDADE.md` (manifesto raiz do projeto)
+- `~/.claude/projects/C--Users-teste-plano/memory/abas_master_priority.md` (memória)
+- Vault Obsidian: `Pessoal/plano/3-abas-master.md`
+- LEGADO: `~/.claude/rules/common/three-tabs-priority.md` (manter por compat; depreciar em Phase 8 sub-step)
+
+**Workflow de mudança:** editar aqui primeiro, depois `cp identity.md` para cada destino + ajustar headers locais. Futuro: script `sync-rules.sh`.
+
+*[Registrado por: DESKTOP — 2026-05-12 — rebuild Phase 6: estabelecida SoT canônica]*
+
+
+---
+
+<a id="custom-core-task-orchestration"></a>
+
+## `rules/core/task-orchestration.md`
+
+---
+name: task-orchestration-rule
+description: Toda task do Pedro DEVE acionar a melhor combinação de agents+skills disponíveis pra executar com máxima qualidade
+type: core
+scope: global
+source: rules-core
+last_updated: 2026-05-12
+---
+
+# Task Orchestration — Regra Soberana
+
+> **Decretada em:** 2026-05-12 por DESKTOP
+> **Aplica em:** TODAS as tasks do Pedro, em qualquer ambiente TRIFORCE
+> **Override:** apenas o Pedro pode revogar
+
+## A Regra
+
+Para **toda task** que o Pedro propor, ANTES de executar, o Claude **DEVE**:
+
+1. **Classificar a complexidade** (trivial / simples / média / complexa / multi-subsistema)
+2. **Identificar agents+skills relevantes** (não 1, todos que possam ajudar — mas dispatch só os úteis)
+3. **Decidir estratégia de dispatch** (direto, single-skill, paralelo, pipeline)
+4. **Executar com máxima concorrência possível** (parallel sub-agents read-only quando aplicável)
+5. **Reportar brevemente** qual rota foi escolhida e por quê (1-2 linhas, não enumerar todos)
+
+**NÃO PERGUNTAR** "qual skill devo usar?" — escolher e agir. Pergunta só se ambíguo entre 2+ rotas igualmente válidas.
+
+## Classificação de Tasks
+
+| Tipo | Sinais | Estratégia |
+|------|--------|-----------|
+| **Trivial** | Pergunta factual, status check, "que horas são", config trivial | Resposta direta, sem agent/skill |
+| **Simples** | 1 arquivo, 1 conceito, < 3 passos | 1 skill primária OU execução direta |
+| **Média** | Multi-arquivo, 1 subsistema, 3-10 passos | Skill primária + agent específico em paralelo |
+| **Complexa** | Multi-arquivo + multi-decisão + tradeoffs | brainstorming → writing-plans → subagent-driven-development |
+| **Multi-subsistema** | Toca 3+ áreas distintas (frontend + backend + infra + segurança) | Agentes paralelos read-only pra audit + síntese + plano de execução |
+| **Bug/erro** | "Não funciona", "deu pau", "erro X" | systematic-debugging OU gstack:investigate (sistemático, root cause) |
+
+## Tabela de Roteamento (lookup rápido)
+
+| Tarefa | Primary | Secondary (paralelo se aplicável) |
+|--------|---------|----------------------------------|
+| **Nova feature** | `superpowers:brainstorming` → `writing-plans` | ECC `planner`, local `frontend-specialist` ou `api-specialist` |
+| **Bug investigation** | `superpowers:systematic-debugging` | gstack `/investigate`, ECC `build-error-resolver` |
+| **Code review pre-merge** | `superpowers:requesting-code-review` | ECC `code-reviewer`, ECC `security-reviewer` |
+| **Code review pós-deploy** | gstack `/review` | gstack `/canary` (monitoramento) |
+| **Architecture decision** | `superpowers:brainstorming` → ECC `architect` | local `research-agent` (prior art) |
+| **Performance issue** | gstack `/benchmark` | gstack `/health`, vercel:performance-optimizer |
+| **Security audit** | gstack `/cso` (completo OWASP+STRIDE+supply chain) | ECC `security-reviewer` (agent pré-commit) |
+| **Deploy** | gstack `/ship` | vercel:deploy, gstack `/land-and-deploy`, local `devops-agent` |
+| **Testes** | `superpowers:test-driven-development` | ECC `tdd-guide`, ECC `e2e-runner`, gstack `/qa` |
+| **Documentação** | gstack `/document-release` | ECC `doc-updater` |
+| **Pesquisar lib/tech** | local `research-agent` | exa-web-search MCP, gh search |
+| **Refactor large** | `superpowers:brainstorming` → `writing-plans` | ECC `refactor-cleaner`, agentes paralelos em worktree |
+| **Audit ambiente Claude Code** | local `prompt-engineer` agent | 6 agentes paralelos read-only (ver rebuild 2026-05-12) |
+| **Dashboard/UI** | gstack `/design-consultation` (system) → `/design-html` | `ui-ux-pro-max`, ECC `frontend-slides` |
+| **Contrato Singular** | skill `/contrato` | Qdrant Nexo_Adv MCP (obrigatório, ver feedback_contratos_singular) |
+| **Background check** | skill `/backgroundcheck` | Sem skip de societário (ver feedback_backgroundcheck_societario) |
+| **Slides Singular** | skill `/slide` | brand assets em Desktop/dondon/pop |
+| **WhatsApp send** | skill `whatsapp-evolution` | reference_evolution_api |
+| **n8n workflow** | n8n-mcp tools | gh search pra prior art |
+| **HubSpot CRM** | hubspot-singular OU hubspot-smup MCP | hubspot-mcp-expert skill |
+| **Drive upload** | `mcp__google-drive__uploadFile` | feedback_drive_upload_zel (pasta Zel obrigatória) |
+| **Memory update** | `~/.claude/scripts/memory-update.sh` | NÃO Edit direto (ver namespace-cheatsheet) |
+| **Salvar progresso** | ECC `save-session` | gstack `/checkpoint` |
+| **Retomar sessão** | ECC `resume-session` | — |
+| **Health check ambiente** | `~/.claude/scripts/audit-hooks.sh` | audit-sessions.sh, sync-triforce status |
+| **Sync TRIFORCE** | `~/.claude/scripts/sync-triforce.sh push` | manual git pull no Mobile |
+
+## Estratégias de Dispatch
+
+### 1. Direto (trivial)
+> Resposta sem ferramenta. Ex: "o que é uma feature flag?"
+
+### 2. Single-skill (simples/média)
+> Invoca 1 skill, segue workflow dela. Ex: gerar contrato → `/contrato`.
+
+### 3. Pipeline (complexa)
+> `brainstorming` (alinha) → `writing-plans` (spec) → `subagent-driven-development` (execução com checkpoints) → `code-reviewer` (review). Cada etapa tem gate.
+
+### 4. Parallel agents read-only (multi-subsistema)
+> Para auditoria, mapeamento, descoberta: 4-8 agentes em paralelo, cada um foca uma área. Eu sintetizo. Exemplo deste rebuild: 6 agentes (hooks/rules/plugins/memory/scripts/performance). Use `Agent` tool com `run_in_background: true` e brief específico por agente.
+
+### 5. Parallel agents write (refactor amplo)
+> Cada agente em `isolation: "worktree"`. Eu reviso e mergeio. Ver `~/.claude/rules/parallel-agents.md`.
+
+### 6. Investigative loop (bug crítico)
+> `systematic-debugging` → root cause → fix mínimo → verification-before-completion → commit.
+
+## Como Decidir (Heurística)
+
+```
+Task chega:
+├── Trivial (pergunta factual, status)? → estratégia 1 (direto)
+├── User invocou skill explicitamente (/cmd)? → respeita, segue workflow daquela skill
+├── Match único na tabela acima? → estratégia 2 (single-skill)
+├── Bug/erro reportado? → estratégia 6 (investigative)
+├── 3+ subsistemas (frontend+backend+infra+sec...)? → estratégia 4 (parallel read-only)
+├── Nova feature ou refactor complexo? → estratégia 3 (pipeline)
+└── Refactor que toca muito arquivo? → estratégia 5 (parallel write em worktree)
+```
+
+## Reporting
+
+Após decidir, **antes de executar**, declarar em 1-2 linhas:
+
+> "[Orquestração] Task X classificada como Y. Dispatch: skill Z + agentes A, B em paralelo."
+
+Não enumerar opções rejeitadas. Não pedir confirmação se a rota é óbvia.
+
+## Anti-patterns (evitar)
+
+1. **Dispatch de agent pra task que faria em 2 ferramenta calls direto** — overhead pior que valor.
+2. **Listar 5 skills "que poderiam ajudar" e pedir pro user escolher** — decida você.
+3. **Sequencial quando podia ser paralelo** — sempre prefira concorrência onde não há dependência.
+4. **Repetir trabalho que subagent já fez** — confia no relatório do agent, não duplica.
+5. **Brainstorming pra task trivial** — overkill que irrita o user (memory: "preferir ações diretas").
+6. **Enumerate todas skills disponíveis em cada turn** — caro em tokens (já temos skillOverrides cortando 4-5K).
+
+## Memory & Override
+
+- Se o user disser **"sem orquestração, só faz X"** → modo direto, ignora regra nesta task.
+- Se o user disser **"chama todos os agentes"** → modo paralelo aggressive (estratégia 4 mesmo se task média).
+- Se o user disser **"ultrathink"** → adicionar análise profunda + considerar estratégia 3 ou 4 mesmo em tasks médias.
+
+## Cross-references
+
+- Cheatsheet completa: `~/.claude/rules/common/namespace-cheatsheet.md`
+- Agents inventário: `~/.claude/rules/common/agents.md`
+- Workflow git: `~/.claude/rules/common/git-workflow.md`
+- 3 Abas Master (categoriza ANTES da orquestração): `~/.claude/rules/core/identity.md`
+- Parallel agents safety: `~/.claude/rules/parallel-agents.md`
+
+## Sequência Combinada com 3 Abas
+
+```
+Input do Pedro chega
+  ↓
+1. Categoriza nas 3 Abas Master (plano/singular/skip) — REGRA SOBERANA #1
+  ↓
+2. Aplica Task Orchestration (esta regra) — REGRA SOBERANA #2
+  ↓
+3. Executa com agents/skills escolhidos
+  ↓
+4. Reporta breve
+```
+
+## Sincronização
+
+Esta regra é Master Desktop SoT. Replicada em (devem refletir):
+- `~/.claude/CLAUDE.md` (referência curta + link aqui)
+- `~/.claude/projects/C--Users-teste/memory/feedback_task_orchestration.md` (memory)
+- TRIFORCE Mobile/VPS: propagar via `sync-triforce.sh push`
+
+*[Registrado por: DESKTOP — 2026-05-12]*
+
 
 ---
 
 <a id="custom-parallel-agents"></a>
 
-## [CUSTOM] `rules/parallel-agents.md`
+## `rules/parallel-agents.md`
 
-```markdown
 # Parallel Agents — Worktree Isolation
 
 ## Regra Principal
@@ -570,15 +1222,13 @@ Agent 2: code-reviewer — apenas le e analisa
 4. Resolver conflitos se houver
 5. Verificacao final (`npm run lint && npm run build`)
 
-```
 
 ---
 
 <a id="custom-typescript-coding-style"></a>
 
-## [CUSTOM] `rules/typescript/coding-style.md`
+## `rules/typescript/coding-style.md`
 
-```markdown
 ---
 paths:
   - "**/*.ts"
@@ -779,15 +1429,13 @@ const validated: UserInput = userSchema.parse(input)
 - Use proper logging libraries instead
 - See hooks for automatic detection
 
-```
 
 ---
 
 <a id="custom-typescript-hooks"></a>
 
-## [CUSTOM] `rules/typescript/hooks.md`
+## `rules/typescript/hooks.md`
 
-```markdown
 ---
 paths:
   - "**/*.ts"
@@ -811,15 +1459,13 @@ Configure in `~/.claude/settings.json`:
 
 - **console.log audit**: Check all modified files for `console.log` before session ends
 
-```
 
 ---
 
 <a id="custom-typescript-patterns"></a>
 
-## [CUSTOM] `rules/typescript/patterns.md`
+## `rules/typescript/patterns.md`
 
-```markdown
 ---
 paths:
   - "**/*.ts"
@@ -873,15 +1519,13 @@ interface Repository<T> {
 }
 ```
 
-```
 
 ---
 
 <a id="custom-typescript-security"></a>
 
-## [CUSTOM] `rules/typescript/security.md`
+## `rules/typescript/security.md`
 
-```markdown
 ---
 paths:
   - "**/*.ts"
@@ -911,15 +1555,13 @@ if (!apiKey) {
 
 - Use **security-reviewer** skill for comprehensive security audits
 
-```
 
 ---
 
 <a id="custom-typescript-testing"></a>
 
-## [CUSTOM] `rules/typescript/testing.md`
+## `rules/typescript/testing.md`
 
-```markdown
 ---
 paths:
   - "**/*.ts"
@@ -939,2616 +1581,3 @@ Use **Playwright** as the E2E testing framework for critical user flows.
 
 - **e2e-runner** - Playwright E2E testing specialist
 
-```
-
----
----
-
-# PARTE 2: REGRAS DO PLUGIN EVERYTHING CLAUDE CODE (ECC)
-
-> Fonte: Plugin `everything-claude-code` v1.8.0
-> Repo: https://github.com/affaan-m/everything-claude-code
-> Estas regras sao carregadas automaticamente quando o plugin esta instalado.
-
-
----
-
-<a id="ecc-readme"></a>
-
-## [ECC] `rules/README.md`
-
-```markdown
-# Rules
-## Structure
-
-Rules are organized into a **common** layer plus **language-specific** directories:
-
-```
-rules/
-├── common/          # Language-agnostic principles (always install)
-│   ├── coding-style.md
-│   ├── git-workflow.md
-│   ├── testing.md
-│   ├── performance.md
-│   ├── patterns.md
-│   ├── hooks.md
-│   ├── agents.md
-│   └── security.md
-├── typescript/      # TypeScript/JavaScript specific
-├── python/          # Python specific
-├── golang/          # Go specific
-├── swift/           # Swift specific
-└── php/             # PHP specific
-```
-
-- **common/** contains universal principles — no language-specific code examples.
-- **Language directories** extend the common rules with framework-specific patterns, tools, and code examples. Each file references its common counterpart.
-
-## Installation
-
-### Option 1: Install Script (Recommended)
-
-```bash
-# Install common + one or more language-specific rule sets
-./install.sh typescript
-./install.sh python
-./install.sh golang
-./install.sh swift
-./install.sh php
-
-# Install multiple languages at once
-./install.sh typescript python
-```
-
-### Option 2: Manual Installation
-
-> **Important:** Copy entire directories — do NOT flatten with `/*`.
-> Common and language-specific directories contain files with the same names.
-> Flattening them into one directory causes language-specific files to overwrite
-> common rules, and breaks the relative `../common/` references used by
-> language-specific files.
-
-```bash
-# Install common rules (required for all projects)
-cp -r rules/common ~/.claude/rules/common
-
-# Install language-specific rules based on your project's tech stack
-cp -r rules/typescript ~/.claude/rules/typescript
-cp -r rules/python ~/.claude/rules/python
-cp -r rules/golang ~/.claude/rules/golang
-cp -r rules/swift ~/.claude/rules/swift
-cp -r rules/php ~/.claude/rules/php
-
-# Attention ! ! ! Configure according to your actual project requirements; the configuration here is for reference only.
-```
-
-## Rules vs Skills
-
-- **Rules** define standards, conventions, and checklists that apply broadly (e.g., "80% test coverage", "no hardcoded secrets").
-- **Skills** (`skills/` directory) provide deep, actionable reference material for specific tasks (e.g., `python-patterns`, `golang-testing`).
-
-Language-specific rule files reference relevant skills where appropriate. Rules tell you *what* to do; skills tell you *how* to do it.
-
-## Adding a New Language
-
-To add support for a new language (e.g., `rust/`):
-
-1. Create a `rules/rust/` directory
-2. Add files that extend the common rules:
-   - `coding-style.md` — formatting tools, idioms, error handling patterns
-   - `testing.md` — test framework, coverage tools, test organization
-   - `patterns.md` — language-specific design patterns
-   - `hooks.md` — PostToolUse hooks for formatters, linters, type checkers
-   - `security.md` — secret management, security scanning tools
-3. Each file should start with:
-   ```
-   > This file extends [common/xxx.md](../common/xxx.md) with <Language> specific content.
-   ```
-4. Reference existing skills if available, or create new ones under `skills/`.
-
-## Rule Priority
-
-When language-specific rules and common rules conflict, **language-specific rules take precedence** (specific overrides general). This follows the standard layered configuration pattern (similar to CSS specificity or `.gitignore` precedence).
-
-- `rules/common/` defines universal defaults applicable to all projects.
-- `rules/golang/`, `rules/python/`, `rules/swift/`, `rules/php/`, `rules/typescript/`, etc. override those defaults where language idioms differ.
-
-### Example
-
-`common/coding-style.md` recommends immutability as a default principle. A language-specific `golang/coding-style.md` can override this:
-
-> Idiomatic Go uses pointer receivers for struct mutation — see [common/coding-style.md](../common/coding-style.md) for the general principle, but Go-idiomatic mutation is preferred here.
-
-### Common rules with override notes
-
-Rules in `rules/common/` that may be overridden by language-specific files are marked with:
-
-> **Language note**: This rule may be overridden by language-specific rules for languages where this pattern is not idiomatic.
-
-```
-
----
-
-<a id="ecc-common-agents"></a>
-
-## [ECC] `rules/common/agents.md`
-
-```markdown
-# Agent Orchestration
-
-## Available Agents
-
-Located in `~/.claude/agents/`:
-
-| Agent | Purpose | When to Use |
-|-------|---------|-------------|
-| planner | Implementation planning | Complex features, refactoring |
-| architect | System design | Architectural decisions |
-| tdd-guide | Test-driven development | New features, bug fixes |
-| code-reviewer | Code review | After writing code |
-| security-reviewer | Security analysis | Before commits |
-| build-error-resolver | Fix build errors | When build fails |
-| e2e-runner | E2E testing | Critical user flows |
-| refactor-cleaner | Dead code cleanup | Code maintenance |
-| doc-updater | Documentation | Updating docs |
-
-## Immediate Agent Usage
-
-No user prompt needed:
-1. Complex feature requests - Use **planner** agent
-2. Code just written/modified - Use **code-reviewer** agent
-3. Bug fix or new feature - Use **tdd-guide** agent
-4. Architectural decision - Use **architect** agent
-
-## Parallel Task Execution
-
-ALWAYS use parallel Task execution for independent operations:
-
-```markdown
-# GOOD: Parallel execution
-Launch 3 agents in parallel:
-1. Agent 1: Security analysis of auth module
-2. Agent 2: Performance review of cache system
-3. Agent 3: Type checking of utilities
-
-# BAD: Sequential when unnecessary
-First agent 1, then agent 2, then agent 3
-```
-
-## Multi-Perspective Analysis
-
-For complex problems, use split role sub-agents:
-- Factual reviewer
-- Senior engineer
-- Security expert
-- Consistency reviewer
-- Redundancy checker
-
-```
-
----
-
-<a id="ecc-common-coding-style"></a>
-
-## [ECC] `rules/common/coding-style.md`
-
-```markdown
-# Coding Style
-
-## Immutability (CRITICAL)
-
-ALWAYS create new objects, NEVER mutate existing ones:
-
-```
-// Pseudocode
-WRONG:  modify(original, field, value) → changes original in-place
-CORRECT: update(original, field, value) → returns new copy with change
-```
-
-Rationale: Immutable data prevents hidden side effects, makes debugging easier, and enables safe concurrency.
-
-## File Organization
-
-MANY SMALL FILES > FEW LARGE FILES:
-- High cohesion, low coupling
-- 200-400 lines typical, 800 max
-- Extract utilities from large modules
-- Organize by feature/domain, not by type
-
-## Error Handling
-
-ALWAYS handle errors comprehensively:
-- Handle errors explicitly at every level
-- Provide user-friendly error messages in UI-facing code
-- Log detailed error context on the server side
-- Never silently swallow errors
-
-## Input Validation
-
-ALWAYS validate at system boundaries:
-- Validate all user input before processing
-- Use schema-based validation where available
-- Fail fast with clear error messages
-- Never trust external data (API responses, user input, file content)
-
-## Code Quality Checklist
-
-Before marking work complete:
-- [ ] Code is readable and well-named
-- [ ] Functions are small (<50 lines)
-- [ ] Files are focused (<800 lines)
-- [ ] No deep nesting (>4 levels)
-- [ ] Proper error handling
-- [ ] No hardcoded values (use constants or config)
-- [ ] No mutation (immutable patterns used)
-
-```
-
----
-
-<a id="ecc-common-development-workflow"></a>
-
-## [ECC] `rules/common/development-workflow.md`
-
-```markdown
-# Development Workflow
-
-> This file extends [common/git-workflow.md](./git-workflow.md) with the full feature development process that happens before git operations.
-
-The Feature Implementation Workflow describes the development pipeline: research, planning, TDD, code review, and then committing to git.
-
-## Feature Implementation Workflow
-
-0. **Research & Reuse** _(mandatory before any new implementation)_
-   - **GitHub code search first:** Run `gh search repos` and `gh search code` to find existing implementations, templates, and patterns before writing anything new.
-   - **Exa MCP for research:** Use `exa-web-search` MCP during the planning phase for broader research, data ingestion, and discovering prior art.
-   - **Check package registries:** Search npm, PyPI, crates.io, and other registries before writing utility code. Prefer battle-tested libraries over hand-rolled solutions.
-   - **Search for adaptable implementations:** Look for open-source projects that solve 80%+ of the problem and can be forked, ported, or wrapped.
-   - Prefer adopting or porting a proven approach over writing net-new code when it meets the requirement.
-
-1. **Plan First**
-   - Use **planner** agent to create implementation plan
-   - Generate planning docs before coding: PRD, architecture, system_design, tech_doc, task_list
-   - Identify dependencies and risks
-   - Break down into phases
-
-2. **TDD Approach**
-   - Use **tdd-guide** agent
-   - Write tests first (RED)
-   - Implement to pass tests (GREEN)
-   - Refactor (IMPROVE)
-   - Verify 80%+ coverage
-
-3. **Code Review**
-   - Use **code-reviewer** agent immediately after writing code
-   - Address CRITICAL and HIGH issues
-   - Fix MEDIUM issues when possible
-
-4. **Commit & Push**
-   - Detailed commit messages
-   - Follow conventional commits format
-   - See [git-workflow.md](./git-workflow.md) for commit message format and PR process
-
-```
-
----
-
-<a id="ecc-common-git-workflow"></a>
-
-## [ECC] `rules/common/git-workflow.md`
-
-```markdown
-# Git Workflow
-
-## Commit Message Format
-```
-<type>: <description>
-
-<optional body>
-```
-
-Types: feat, fix, refactor, docs, test, chore, perf, ci
-
-Note: Attribution disabled globally via ~/.claude/settings.json.
-
-## Pull Request Workflow
-
-When creating PRs:
-1. Analyze full commit history (not just latest commit)
-2. Use `git diff [base-branch]...HEAD` to see all changes
-3. Draft comprehensive PR summary
-4. Include test plan with TODOs
-5. Push with `-u` flag if new branch
-
-> For the full development process (planning, TDD, code review) before git operations,
-> see [development-workflow.md](./development-workflow.md).
-
-```
-
----
-
-<a id="ecc-common-hooks"></a>
-
-## [ECC] `rules/common/hooks.md`
-
-```markdown
-# Hooks System
-
-## Hook Types
-
-- **PreToolUse**: Before tool execution (validation, parameter modification)
-- **PostToolUse**: After tool execution (auto-format, checks)
-- **Stop**: When session ends (final verification)
-
-## Auto-Accept Permissions
-
-Use with caution:
-- Enable for trusted, well-defined plans
-- Disable for exploratory work
-- Never use dangerously-skip-permissions flag
-- Configure `allowedTools` in `~/.claude.json` instead
-
-## TodoWrite Best Practices
-
-Use TodoWrite tool to:
-- Track progress on multi-step tasks
-- Verify understanding of instructions
-- Enable real-time steering
-- Show granular implementation steps
-
-Todo list reveals:
-- Out of order steps
-- Missing items
-- Extra unnecessary items
-- Wrong granularity
-- Misinterpreted requirements
-
-```
-
----
-
-<a id="ecc-common-patterns"></a>
-
-## [ECC] `rules/common/patterns.md`
-
-```markdown
-# Common Patterns
-
-## Skeleton Projects
-
-When implementing new functionality:
-1. Search for battle-tested skeleton projects
-2. Use parallel agents to evaluate options:
-   - Security assessment
-   - Extensibility analysis
-   - Relevance scoring
-   - Implementation planning
-3. Clone best match as foundation
-4. Iterate within proven structure
-
-## Design Patterns
-
-### Repository Pattern
-
-Encapsulate data access behind a consistent interface:
-- Define standard operations: findAll, findById, create, update, delete
-- Concrete implementations handle storage details (database, API, file, etc.)
-- Business logic depends on the abstract interface, not the storage mechanism
-- Enables easy swapping of data sources and simplifies testing with mocks
-
-### API Response Format
-
-Use a consistent envelope for all API responses:
-- Include a success/status indicator
-- Include the data payload (nullable on error)
-- Include an error message field (nullable on success)
-- Include metadata for paginated responses (total, page, limit)
-
-```
-
----
-
-<a id="ecc-common-performance"></a>
-
-## [ECC] `rules/common/performance.md`
-
-```markdown
-# Performance Optimization
-
-## Model Selection Strategy
-
-**Haiku 4.5** (90% of Sonnet capability, 3x cost savings):
-- Lightweight agents with frequent invocation
-- Pair programming and code generation
-- Worker agents in multi-agent systems
-
-**Sonnet 4.6** (Best coding model):
-- Main development work
-- Orchestrating multi-agent workflows
-- Complex coding tasks
-
-**Opus 4.5** (Deepest reasoning):
-- Complex architectural decisions
-- Maximum reasoning requirements
-- Research and analysis tasks
-
-## Context Window Management
-
-Avoid last 20% of context window for:
-- Large-scale refactoring
-- Feature implementation spanning multiple files
-- Debugging complex interactions
-
-Lower context sensitivity tasks:
-- Single-file edits
-- Independent utility creation
-- Documentation updates
-- Simple bug fixes
-
-## Extended Thinking + Plan Mode
-
-Extended thinking is enabled by default, reserving up to 31,999 tokens for internal reasoning.
-
-Control extended thinking via:
-- **Toggle**: Option+T (macOS) / Alt+T (Windows/Linux)
-- **Config**: Set `alwaysThinkingEnabled` in `~/.claude/settings.json`
-- **Budget cap**: `export MAX_THINKING_TOKENS=10000`
-- **Verbose mode**: Ctrl+O to see thinking output
-
-For complex tasks requiring deep reasoning:
-1. Ensure extended thinking is enabled (on by default)
-2. Enable **Plan Mode** for structured approach
-3. Use multiple critique rounds for thorough analysis
-4. Use split role sub-agents for diverse perspectives
-
-## Build Troubleshooting
-
-If build fails:
-1. Use **build-error-resolver** agent
-2. Analyze error messages
-3. Fix incrementally
-4. Verify after each fix
-
-```
-
----
-
-<a id="ecc-common-security"></a>
-
-## [ECC] `rules/common/security.md`
-
-```markdown
-# Security Guidelines
-
-## Mandatory Security Checks
-
-Before ANY commit:
-- [ ] No hardcoded secrets (API keys, passwords, tokens)
-- [ ] All user inputs validated
-- [ ] SQL injection prevention (parameterized queries)
-- [ ] XSS prevention (sanitized HTML)
-- [ ] CSRF protection enabled
-- [ ] Authentication/authorization verified
-- [ ] Rate limiting on all endpoints
-- [ ] Error messages don't leak sensitive data
-
-## Secret Management
-
-- NEVER hardcode secrets in source code
-- ALWAYS use environment variables or a secret manager
-- Validate that required secrets are present at startup
-- Rotate any secrets that may have been exposed
-
-## Security Response Protocol
-
-If security issue found:
-1. STOP immediately
-2. Use **security-reviewer** agent
-3. Fix CRITICAL issues before continuing
-4. Rotate any exposed secrets
-5. Review entire codebase for similar issues
-
-```
-
----
-
-<a id="ecc-common-testing"></a>
-
-## [ECC] `rules/common/testing.md`
-
-```markdown
-# Testing Requirements
-
-## Minimum Test Coverage: 80%
-
-Test Types (ALL required):
-1. **Unit Tests** - Individual functions, utilities, components
-2. **Integration Tests** - API endpoints, database operations
-3. **E2E Tests** - Critical user flows (framework chosen per language)
-
-## Test-Driven Development
-
-MANDATORY workflow:
-1. Write test first (RED)
-2. Run test - it should FAIL
-3. Write minimal implementation (GREEN)
-4. Run test - it should PASS
-5. Refactor (IMPROVE)
-6. Verify coverage (80%+)
-
-## Troubleshooting Test Failures
-
-1. Use **tdd-guide** agent
-2. Check test isolation
-3. Verify mocks are correct
-4. Fix implementation, not tests (unless tests are wrong)
-
-## Agent Support
-
-- **tdd-guide** - Use PROACTIVELY for new features, enforces write-tests-first
-
-```
-
----
-
-<a id="ecc-golang-coding-style"></a>
-
-## [ECC] `rules/golang/coding-style.md`
-
-```markdown
----
-paths:
-  - "**/*.go"
-  - "**/go.mod"
-  - "**/go.sum"
----
-# Go Coding Style
-
-> This file extends [common/coding-style.md](../common/coding-style.md) with Go specific content.
-
-## Formatting
-
-- **gofmt** and **goimports** are mandatory — no style debates
-
-## Design Principles
-
-- Accept interfaces, return structs
-- Keep interfaces small (1-3 methods)
-
-## Error Handling
-
-Always wrap errors with context:
-
-```go
-if err != nil {
-    return fmt.Errorf("failed to create user: %w", err)
-}
-```
-
-## Reference
-
-See skill: `golang-patterns` for comprehensive Go idioms and patterns.
-
-```
-
----
-
-<a id="ecc-golang-hooks"></a>
-
-## [ECC] `rules/golang/hooks.md`
-
-```markdown
----
-paths:
-  - "**/*.go"
-  - "**/go.mod"
-  - "**/go.sum"
----
-# Go Hooks
-
-> This file extends [common/hooks.md](../common/hooks.md) with Go specific content.
-
-## PostToolUse Hooks
-
-Configure in `~/.claude/settings.json`:
-
-- **gofmt/goimports**: Auto-format `.go` files after edit
-- **go vet**: Run static analysis after editing `.go` files
-- **staticcheck**: Run extended static checks on modified packages
-
-```
-
----
-
-<a id="ecc-golang-patterns"></a>
-
-## [ECC] `rules/golang/patterns.md`
-
-```markdown
----
-paths:
-  - "**/*.go"
-  - "**/go.mod"
-  - "**/go.sum"
----
-# Go Patterns
-
-> This file extends [common/patterns.md](../common/patterns.md) with Go specific content.
-
-## Functional Options
-
-```go
-type Option func(*Server)
-
-func WithPort(port int) Option {
-    return func(s *Server) { s.port = port }
-}
-
-func NewServer(opts ...Option) *Server {
-    s := &Server{port: 8080}
-    for _, opt := range opts {
-        opt(s)
-    }
-    return s
-}
-```
-
-## Small Interfaces
-
-Define interfaces where they are used, not where they are implemented.
-
-## Dependency Injection
-
-Use constructor functions to inject dependencies:
-
-```go
-func NewUserService(repo UserRepository, logger Logger) *UserService {
-    return &UserService{repo: repo, logger: logger}
-}
-```
-
-## Reference
-
-See skill: `golang-patterns` for comprehensive Go patterns including concurrency, error handling, and package organization.
-
-```
-
----
-
-<a id="ecc-golang-security"></a>
-
-## [ECC] `rules/golang/security.md`
-
-```markdown
----
-paths:
-  - "**/*.go"
-  - "**/go.mod"
-  - "**/go.sum"
----
-# Go Security
-
-> This file extends [common/security.md](../common/security.md) with Go specific content.
-
-## Secret Management
-
-```go
-apiKey := os.Getenv("OPENAI_API_KEY")
-if apiKey == "" {
-    log.Fatal("OPENAI_API_KEY not configured")
-}
-```
-
-## Security Scanning
-
-- Use **gosec** for static security analysis:
-  ```bash
-  gosec ./...
-  ```
-
-## Context & Timeouts
-
-Always use `context.Context` for timeout control:
-
-```go
-ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-defer cancel()
-```
-
-```
-
----
-
-<a id="ecc-golang-testing"></a>
-
-## [ECC] `rules/golang/testing.md`
-
-```markdown
----
-paths:
-  - "**/*.go"
-  - "**/go.mod"
-  - "**/go.sum"
----
-# Go Testing
-
-> This file extends [common/testing.md](../common/testing.md) with Go specific content.
-
-## Framework
-
-Use the standard `go test` with **table-driven tests**.
-
-## Race Detection
-
-Always run with the `-race` flag:
-
-```bash
-go test -race ./...
-```
-
-## Coverage
-
-```bash
-go test -cover ./...
-```
-
-## Reference
-
-See skill: `golang-testing` for detailed Go testing patterns and helpers.
-
-```
-
----
-
-<a id="ecc-kotlin-coding-style"></a>
-
-## [ECC] `rules/kotlin/coding-style.md`
-
-```markdown
----
-paths:
-  - "**/*.kt"
-  - "**/*.kts"
----
-# Kotlin Coding Style
-
-> This file extends [common/coding-style.md](../common/coding-style.md) with Kotlin-specific content.
-
-## Formatting
-
-- **ktlint** or **Detekt** for style enforcement
-- Official Kotlin code style (`kotlin.code.style=official` in `gradle.properties`)
-
-## Immutability
-
-- Prefer `val` over `var` — default to `val` and only use `var` when mutation is required
-- Use `data class` for value types; use immutable collections (`List`, `Map`, `Set`) in public APIs
-- Copy-on-write for state updates: `state.copy(field = newValue)`
-
-## Naming
-
-Follow Kotlin conventions:
-- `camelCase` for functions and properties
-- `PascalCase` for classes, interfaces, objects, and type aliases
-- `SCREAMING_SNAKE_CASE` for constants (`const val` or `@JvmStatic`)
-- Prefix interfaces with behavior, not `I`: `Clickable` not `IClickable`
-
-## Null Safety
-
-- Never use `!!` — prefer `?.`, `?:`, `requireNotNull()`, or `checkNotNull()`
-- Use `?.let {}` for scoped null-safe operations
-- Return nullable types from functions that can legitimately have no result
-
-```kotlin
-// BAD
-val name = user!!.name
-
-// GOOD
-val name = user?.name ?: "Unknown"
-val name = requireNotNull(user) { "User must be set before accessing name" }.name
-```
-
-## Sealed Types
-
-Use sealed classes/interfaces to model closed state hierarchies:
-
-```kotlin
-sealed interface UiState<out T> {
-    data object Loading : UiState<Nothing>
-    data class Success<T>(val data: T) : UiState<T>
-    data class Error(val message: String) : UiState<Nothing>
-}
-```
-
-Always use exhaustive `when` with sealed types — no `else` branch.
-
-## Extension Functions
-
-Use extension functions for utility operations, but keep them discoverable:
-- Place in a file named after the receiver type (`StringExt.kt`, `FlowExt.kt`)
-- Keep scope limited — don't add extensions to `Any` or overly generic types
-
-## Scope Functions
-
-Use the right scope function:
-- `let` — null check + transform: `user?.let { greet(it) }`
-- `run` — compute a result using receiver: `service.run { fetch(config) }`
-- `apply` — configure an object: `builder.apply { timeout = 30 }`
-- `also` — side effects: `result.also { log(it) }`
-- Avoid deep nesting of scope functions (max 2 levels)
-
-## Error Handling
-
-- Use `Result<T>` or custom sealed types
-- Use `runCatching {}` for wrapping throwable code
-- Never catch `CancellationException` — always rethrow it
-- Avoid `try-catch` for control flow
-
-```kotlin
-// BAD — using exceptions for control flow
-val user = try { repository.getUser(id) } catch (e: NotFoundException) { null }
-
-// GOOD — nullable return
-val user: User? = repository.findUser(id)
-```
-
-```
-
----
-
-<a id="ecc-kotlin-patterns"></a>
-
-## [ECC] `rules/kotlin/patterns.md`
-
-```markdown
----
-paths:
-  - "**/*.kt"
-  - "**/*.kts"
----
-# Kotlin Patterns
-
-> This file extends [common/patterns.md](../common/patterns.md) with Kotlin and Android/KMP-specific content.
-
-## Dependency Injection
-
-Prefer constructor injection. Use Koin (KMP) or Hilt (Android-only):
-
-```kotlin
-// Koin — declare modules
-val dataModule = module {
-    single<ItemRepository> { ItemRepositoryImpl(get(), get()) }
-    factory { GetItemsUseCase(get()) }
-    viewModelOf(::ItemListViewModel)
-}
-
-// Hilt — annotations
-@HiltViewModel
-class ItemListViewModel @Inject constructor(
-    private val getItems: GetItemsUseCase
-) : ViewModel()
-```
-
-## ViewModel Pattern
-
-Single state object, event sink, one-way data flow:
-
-```kotlin
-data class ScreenState(
-    val items: List<Item> = emptyList(),
-    val isLoading: Boolean = false
-)
-
-class ScreenViewModel(private val useCase: GetItemsUseCase) : ViewModel() {
-    private val _state = MutableStateFlow(ScreenState())
-    val state = _state.asStateFlow()
-
-    fun onEvent(event: ScreenEvent) {
-        when (event) {
-            is ScreenEvent.Load -> load()
-            is ScreenEvent.Delete -> delete(event.id)
-        }
-    }
-}
-```
-
-## Repository Pattern
-
-- `suspend` functions return `Result<T>` or custom error type
-- `Flow` for reactive streams
-- Coordinate local + remote data sources
-
-```kotlin
-interface ItemRepository {
-    suspend fun getById(id: String): Result<Item>
-    suspend fun getAll(): Result<List<Item>>
-    fun observeAll(): Flow<List<Item>>
-}
-```
-
-## UseCase Pattern
-
-Single responsibility, `operator fun invoke`:
-
-```kotlin
-class GetItemUseCase(private val repository: ItemRepository) {
-    suspend operator fun invoke(id: String): Result<Item> {
-        return repository.getById(id)
-    }
-}
-
-class GetItemsUseCase(private val repository: ItemRepository) {
-    suspend operator fun invoke(): Result<List<Item>> {
-        return repository.getAll()
-    }
-}
-```
-
-## expect/actual (KMP)
-
-Use for platform-specific implementations:
-
-```kotlin
-// commonMain
-expect fun platformName(): String
-expect class SecureStorage {
-    fun save(key: String, value: String)
-    fun get(key: String): String?
-}
-
-// androidMain
-actual fun platformName(): String = "Android"
-actual class SecureStorage {
-    actual fun save(key: String, value: String) { /* EncryptedSharedPreferences */ }
-    actual fun get(key: String): String? = null /* ... */
-}
-
-// iosMain
-actual fun platformName(): String = "iOS"
-actual class SecureStorage {
-    actual fun save(key: String, value: String) { /* Keychain */ }
-    actual fun get(key: String): String? = null /* ... */
-}
-```
-
-## Coroutine Patterns
-
-- Use `viewModelScope` in ViewModels, `coroutineScope` for structured child work
-- Use `stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), initialValue)` for StateFlow from cold Flows
-- Use `supervisorScope` when child failures should be independent
-
-## Builder Pattern with DSL
-
-```kotlin
-class HttpClientConfig {
-    var baseUrl: String = ""
-    var timeout: Long = 30_000
-    private val interceptors = mutableListOf<Interceptor>()
-
-    fun interceptor(block: () -> Interceptor) {
-        interceptors.add(block())
-    }
-}
-
-fun httpClient(block: HttpClientConfig.() -> Unit): HttpClient {
-    val config = HttpClientConfig().apply(block)
-    return HttpClient(config)
-}
-
-// Usage
-val client = httpClient {
-    baseUrl = "https://api.example.com"
-    timeout = 15_000
-    interceptor { AuthInterceptor(tokenProvider) }
-}
-```
-
-## References
-
-See skill: `kotlin-coroutines-flows` for detailed coroutine patterns.
-See skill: `android-clean-architecture` for module and layer patterns.
-
-```
-
----
-
-<a id="ecc-kotlin-security"></a>
-
-## [ECC] `rules/kotlin/security.md`
-
-```markdown
----
-paths:
-  - "**/*.kt"
-  - "**/*.kts"
----
-# Kotlin Security
-
-> This file extends [common/security.md](../common/security.md) with Kotlin and Android/KMP-specific content.
-
-## Secrets Management
-
-- Never hardcode API keys, tokens, or credentials in source code
-- Use `local.properties` (git-ignored) for local development secrets
-- Use `BuildConfig` fields generated from CI secrets for release builds
-- Use `EncryptedSharedPreferences` (Android) or Keychain (iOS) for runtime secret storage
-
-```kotlin
-// BAD
-val apiKey = "sk-abc123..."
-
-// GOOD — from BuildConfig (generated at build time)
-val apiKey = BuildConfig.API_KEY
-
-// GOOD — from secure storage at runtime
-val token = secureStorage.get("auth_token")
-```
-
-## Network Security
-
-- Use HTTPS exclusively — configure `network_security_config.xml` to block cleartext
-- Pin certificates for sensitive endpoints using OkHttp `CertificatePinner` or Ktor equivalent
-- Set timeouts on all HTTP clients — never leave defaults (which may be infinite)
-- Validate and sanitize all server responses before use
-
-```xml
-<!-- res/xml/network_security_config.xml -->
-<network-security-config>
-    <base-config cleartextTrafficPermitted="false" />
-</network-security-config>
-```
-
-## Input Validation
-
-- Validate all user input before processing or sending to API
-- Use parameterized queries for Room/SQLDelight — never concatenate user input into SQL
-- Sanitize file paths from user input to prevent path traversal
-
-```kotlin
-// BAD — SQL injection
-@Query("SELECT * FROM items WHERE name = '$input'")
-
-// GOOD — parameterized
-@Query("SELECT * FROM items WHERE name = :input")
-fun findByName(input: String): List<ItemEntity>
-```
-
-## Data Protection
-
-- Use `EncryptedSharedPreferences` for sensitive key-value data on Android
-- Use `@Serializable` with explicit field names — don't leak internal property names
-- Clear sensitive data from memory when no longer needed
-- Use `@Keep` or ProGuard rules for serialized classes to prevent name mangling
-
-## Authentication
-
-- Store tokens in secure storage, not in plain SharedPreferences
-- Implement token refresh with proper 401/403 handling
-- Clear all auth state on logout (tokens, cached user data, cookies)
-- Use biometric authentication (`BiometricPrompt`) for sensitive operations
-
-## ProGuard / R8
-
-- Keep rules for all serialized models (`@Serializable`, Gson, Moshi)
-- Keep rules for reflection-based libraries (Koin, Retrofit)
-- Test release builds — obfuscation can break serialization silently
-
-## WebView Security
-
-- Disable JavaScript unless explicitly needed: `settings.javaScriptEnabled = false`
-- Validate URLs before loading in WebView
-- Never expose `@JavascriptInterface` methods that access sensitive data
-- Use `WebViewClient.shouldOverrideUrlLoading()` to control navigation
-
-```
-
----
-
-<a id="ecc-kotlin-testing"></a>
-
-## [ECC] `rules/kotlin/testing.md`
-
-```markdown
----
-paths:
-  - "**/*.kt"
-  - "**/*.kts"
----
-# Kotlin Testing
-
-> This file extends [common/testing.md](../common/testing.md) with Kotlin and Android/KMP-specific content.
-
-## Test Framework
-
-- **kotlin.test** for multiplatform (KMP) — `@Test`, `assertEquals`, `assertTrue`
-- **JUnit 4/5** for Android-specific tests
-- **Turbine** for testing Flows and StateFlow
-- **kotlinx-coroutines-test** for coroutine testing (`runTest`, `TestDispatcher`)
-
-## ViewModel Testing with Turbine
-
-```kotlin
-@Test
-fun `loading state emitted then data`() = runTest {
-    val repo = FakeItemRepository()
-    repo.addItem(testItem)
-    val viewModel = ItemListViewModel(GetItemsUseCase(repo))
-
-    viewModel.state.test {
-        assertEquals(ItemListState(), awaitItem())     // initial state
-        viewModel.onEvent(ItemListEvent.Load)
-        assertTrue(awaitItem().isLoading)               // loading
-        assertEquals(listOf(testItem), awaitItem().items) // loaded
-    }
-}
-```
-
-## Fakes Over Mocks
-
-Prefer hand-written fakes over mocking frameworks:
-
-```kotlin
-class FakeItemRepository : ItemRepository {
-    private val items = mutableListOf<Item>()
-    var fetchError: Throwable? = null
-
-    override suspend fun getAll(): Result<List<Item>> {
-        fetchError?.let { return Result.failure(it) }
-        return Result.success(items.toList())
-    }
-
-    override fun observeAll(): Flow<List<Item>> = flowOf(items.toList())
-
-    fun addItem(item: Item) { items.add(item) }
-}
-```
-
-## Coroutine Testing
-
-```kotlin
-@Test
-fun `parallel operations complete`() = runTest {
-    val repo = FakeRepository()
-    val result = loadDashboard(repo)
-    advanceUntilIdle()
-    assertNotNull(result.items)
-    assertNotNull(result.stats)
-}
-```
-
-Use `runTest` — it auto-advances virtual time and provides `TestScope`.
-
-## Ktor MockEngine
-
-```kotlin
-val mockEngine = MockEngine { request ->
-    when (request.url.encodedPath) {
-        "/api/items" -> respond(
-            content = Json.encodeToString(testItems),
-            headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-        )
-        else -> respondError(HttpStatusCode.NotFound)
-    }
-}
-
-val client = HttpClient(mockEngine) {
-    install(ContentNegotiation) { json() }
-}
-```
-
-## Room/SQLDelight Testing
-
-- Room: Use `Room.inMemoryDatabaseBuilder()` for in-memory testing
-- SQLDelight: Use `JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)` for JVM tests
-
-```kotlin
-@Test
-fun `insert and query items`() = runTest {
-    val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-    Database.Schema.create(driver)
-    val db = Database(driver)
-
-    db.itemQueries.insert("1", "Sample Item", "description")
-    val items = db.itemQueries.getAll().executeAsList()
-    assertEquals(1, items.size)
-}
-```
-
-## Test Naming
-
-Use backtick-quoted descriptive names:
-
-```kotlin
-@Test
-fun `search with empty query returns all items`() = runTest { }
-
-@Test
-fun `delete item emits updated list without deleted item`() = runTest { }
-```
-
-## Test Organization
-
-```
-src/
-├── commonTest/kotlin/     # Shared tests (ViewModel, UseCase, Repository)
-├── androidUnitTest/kotlin/ # Android unit tests (JUnit)
-├── androidInstrumentedTest/kotlin/  # Instrumented tests (Room, UI)
-└── iosTest/kotlin/        # iOS-specific tests
-```
-
-Minimum test coverage: ViewModel + UseCase for every feature.
-
-```
-
----
-
-<a id="ecc-perl-coding-style"></a>
-
-## [ECC] `rules/perl/coding-style.md`
-
-```markdown
----
-paths:
-  - "**/*.pl"
-  - "**/*.pm"
-  - "**/*.t"
-  - "**/*.psgi"
-  - "**/*.cgi"
----
-# Perl Coding Style
-
-> This file extends [common/coding-style.md](../common/coding-style.md) with Perl-specific content.
-
-## Standards
-
-- Always `use v5.36` (enables `strict`, `warnings`, `say`, subroutine signatures)
-- Use subroutine signatures — never unpack `@_` manually
-- Prefer `say` over `print` with explicit newlines
-
-## Immutability
-
-- Use **Moo** with `is => 'ro'` and `Types::Standard` for all attributes
-- Never use blessed hashrefs directly — always use Moo/Moose accessors
-- **OO override note**: Moo `has` attributes with `builder` or `default` are acceptable for computed read-only values
-
-## Formatting
-
-Use **perltidy** with these settings:
-
-```
--i=4    # 4-space indent
--l=100  # 100 char line length
--ce     # cuddled else
--bar    # opening brace always right
-```
-
-## Linting
-
-Use **perlcritic** at severity 3 with themes: `core`, `pbp`, `security`.
-
-```bash
-perlcritic --severity 3 --theme 'core || pbp || security' lib/
-```
-
-## Reference
-
-See skill: `perl-patterns` for comprehensive modern Perl idioms and best practices.
-
-```
-
----
-
-<a id="ecc-perl-hooks"></a>
-
-## [ECC] `rules/perl/hooks.md`
-
-```markdown
----
-paths:
-  - "**/*.pl"
-  - "**/*.pm"
-  - "**/*.t"
-  - "**/*.psgi"
-  - "**/*.cgi"
----
-# Perl Hooks
-
-> This file extends [common/hooks.md](../common/hooks.md) with Perl-specific content.
-
-## PostToolUse Hooks
-
-Configure in `~/.claude/settings.json`:
-
-- **perltidy**: Auto-format `.pl` and `.pm` files after edit
-- **perlcritic**: Run lint check after editing `.pm` files
-
-## Warnings
-
-- Warn about `print` in non-script `.pm` files — use `say` or a logging module (e.g., `Log::Any`)
-
-```
-
----
-
-<a id="ecc-perl-patterns"></a>
-
-## [ECC] `rules/perl/patterns.md`
-
-```markdown
----
-paths:
-  - "**/*.pl"
-  - "**/*.pm"
-  - "**/*.t"
-  - "**/*.psgi"
-  - "**/*.cgi"
----
-# Perl Patterns
-
-> This file extends [common/patterns.md](../common/patterns.md) with Perl-specific content.
-
-## Repository Pattern
-
-Use **DBI** or **DBIx::Class** behind an interface:
-
-```perl
-package MyApp::Repo::User;
-use Moo;
-
-has dbh => (is => 'ro', required => 1);
-
-sub find_by_id ($self, $id) {
-    my $sth = $self->dbh->prepare('SELECT * FROM users WHERE id = ?');
-    $sth->execute($id);
-    return $sth->fetchrow_hashref;
-}
-```
-
-## DTOs / Value Objects
-
-Use **Moo** classes with **Types::Standard** (equivalent to Python dataclasses):
-
-```perl
-package MyApp::DTO::User;
-use Moo;
-use Types::Standard qw(Str Int);
-
-has name  => (is => 'ro', isa => Str, required => 1);
-has email => (is => 'ro', isa => Str, required => 1);
-has age   => (is => 'ro', isa => Int);
-```
-
-## Resource Management
-
-- Always use **three-arg open** with `autodie`
-- Use **Path::Tiny** for file operations
-
-```perl
-use autodie;
-use Path::Tiny;
-
-my $content = path('config.json')->slurp_utf8;
-```
-
-## Module Interface
-
-Use `Exporter 'import'` with `@EXPORT_OK` — never `@EXPORT`:
-
-```perl
-use Exporter 'import';
-our @EXPORT_OK = qw(parse_config validate_input);
-```
-
-## Dependency Management
-
-Use **cpanfile** + **carton** for reproducible installs:
-
-```bash
-carton install
-carton exec prove -lr t/
-```
-
-## Reference
-
-See skill: `perl-patterns` for comprehensive modern Perl patterns and idioms.
-
-```
-
----
-
-<a id="ecc-perl-security"></a>
-
-## [ECC] `rules/perl/security.md`
-
-```markdown
----
-paths:
-  - "**/*.pl"
-  - "**/*.pm"
-  - "**/*.t"
-  - "**/*.psgi"
-  - "**/*.cgi"
----
-# Perl Security
-
-> This file extends [common/security.md](../common/security.md) with Perl-specific content.
-
-## Taint Mode
-
-- Use `-T` flag on all CGI/web-facing scripts
-- Sanitize `%ENV` (`$ENV{PATH}`, `$ENV{CDPATH}`, etc.) before any external command
-
-## Input Validation
-
-- Use allowlist regex for untainting — never `/(.*)/s`
-- Validate all user input with explicit patterns:
-
-```perl
-if ($input =~ /\A([a-zA-Z0-9_-]+)\z/) {
-    my $clean = $1;
-}
-```
-
-## File I/O
-
-- **Three-arg open only** — never two-arg open
-- Prevent path traversal with `Cwd::realpath`:
-
-```perl
-use Cwd 'realpath';
-my $safe_path = realpath($user_path);
-die "Path traversal" unless $safe_path =~ m{\A/allowed/directory/};
-```
-
-## Process Execution
-
-- Use **list-form `system()`** — never single-string form
-- Use **IPC::Run3** for capturing output
-- Never use backticks with variable interpolation
-
-```perl
-system('grep', '-r', $pattern, $directory);  # safe
-```
-
-## SQL Injection Prevention
-
-Always use DBI placeholders — never interpolate into SQL:
-
-```perl
-my $sth = $dbh->prepare('SELECT * FROM users WHERE email = ?');
-$sth->execute($email);
-```
-
-## Security Scanning
-
-Run **perlcritic** with the security theme at severity 4+:
-
-```bash
-perlcritic --severity 4 --theme security lib/
-```
-
-## Reference
-
-See skill: `perl-security` for comprehensive Perl security patterns, taint mode, and safe I/O.
-
-```
-
----
-
-<a id="ecc-perl-testing"></a>
-
-## [ECC] `rules/perl/testing.md`
-
-```markdown
----
-paths:
-  - "**/*.pl"
-  - "**/*.pm"
-  - "**/*.t"
-  - "**/*.psgi"
-  - "**/*.cgi"
----
-# Perl Testing
-
-> This file extends [common/testing.md](../common/testing.md) with Perl-specific content.
-
-## Framework
-
-Use **Test2::V0** for new projects (not Test::More):
-
-```perl
-use Test2::V0;
-
-is($result, 42, 'answer is correct');
-
-done_testing;
-```
-
-## Runner
-
-```bash
-prove -l t/              # adds lib/ to @INC
-prove -lr -j8 t/         # recursive, 8 parallel jobs
-```
-
-Always use `-l` to ensure `lib/` is on `@INC`.
-
-## Coverage
-
-Use **Devel::Cover** — target 80%+:
-
-```bash
-cover -test
-```
-
-## Mocking
-
-- **Test::MockModule** — mock methods on existing modules
-- **Test::MockObject** — create test doubles from scratch
-
-## Pitfalls
-
-- Always end test files with `done_testing`
-- Never forget the `-l` flag with `prove`
-
-## Reference
-
-See skill: `perl-testing` for detailed Perl TDD patterns with Test2::V0, prove, and Devel::Cover.
-
-```
-
----
-
-<a id="ecc-php-coding-style"></a>
-
-## [ECC] `rules/php/coding-style.md`
-
-```markdown
----
-paths:
-  - "**/*.php"
-  - "**/composer.json"
----
-# PHP Coding Style
-
-> This file extends [common/coding-style.md](../common/coding-style.md) with PHP specific content.
-
-## Standards
-
-- Follow **PSR-12** formatting and naming conventions.
-- Prefer `declare(strict_types=1);` in application code.
-- Use scalar type hints, return types, and typed properties everywhere new code permits.
-
-## Immutability
-
-- Prefer immutable DTOs and value objects for data crossing service boundaries.
-- Use `readonly` properties or immutable constructors for request/response payloads where possible.
-- Keep arrays for simple maps; promote business-critical structures into explicit classes.
-
-## Formatting
-
-- Use **PHP-CS-Fixer** or **Laravel Pint** for formatting.
-- Use **PHPStan** or **Psalm** for static analysis.
-- Keep Composer scripts checked in so the same commands run locally and in CI.
-
-## Error Handling
-
-- Throw exceptions for exceptional states; avoid returning `false`/`null` as hidden error channels in new code.
-- Convert framework/request input into validated DTOs before it reaches domain logic.
-
-## Reference
-
-See skill: `backend-patterns` for broader service/repository layering guidance.
-
-```
-
----
-
-<a id="ecc-php-hooks"></a>
-
-## [ECC] `rules/php/hooks.md`
-
-```markdown
----
-paths:
-  - "**/*.php"
-  - "**/composer.json"
-  - "**/phpstan.neon"
-  - "**/phpstan.neon.dist"
-  - "**/psalm.xml"
----
-# PHP Hooks
-
-> This file extends [common/hooks.md](../common/hooks.md) with PHP specific content.
-
-## PostToolUse Hooks
-
-Configure in `~/.claude/settings.json`:
-
-- **Pint / PHP-CS-Fixer**: Auto-format edited `.php` files.
-- **PHPStan / Psalm**: Run static analysis after PHP edits in typed codebases.
-- **PHPUnit / Pest**: Run targeted tests for touched files or modules when edits affect behavior.
-
-## Warnings
-
-- Warn on `var_dump`, `dd`, `dump`, or `die()` left in edited files.
-- Warn when edited PHP files add raw SQL or disable CSRF/session protections.
-
-```
-
----
-
-<a id="ecc-php-patterns"></a>
-
-## [ECC] `rules/php/patterns.md`
-
-```markdown
----
-paths:
-  - "**/*.php"
-  - "**/composer.json"
----
-# PHP Patterns
-
-> This file extends [common/patterns.md](../common/patterns.md) with PHP specific content.
-
-## Thin Controllers, Explicit Services
-
-- Keep controllers focused on transport: auth, validation, serialization, status codes.
-- Move business rules into application/domain services that are easy to test without HTTP bootstrapping.
-
-## DTOs and Value Objects
-
-- Replace shape-heavy associative arrays with DTOs for requests, commands, and external API payloads.
-- Use value objects for money, identifiers, date ranges, and other constrained concepts.
-
-## Dependency Injection
-
-- Depend on interfaces or narrow service contracts, not framework globals.
-- Pass collaborators through constructors so services are testable without service-locator lookups.
-
-## Boundaries
-
-- Isolate ORM models from domain decisions when the model layer is doing more than persistence.
-- Wrap third-party SDKs behind small adapters so the rest of the codebase depends on your contract, not theirs.
-
-## Reference
-
-See skill: `api-design` for endpoint conventions and response-shape guidance.
-
-```
-
----
-
-<a id="ecc-php-security"></a>
-
-## [ECC] `rules/php/security.md`
-
-```markdown
----
-paths:
-  - "**/*.php"
-  - "**/composer.lock"
-  - "**/composer.json"
----
-# PHP Security
-
-> This file extends [common/security.md](../common/security.md) with PHP specific content.
-
-## Input and Output
-
-- Validate request input at the framework boundary (`FormRequest`, Symfony Validator, or explicit DTO validation).
-- Escape output in templates by default; treat raw HTML rendering as an exception that must be justified.
-- Never trust query params, cookies, headers, or uploaded file metadata without validation.
-
-## Database Safety
-
-- Use prepared statements (`PDO`, Doctrine, Eloquent query builder) for all dynamic queries.
-- Avoid string-building SQL in controllers/views.
-- Scope ORM mass-assignment carefully and whitelist writable fields.
-
-## Secrets and Dependencies
-
-- Load secrets from environment variables or a secret manager, never from committed config files.
-- Run `composer audit` in CI and review new package maintainer trust before adding dependencies.
-- Pin major versions deliberately and remove abandoned packages quickly.
-
-## Auth and Session Safety
-
-- Use `password_hash()` / `password_verify()` for password storage.
-- Regenerate session identifiers after authentication and privilege changes.
-- Enforce CSRF protection on state-changing web requests.
-
-```
-
----
-
-<a id="ecc-php-testing"></a>
-
-## [ECC] `rules/php/testing.md`
-
-```markdown
----
-paths:
-  - "**/*.php"
-  - "**/phpunit.xml"
-  - "**/phpunit.xml.dist"
-  - "**/composer.json"
----
-# PHP Testing
-
-> This file extends [common/testing.md](../common/testing.md) with PHP specific content.
-
-## Framework
-
-Use **PHPUnit** as the default test framework. **Pest** is also acceptable when the project already uses it.
-
-## Coverage
-
-```bash
-vendor/bin/phpunit --coverage-text
-# or
-vendor/bin/pest --coverage
-```
-
-Prefer **pcov** or **Xdebug** in CI, and keep coverage thresholds in CI rather than as tribal knowledge.
-
-## Test Organization
-
-- Separate fast unit tests from framework/database integration tests.
-- Use factory/builders for fixtures instead of large hand-written arrays.
-- Keep HTTP/controller tests focused on transport and validation; move business rules into service-level tests.
-
-## Reference
-
-See skill: `tdd-workflow` for the repo-wide RED -> GREEN -> REFACTOR loop.
-
-```
-
----
-
-<a id="ecc-python-coding-style"></a>
-
-## [ECC] `rules/python/coding-style.md`
-
-```markdown
----
-paths:
-  - "**/*.py"
-  - "**/*.pyi"
----
-# Python Coding Style
-
-> This file extends [common/coding-style.md](../common/coding-style.md) with Python specific content.
-
-## Standards
-
-- Follow **PEP 8** conventions
-- Use **type annotations** on all function signatures
-
-## Immutability
-
-Prefer immutable data structures:
-
-```python
-from dataclasses import dataclass
-
-@dataclass(frozen=True)
-class User:
-    name: str
-    email: str
-
-from typing import NamedTuple
-
-class Point(NamedTuple):
-    x: float
-    y: float
-```
-
-## Formatting
-
-- **black** for code formatting
-- **isort** for import sorting
-- **ruff** for linting
-
-## Reference
-
-See skill: `python-patterns` for comprehensive Python idioms and patterns.
-
-```
-
----
-
-<a id="ecc-python-hooks"></a>
-
-## [ECC] `rules/python/hooks.md`
-
-```markdown
----
-paths:
-  - "**/*.py"
-  - "**/*.pyi"
----
-# Python Hooks
-
-> This file extends [common/hooks.md](../common/hooks.md) with Python specific content.
-
-## PostToolUse Hooks
-
-Configure in `~/.claude/settings.json`:
-
-- **black/ruff**: Auto-format `.py` files after edit
-- **mypy/pyright**: Run type checking after editing `.py` files
-
-## Warnings
-
-- Warn about `print()` statements in edited files (use `logging` module instead)
-
-```
-
----
-
-<a id="ecc-python-patterns"></a>
-
-## [ECC] `rules/python/patterns.md`
-
-```markdown
----
-paths:
-  - "**/*.py"
-  - "**/*.pyi"
----
-# Python Patterns
-
-> This file extends [common/patterns.md](../common/patterns.md) with Python specific content.
-
-## Protocol (Duck Typing)
-
-```python
-from typing import Protocol
-
-class Repository(Protocol):
-    def find_by_id(self, id: str) -> dict | None: ...
-    def save(self, entity: dict) -> dict: ...
-```
-
-## Dataclasses as DTOs
-
-```python
-from dataclasses import dataclass
-
-@dataclass
-class CreateUserRequest:
-    name: str
-    email: str
-    age: int | None = None
-```
-
-## Context Managers & Generators
-
-- Use context managers (`with` statement) for resource management
-- Use generators for lazy evaluation and memory-efficient iteration
-
-## Reference
-
-See skill: `python-patterns` for comprehensive patterns including decorators, concurrency, and package organization.
-
-```
-
----
-
-<a id="ecc-python-security"></a>
-
-## [ECC] `rules/python/security.md`
-
-```markdown
----
-paths:
-  - "**/*.py"
-  - "**/*.pyi"
----
-# Python Security
-
-> This file extends [common/security.md](../common/security.md) with Python specific content.
-
-## Secret Management
-
-```python
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-api_key = os.environ["OPENAI_API_KEY"]  # Raises KeyError if missing
-```
-
-## Security Scanning
-
-- Use **bandit** for static security analysis:
-  ```bash
-  bandit -r src/
-  ```
-
-## Reference
-
-See skill: `django-security` for Django-specific security guidelines (if applicable).
-
-```
-
----
-
-<a id="ecc-python-testing"></a>
-
-## [ECC] `rules/python/testing.md`
-
-```markdown
----
-paths:
-  - "**/*.py"
-  - "**/*.pyi"
----
-# Python Testing
-
-> This file extends [common/testing.md](../common/testing.md) with Python specific content.
-
-## Framework
-
-Use **pytest** as the testing framework.
-
-## Coverage
-
-```bash
-pytest --cov=src --cov-report=term-missing
-```
-
-## Test Organization
-
-Use `pytest.mark` for test categorization:
-
-```python
-import pytest
-
-@pytest.mark.unit
-def test_calculate_total():
-    ...
-
-@pytest.mark.integration
-def test_database_connection():
-    ...
-```
-
-## Reference
-
-See skill: `python-testing` for detailed pytest patterns and fixtures.
-
-```
-
----
-
-<a id="ecc-swift-coding-style"></a>
-
-## [ECC] `rules/swift/coding-style.md`
-
-```markdown
----
-paths:
-  - "**/*.swift"
-  - "**/Package.swift"
----
-# Swift Coding Style
-
-> This file extends [common/coding-style.md](../common/coding-style.md) with Swift specific content.
-
-## Formatting
-
-- **SwiftFormat** for auto-formatting, **SwiftLint** for style enforcement
-- `swift-format` is bundled with Xcode 16+ as an alternative
-
-## Immutability
-
-- Prefer `let` over `var` — define everything as `let` and only change to `var` if the compiler requires it
-- Use `struct` with value semantics by default; use `class` only when identity or reference semantics are needed
-
-## Naming
-
-Follow [Apple API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/):
-
-- Clarity at the point of use — omit needless words
-- Name methods and properties for their roles, not their types
-- Use `static let` for constants over global constants
-
-## Error Handling
-
-Use typed throws (Swift 6+) and pattern matching:
-
-```swift
-func load(id: String) throws(LoadError) -> Item {
-    guard let data = try? read(from: path) else {
-        throw .fileNotFound(id)
-    }
-    return try decode(data)
-}
-```
-
-## Concurrency
-
-Enable Swift 6 strict concurrency checking. Prefer:
-
-- `Sendable` value types for data crossing isolation boundaries
-- Actors for shared mutable state
-- Structured concurrency (`async let`, `TaskGroup`) over unstructured `Task {}`
-
-```
-
----
-
-<a id="ecc-swift-hooks"></a>
-
-## [ECC] `rules/swift/hooks.md`
-
-```markdown
----
-paths:
-  - "**/*.swift"
-  - "**/Package.swift"
----
-# Swift Hooks
-
-> This file extends [common/hooks.md](../common/hooks.md) with Swift specific content.
-
-## PostToolUse Hooks
-
-Configure in `~/.claude/settings.json`:
-
-- **SwiftFormat**: Auto-format `.swift` files after edit
-- **SwiftLint**: Run lint checks after editing `.swift` files
-- **swift build**: Type-check modified packages after edit
-
-## Warning
-
-Flag `print()` statements — use `os.Logger` or structured logging instead for production code.
-
-```
-
----
-
-<a id="ecc-swift-patterns"></a>
-
-## [ECC] `rules/swift/patterns.md`
-
-```markdown
----
-paths:
-  - "**/*.swift"
-  - "**/Package.swift"
----
-# Swift Patterns
-
-> This file extends [common/patterns.md](../common/patterns.md) with Swift specific content.
-
-## Protocol-Oriented Design
-
-Define small, focused protocols. Use protocol extensions for shared defaults:
-
-```swift
-protocol Repository: Sendable {
-    associatedtype Item: Identifiable & Sendable
-    func find(by id: Item.ID) async throws -> Item?
-    func save(_ item: Item) async throws
-}
-```
-
-## Value Types
-
-- Use structs for data transfer objects and models
-- Use enums with associated values to model distinct states:
-
-```swift
-enum LoadState<T: Sendable>: Sendable {
-    case idle
-    case loading
-    case loaded(T)
-    case failed(Error)
-}
-```
-
-## Actor Pattern
-
-Use actors for shared mutable state instead of locks or dispatch queues:
-
-```swift
-actor Cache<Key: Hashable & Sendable, Value: Sendable> {
-    private var storage: [Key: Value] = [:]
-
-    func get(_ key: Key) -> Value? { storage[key] }
-    func set(_ key: Key, value: Value) { storage[key] = value }
-}
-```
-
-## Dependency Injection
-
-Inject protocols with default parameters — production uses defaults, tests inject mocks:
-
-```swift
-struct UserService {
-    private let repository: any UserRepository
-
-    init(repository: any UserRepository = DefaultUserRepository()) {
-        self.repository = repository
-    }
-}
-```
-
-## References
-
-See skill: `swift-actor-persistence` for actor-based persistence patterns.
-See skill: `swift-protocol-di-testing` for protocol-based DI and testing.
-
-```
-
----
-
-<a id="ecc-swift-security"></a>
-
-## [ECC] `rules/swift/security.md`
-
-```markdown
----
-paths:
-  - "**/*.swift"
-  - "**/Package.swift"
----
-# Swift Security
-
-> This file extends [common/security.md](../common/security.md) with Swift specific content.
-
-## Secret Management
-
-- Use **Keychain Services** for sensitive data (tokens, passwords, keys) — never `UserDefaults`
-- Use environment variables or `.xcconfig` files for build-time secrets
-- Never hardcode secrets in source — decompilation tools extract them trivially
-
-```swift
-let apiKey = ProcessInfo.processInfo.environment["API_KEY"]
-guard let apiKey, !apiKey.isEmpty else {
-    fatalError("API_KEY not configured")
-}
-```
-
-## Transport Security
-
-- App Transport Security (ATS) is enforced by default — do not disable it
-- Use certificate pinning for critical endpoints
-- Validate all server certificates
-
-## Input Validation
-
-- Sanitize all user input before display to prevent injection
-- Use `URL(string:)` with validation rather than force-unwrapping
-- Validate data from external sources (APIs, deep links, pasteboard) before processing
-
-```
-
----
-
-<a id="ecc-swift-testing"></a>
-
-## [ECC] `rules/swift/testing.md`
-
-```markdown
----
-paths:
-  - "**/*.swift"
-  - "**/Package.swift"
----
-# Swift Testing
-
-> This file extends [common/testing.md](../common/testing.md) with Swift specific content.
-
-## Framework
-
-Use **Swift Testing** (`import Testing`) for new tests. Use `@Test` and `#expect`:
-
-```swift
-@Test("User creation validates email")
-func userCreationValidatesEmail() throws {
-    #expect(throws: ValidationError.invalidEmail) {
-        try User(email: "not-an-email")
-    }
-}
-```
-
-## Test Isolation
-
-Each test gets a fresh instance — set up in `init`, tear down in `deinit`. No shared mutable state between tests.
-
-## Parameterized Tests
-
-```swift
-@Test("Validates formats", arguments: ["json", "xml", "csv"])
-func validatesFormat(format: String) throws {
-    let parser = try Parser(format: format)
-    #expect(parser.isValid)
-}
-```
-
-## Coverage
-
-```bash
-swift test --enable-code-coverage
-```
-
-## Reference
-
-See skill: `swift-protocol-di-testing` for protocol-based dependency injection and mock patterns with Swift Testing.
-
-```
-
----
-
-<a id="ecc-typescript-coding-style"></a>
-
-## [ECC] `rules/typescript/coding-style.md`
-
-```markdown
----
-paths:
-  - "**/*.ts"
-  - "**/*.tsx"
-  - "**/*.js"
-  - "**/*.jsx"
----
-# TypeScript/JavaScript Coding Style
-
-> This file extends [common/coding-style.md](../common/coding-style.md) with TypeScript/JavaScript specific content.
-
-## Types and Interfaces
-
-Use types to make public APIs, shared models, and component props explicit, readable, and reusable.
-
-### Public APIs
-
-- Add parameter and return types to exported functions, shared utilities, and public class methods
-- Let TypeScript infer obvious local variable types
-- Extract repeated inline object shapes into named types or interfaces
-
-```typescript
-// WRONG: Exported function without explicit types
-export function formatUser(user) {
-  return `${user.firstName} ${user.lastName}`
-}
-
-// CORRECT: Explicit types on public APIs
-interface User {
-  firstName: string
-  lastName: string
-}
-
-export function formatUser(user: User): string {
-  return `${user.firstName} ${user.lastName}`
-}
-```
-
-### Interfaces vs. Type Aliases
-
-- Use `interface` for object shapes that may be extended or implemented
-- Use `type` for unions, intersections, tuples, mapped types, and utility types
-- Prefer string literal unions over `enum` unless an `enum` is required for interoperability
-
-```typescript
-interface User {
-  id: string
-  email: string
-}
-
-type UserRole = 'admin' | 'member'
-type UserWithRole = User & {
-  role: UserRole
-}
-```
-
-### Avoid `any`
-
-- Avoid `any` in application code
-- Use `unknown` for external or untrusted input, then narrow it safely
-- Use generics when a value's type depends on the caller
-
-```typescript
-// WRONG: any removes type safety
-function getErrorMessage(error: any) {
-  return error.message
-}
-
-// CORRECT: unknown forces safe narrowing
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return 'Unexpected error'
-}
-```
-
-### React Props
-
-- Define component props with a named `interface` or `type`
-- Type callback props explicitly
-- Do not use `React.FC` unless there is a specific reason to do so
-
-```typescript
-interface User {
-  id: string
-  email: string
-}
-
-interface UserCardProps {
-  user: User
-  onSelect: (id: string) => void
-}
-
-function UserCard({ user, onSelect }: UserCardProps) {
-  return <button onClick={() => onSelect(user.id)}>{user.email}</button>
-}
-```
-
-### JavaScript Files
-
-- In `.js` and `.jsx` files, use JSDoc when types improve clarity and a TypeScript migration is not practical
-- Keep JSDoc aligned with runtime behavior
-
-```javascript
-/**
- * @param {{ firstName: string, lastName: string }} user
- * @returns {string}
- */
-export function formatUser(user) {
-  return `${user.firstName} ${user.lastName}`
-}
-```
-
-## Immutability
-
-Use spread operator for immutable updates:
-
-```typescript
-interface User {
-  id: string
-  name: string
-}
-
-// WRONG: Mutation
-function updateUser(user: User, name: string): User {
-  user.name = name // MUTATION!
-  return user
-}
-
-// CORRECT: Immutability
-function updateUser(user: Readonly<User>, name: string): User {
-  return {
-    ...user,
-    name
-  }
-}
-```
-
-## Error Handling
-
-Use async/await with try-catch and narrow unknown errors safely:
-
-```typescript
-interface User {
-  id: string
-  email: string
-}
-
-declare function riskyOperation(userId: string): Promise<User>
-
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return 'Unexpected error'
-}
-
-const logger = {
-  error: (message: string, error: unknown) => {
-    // Replace with your production logger (for example, pino or winston).
-  }
-}
-
-async function loadUser(userId: string): Promise<User> {
-  try {
-    const result = await riskyOperation(userId)
-    return result
-  } catch (error: unknown) {
-    logger.error('Operation failed', error)
-    throw new Error(getErrorMessage(error))
-  }
-}
-```
-
-## Input Validation
-
-Use Zod for schema-based validation and infer types from the schema:
-
-```typescript
-import { z } from 'zod'
-
-const userSchema = z.object({
-  email: z.string().email(),
-  age: z.number().int().min(0).max(150)
-})
-
-type UserInput = z.infer<typeof userSchema>
-
-const validated: UserInput = userSchema.parse(input)
-```
-
-## Console.log
-
-- No `console.log` statements in production code
-- Use proper logging libraries instead
-- See hooks for automatic detection
-
-```
-
----
-
-<a id="ecc-typescript-hooks"></a>
-
-## [ECC] `rules/typescript/hooks.md`
-
-```markdown
----
-paths:
-  - "**/*.ts"
-  - "**/*.tsx"
-  - "**/*.js"
-  - "**/*.jsx"
----
-# TypeScript/JavaScript Hooks
-
-> This file extends [common/hooks.md](../common/hooks.md) with TypeScript/JavaScript specific content.
-
-## PostToolUse Hooks
-
-Configure in `~/.claude/settings.json`:
-
-- **Prettier**: Auto-format JS/TS files after edit
-- **TypeScript check**: Run `tsc` after editing `.ts`/`.tsx` files
-- **console.log warning**: Warn about `console.log` in edited files
-
-## Stop Hooks
-
-- **console.log audit**: Check all modified files for `console.log` before session ends
-
-```
-
----
-
-<a id="ecc-typescript-patterns"></a>
-
-## [ECC] `rules/typescript/patterns.md`
-
-```markdown
----
-paths:
-  - "**/*.ts"
-  - "**/*.tsx"
-  - "**/*.js"
-  - "**/*.jsx"
----
-# TypeScript/JavaScript Patterns
-
-> This file extends [common/patterns.md](../common/patterns.md) with TypeScript/JavaScript specific content.
-
-## API Response Format
-
-```typescript
-interface ApiResponse<T> {
-  success: boolean
-  data?: T
-  error?: string
-  meta?: {
-    total: number
-    page: number
-    limit: number
-  }
-}
-```
-
-## Custom Hooks Pattern
-
-```typescript
-export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value)
-
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedValue(value), delay)
-    return () => clearTimeout(handler)
-  }, [value, delay])
-
-  return debouncedValue
-}
-```
-
-## Repository Pattern
-
-```typescript
-interface Repository<T> {
-  findAll(filters?: Filters): Promise<T[]>
-  findById(id: string): Promise<T | null>
-  create(data: CreateDto): Promise<T>
-  update(id: string, data: UpdateDto): Promise<T>
-  delete(id: string): Promise<void>
-}
-```
-
-```
-
----
-
-<a id="ecc-typescript-security"></a>
-
-## [ECC] `rules/typescript/security.md`
-
-```markdown
----
-paths:
-  - "**/*.ts"
-  - "**/*.tsx"
-  - "**/*.js"
-  - "**/*.jsx"
----
-# TypeScript/JavaScript Security
-
-> This file extends [common/security.md](../common/security.md) with TypeScript/JavaScript specific content.
-
-## Secret Management
-
-```typescript
-// NEVER: Hardcoded secrets
-const apiKey = "sk-proj-xxxxx"
-
-// ALWAYS: Environment variables
-const apiKey = process.env.OPENAI_API_KEY
-
-if (!apiKey) {
-  throw new Error('OPENAI_API_KEY not configured')
-}
-```
-
-## Agent Support
-
-- Use **security-reviewer** skill for comprehensive security audits
-
-```
-
----
-
-<a id="ecc-typescript-testing"></a>
-
-## [ECC] `rules/typescript/testing.md`
-
-```markdown
----
-paths:
-  - "**/*.ts"
-  - "**/*.tsx"
-  - "**/*.js"
-  - "**/*.jsx"
----
-# TypeScript/JavaScript Testing
-
-> This file extends [common/testing.md](../common/testing.md) with TypeScript/JavaScript specific content.
-
-## E2E Testing
-
-Use **Playwright** as the E2E testing framework for critical user flows.
-
-## Agent Support
-
-- **e2e-runner** - Playwright E2E testing specialist
-
-```

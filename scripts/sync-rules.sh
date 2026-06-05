@@ -63,7 +63,7 @@ for arg in "$@"; do
   case "$arg" in
     --check) CHECK_ONLY=1 ;;
     -h|--help)
-      sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'
+      sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'
       exit 0
       ;;
     *)
@@ -110,6 +110,16 @@ for entry in "${TARGETS[@]}"; do
   printf "\n${C_BOLD}%s${C_RST}\n" "$label"
 
   if [ ! -f "$path" ]; then
+    # O target do toolkit e opcional: se o clone nao existe aqui (ex: Mobile/VPS),
+    # nao e drift de regra, e so ausencia do repo. Warn em vez de critico.
+    case "$path" in
+      "$TOOLKIT_CORE"/*)
+        if [ ! -d "$TOOLKIT_CORE" ]; then
+          warn "toolkit nao clonado aqui (pulando): $label"
+          continue
+        fi
+        ;;
+    esac
     miss "arquivo ausente: $path"
     CRITICAL_MISSING=$((CRITICAL_MISSING + 1))
     continue
